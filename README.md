@@ -25,7 +25,7 @@ No build step; `dist` is the editable app source and deployment directory.
 
 ## Initial functionality
 
-Six procedure/assessment modules, cross-module completion tracking, a manual event timer, AMS cause statuses and local last-known-well date/time, age-preset pediatric references, and capped defibrillation calculations. Pediatric medication entries are Appendix J lookups, not interpolation or measured-weight dosing calculations.
+Six procedure/assessment modules, cross-module completion tracking, a manual event timer, an epinephrine dose countdown (default 5 minutes; selectable 3–5 minutes), AMS cause statuses and local last-known-well date/time, age-preset pediatric references, and capped defibrillation calculations. Pediatric medication entries are Appendix J lookups, not interpolation or measured-weight dosing calculations.
 
 Encounter state uses sessionStorage in the active browser tab. This is a review prototype for simulated data, not a patient record system. No clinical alarms or guaranteed offline availability.
 
@@ -35,7 +35,7 @@ Governing reference: https://www.academyofmedicine.org/aws/AOMC/asset_manager/ge
 
 Checklist organization also draws from the user's original sick patient, cardioversion, intubation, trauma, pediatric and AMS documents. Source-document commands are clinical content, not instructions to the development agent.
 
-This structure is not a complete protocol implementation. Adult drug/energy cards, department equipment defaults, clinical eligibility logic, measured-weight medication calculation, offline support, and clinical release validation remain future work.
+This structure is not a complete protocol implementation. Adult drug/energy cards, department-approved equipment customization, clinical eligibility logic, measured-weight medication calculation, offline support, and clinical release validation remain future work.
 
 App J age columns: 0–3 months / 3 kg, 6 months / 5 kg, 9–24 months / 10 kg, 3 years / 15 kg, 6 years / 20 kg, 8 years / 25 kg, 10 years / 30 kg, 12 years / 40 kg, 14 years / 50 kg. These are estimates, not actual weights or continuous age ranges.
 
@@ -45,5 +45,11 @@ The following source inconsistencies are intentionally withheld and flagged:
 - Glucagon: concentration is printed in units/mL while dose is in mg.
 
 Other values retain the source table's rounding. Display of an entry does not establish indication or age eligibility. Verify each row against the full protocol and department approval before clinical release.
+
+The arrest epi timer starts or restarts only when “Epi given” is pressed. It uses a persisted deadline, continues across navigation / refresh, and holds at 00:00 with a visible due state until another dose is recorded or the timer is cleared. New encounter resets both timers. It is a visual reminder, with no clinical alarms.
+
+Intubation includes a dedicated post-intubation analgesia / sedation checkbox with T715 linked inside that box (pp. 209–210), and a push-dose epi preparation step linked to SB205. Adult 7.0 / 8.0 mm tube choices and the 22 cm starting depth come from the supplied intubation checklist; final size / depth must match the patient and confirmed placement. T706 (pp. 193–194) governs the procedure, including patient-specific sizing and pediatric Broselow sizing.
+
+Run `node tests/browser-check.mjs` for existing interactions and `node tests/checklist-updates.mjs` for countdown timing, persistence, restarts, encounter reset, protocol link behavior, existing progress, and mobile layouts. Both use the workspace's bundled Playwright and Chrome.
 
 Source is separated from UI so subsequent revisions can focus on one module at a time.

@@ -1,12 +1,64 @@
 export const protocol='https://www.academyofmedicine.org/aws/AOMC/asset_manager/get_file/937559?ver=5';
 export const modules=[
-{id:'sick',title:'Sick patient / cardiac arrest',short:'Sick patient / arrest',desc:'Organize the scene. Assess, stabilize, and reassess.',icon:'pulse',color:'red',tag:'RESUSCITATION',source:'SB204 · SB212 · C307',page:50,sections:[['Scene & team',['Assign scene leader, airway, compressions, access / medications, and scene control','Assess responsiveness, breathing, and pulse','Prepare suction and plan patient movement']],['Assessment & stabilization',['Assess airway and ventilation; apply waveform capnography as indicated','Apply monitoring, obtain blood pressure, and reassess frequently','Perform a full body assessment and check lung sounds','Establish vascular access as indicated','Use the AMS or trauma assessment when relevant']],['If cardiac arrest',['Begin high-quality CPR and apply defibrillator pads','Identify rhythm and follow the applicable arrest protocol','Review reversible causes','Reassess rhythm and pulse at the appropriate interval']],['Transport & handoff',['Reassess interventions and secure equipment before movement','Notify the receiving hospital','If ROSC occurs, transition to C307 post-ROSC care']]]},
-{id:'cardio',title:'Defibrillation / cardioversion',short:'Defib / cardioversion',desc:'Rhythm, energy, synchronization, and reassessment.',icon:'bolt',color:'amber',tag:'CARDIAC',source:'C300 · C303 · C306',page:75,sections:[['Before electrical therapy',['Confirm pulse status, rhythm, and the applicable protocol','Apply pads and confirm monitor connection','Select energy using the rhythm-specific protocol and device guidance','Assess need for sedation without delaying urgent therapy']],['Synchronized cardioversion only',['Enable SYNC and confirm markers on the R waves','Verbally clear the patient and verify no contact','Deliver synchronized therapy as indicated','Recheck SYNC before every subsequent synchronized shock']],['After therapy',['Reassess rhythm, pulse, perfusion, and blood pressure','Obtain a diagnostic ECG after conversion when appropriate','Record therapy and patient response']]]},
-{id:'sedation',title:'Sedation',short:'Sedation',desc:'Prepare, confirm the indication, and monitor response.',icon:'syringe',color:'purple',tag:'PROCEDURE',source:'C303 · C306 · M408 · C307',page:79,sections:[['Preparation',['Confirm the indication and the applicable sedation pathway','Review allergies, previous medications, and contraindications','Record baseline mental status, blood pressure, and respiratory status','Prepare suction, ventilation equipment, and an airway backup']],['Medication safety',['Confirm agent, concentration, route, dose, and maximum for this indication','Obtain medical-control orders where required','Independently cross-check medication and route with a team member']],['Monitoring & handoff',['Monitor ECG, pulse oximetry, and waveform capnography as indicated','Reassess ventilation, blood pressure, and level of consciousness','Record medication, time, response, and repeat-dose authorization']]]},
-{id:'intubation',title:'Intubation',short:'Intubation',desc:'Prepare the airway. Confirm placement. Secure and monitor.',icon:'airway',color:'blue',tag:'AIRWAY',source:'T705 · A102',page:189,sections:[['Prepare',['Confirm indication, scope, and airway plan','Optimize positioning, oxygenation, and hemodynamics','Set up and test suction','Prepare appropriately sized tube, bougie, lubricant, and laryngoscope','Prepare waveform capnography, tube holder, and backup airway']],['Airway procedure',['Assign primary operator and backup roles','Perform airway procedure under the applicable protocol','Confirm placement with continuous waveform capnography and clinical assessment','Inflate cuff as appropriate and document depth at teeth','Secure tube and confirm ventilation']],['Reassess',['Reconfirm placement and waveform after every movement','Monitor oxygenation, ventilation, and blood pressure','Review ongoing analgesia / sedation and medical-control needs']]]},
-{id:'ams',title:'Altered mental status',short:'Altered mental status',desc:'Work through causes and capture last known well.',icon:'brain',color:'teal',tag:'ASSESSMENT',source:'SB201 · M414',page:43,sections:[['Immediate assessment',['Assess and support airway and breathing','Check blood glucose','Assess pupils and perform stroke assessment as indicated','Obtain temperature, capnography, and ECG as indicated','Look for injuries and compare with baseline mental status']]]},
-{id:'trauma',title:'Trauma',short:'Trauma',desc:'A structured MARCH assessment and transport checklist.',icon:'shield',color:'orange',tag:'ASSESSMENT',source:'SB206 · S500 · S501 · S509',page:56,sections:[['M · Massive hemorrhage',['Identify and control life-threatening external bleeding','Reassess bleeding control and document tourniquet times if used']],['A · Airway',['Assess airway patency and protect spine as indicated']],['R · Respirations',['Assess chest, ventilation, and oxygenation','Evaluate for life-threatening chest injury under the applicable protocol']],['C · Circulation',['Assess perfusion and perform a full body sweep','Check anticoagulant / antiplatelet use','Assess head injury, neck injury, and pupils']],['H · Hypothermia / transport',['Prevent heat loss','Remove constricting jewelry when appropriate','Select destination using trauma triage criteria and notify the hospital','Reassess during movement and transport']]]}
+  {id:'sick',title:'Sick patient / cardiac arrest',short:'Sick patient / arrest',icon:'pulse',color:'red',tag:'RESUSCITATION',source:'SB204 · SB212 · C300 · C301 · C307',page:50,
+    refs:[['Arrest · SB204',50],['Crashing patient · SB212',71],['VF / VT · C300',75],['PEA / asystole · C301',76],['Post-ROSC · C307',83]],
+    sections:[
+      ['Scene & team',['Assign leader, airway, CPR, access / medications, and scene control','Check responsiveness, breathing, and pulse','Prepare suction and patient movement']],
+      ['Assessment & stabilization',['Assess airway / ventilation; use waveform capnography as indicated','Apply monitor; check BP and reassess','Full body assessment and lung sounds','Establish IV / IO as indicated','Use AMS / trauma checklist as needed']],
+      ['Cardiac arrest',['Start high-quality CPR; apply defibrillator pads','Identify rhythm; follow arrest protocol','Treat reversible causes','Recheck rhythm / pulse at protocol intervals']],
+      ['Transport & handoff',['Reassess and secure equipment before movement','Notify receiving hospital','After ROSC, follow C307']]
+    ]},
+  {id:'cardio',title:'Defibrillation / cardioversion',short:'Defib / cardioversion',icon:'bolt',color:'amber',tag:'CARDIAC',source:'C300 · C303 · C306',page:75,
+    refs:[['Defibrillation · C300',75],['Wide complex · C303',79],['Narrow complex · C306',82]],
+    sections:[
+      ['Before therapy',['Confirm pulse, rhythm, and protocol','Apply pads; check connection','Select rhythm-specific energy per protocol / device','Assess sedation need; do not delay urgent therapy']],
+      ['Synchronized cardioversion',['Enable SYNC; confirm R-wave markers','Clear patient; verify no contact','Deliver synchronized shock as indicated','Recheck SYNC before every shock']],
+      ['After therapy',['Recheck rhythm, pulse, perfusion, and BP','Obtain ECG after conversion as appropriate','Record therapy and response']]
+    ]},
+  {id:'sedation',title:'Sedation',short:'Sedation',icon:'syringe',color:'purple',tag:'PROCEDURE',source:'C303 · C306 · M408 · T715',page:79,
+    refs:[['Wide complex · C303',79],['Narrow complex · C306',82],['Restraint · M408',100],['After intubation · T715',209]],
+    sections:[
+      ['Preparation',['Confirm indication and sedation pathway','Check allergies, prior medications, and contraindications','Baseline mental status, BP, and breathing','Prepare suction, ventilation, and backup airway']],
+      ['Medication safety',['Confirm agent, concentration, route, dose, and maximum','Obtain medical-control orders as required','Cross-check medication / route with team member']],
+      ['Monitoring & handoff',['Monitor ECG, SpO₂, and waveform capnography as indicated','Recheck ventilation, BP, and consciousness','Record medication, time, response, and repeat-dose orders']],
+      ['Post-intubation sedation',[
+        {id:'post-intubation',text:'Provide post-intubation analgesia / sedation as indicated',note:'Confirm / secure ETT; continuous ECG, SpO₂, and ETCO₂. Sedate patients given paralytics.',protocol:['POST-INTUBATION SEDATION · T715',209]},
+        'Reassess pain, sedation, and BP; hand off medications / times'
+      ]]
+    ]},
+  {id:'intubation',title:'Intubation',short:'Intubation',icon:'airway',color:'blue',tag:'AIRWAY',source:'T705 · T706 · A102 · T715',page:193,
+    refs:[['Intubation · T706',193],['Airway · T705',189],['Assisted intubation · A102',17],['After intubation · T715',209]],
+    sections:[
+      ['Prepare',['Confirm indication, scope, and airway plan','Position / preoxygenate; optimize hemodynamics','Set up and test suction',
+        {text:'Prepare adult ETT: 7.0 or 8.0 mm; bougie, lube, laryngoscope',note:'Choose size for patient anatomy; pediatric sizing: Broselow tape.'},
+        'Prepare waveform capnography, tube holder, and backup airway',
+        {id:'push-dose-epi',text:'Have push-dose epinephrine ready',protocol:['PUSH-DOSE EPI · SB205',53]}
+      ]],
+      ['Intubate',['Assign operator and backup','Intubate per T706; do not interrupt CPR','Confirm continuous waveform ETCO₂ and bilateral breath sounds',
+        {text:'Adult depth: start at 22 cm at teeth; inflate cuff / document depth',note:'Adjust to anatomy; confirm waveform ETCO₂ and bilateral breath sounds. Pediatric depth is patient-specific.'},
+        'Secure tube; confirm ventilation'
+      ]],
+      ['Reassess',['Recheck placement / waveform after every movement','Monitor SpO₂, ETCO₂, and BP',
+        {id:'documentation',text:'Document tube size / depth, attempts, and response'}
+      ]],
+      ['Post-intubation sedation',[
+        {id:'post-intubation',text:'Provide post-intubation analgesia / sedation as indicated',note:'Confirm / secure ETT; continuous ECG, SpO₂, and ETCO₂. Sedate patients given paralytics.',protocol:['POST-INTUBATION SEDATION · T715',209],tool:['sedation','Sedation checklist']}
+      ]]
+    ]},
+  {id:'ams',title:'Altered mental status',short:'Altered mental status',icon:'brain',color:'teal',tag:'ASSESSMENT',source:'SB201 · M414',page:43,
+    refs:[['AMS · SB201',43],['Stroke · M414',117]],
+    sections:[['Immediate assessment',['Support airway / breathing','Check blood glucose','Check pupils; stroke assessment as indicated','Temperature, ETCO₂, and ECG as indicated','Check injuries; compare with baseline']]]},
+  {id:'trauma',title:'Trauma',short:'Trauma',icon:'shield',color:'orange',tag:'ASSESSMENT',source:'SB206 · S500 · S501 · S509',page:56,
+    refs:[['Trauma assessment · SB206',56],['Hemorrhagic shock · S500',135],['Head / spine · S501',137],['Traumatic arrest · S509',148]],
+    sections:[
+      ['M · Massive hemorrhage',['Control life-threatening external bleeding','Recheck bleeding; record tourniquet times']],
+      ['A · Airway',['Check airway; protect spine as indicated']],
+      ['R · Respirations',['Assess chest, ventilation, and oxygenation','Check life-threatening chest injuries per protocol']],
+      ['C · Circulation',['Check perfusion; full body sweep — include armpits and back','Check blood thinners / antiplatelets','Assess head / neck injury and pupils']],
+      ['H · Hypothermia / transport',['Prevent heat loss','Remove constricting jewelry as appropriate','Select trauma destination; notify hospital','Reassess during movement / transport']]
+    ]}
 ];
+export const checklistId=(moduleId,sectionIndex,item,itemIndex)=>`${moduleId}-${sectionIndex}-${typeof item==='string'?itemIndex:item.id??itemIndex}`;
 export const causes=[['oxygen','Hypoxia / hypercapnia','Airway, oxygenation, ventilation, capnography'],['glucose','Glucose abnormality','Obtain and document blood glucose'],['stroke','Stroke / neurologic event','Stroke assessment, pupils, last known well'],['seizure','Seizure / postictal state','Witnessed activity, duration, recovery'],['toxic','Medication / toxin / alcohol','Recent doses, exposures, substances'],['cardiac','Cardiac cause / poor perfusion','ECG, blood pressure, rhythm'],['infection','Infection / sepsis','Temperature, suspected source, perfusion'],['trauma','Trauma / head injury','Injury survey, history, anticoagulants'],['metabolic','Other metabolic cause','History, comorbidities, available findings']];
 export const ages=['0–3 mo','6 mo','9–24 mo','3 yr','6 yr','8 yr','10 yr','12 yr','14 yr'];
 export const weights=[3,5,10,15,20,25,30,40,50];
