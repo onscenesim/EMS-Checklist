@@ -1,0 +1,74 @@
+import {chromium} from '/Users/WorkSchool/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/playwright/index.mjs';
+import assert from 'node:assert/strict';
+const browser=await chromium.launch({headless:true,executablePath:'/Applications/Google Chrome.app/Contents/MacOS/Google Chrome'});
+try{
+ const page=await browser.newPage({viewport:{width:1440,height:1100}}),errors=[];page.on('pageerror',e=>errors.push(e.message));
+ await page.goto('http://127.0.0.1:4173/#sick');
+ const rosc=page.locator('.check-row').filter({hasText:'After ROSC, follow C307'});
+ assert.match(await rosc.locator('a').getAttribute('href'),/#page=83$/);
+ assert.equal(await rosc.locator('input').isChecked(),false);
+ await page.locator('.nav-item[data-page="medications"]').click();
+ assert.equal(await page.locator('.drug-card').count(),26);
+ await page.locator('#ref-age').fill('40');await page.locator('#ref-weight').fill('80');await page.locator('#ref-ideal').fill('70');
+ const open=async key=>{const el=page.locator(`[data-ref-open="${key}"]`);if(!await el.getAttribute('open').then(x=>x!==null))await el.locator(':scope > summary').click();};
+ await open('drug-magnesium');await open('path-mag-asthma');
+ assert.match(await page.locator('[data-recipe="mag-asthma-0"] .dose-output').innerText(),/2 g[\s\S]*4 mL/);
+ await open('drug-ketamine');await open('path-ket-pain-iv');
+ assert.match(await page.locator('[data-recipe="ket-pain-iv-0"] .dose-output').innerText(),/14 mg[\s\S]*0.28 mL/);
+ await open('drug-midazolam');await open('path-versed-post-intubation');
+ assert.match(await page.locator('[data-recipe="versed-post-intubation-0"] .dose-output').innerText(),/Confirm concentration/);
+ await page.locator('#stock-midazolam').selectOption('5');
+ assert.match(await page.locator('[data-recipe="versed-post-intubation-0"] .dose-output').innerText(),/4 mg[\s\S]*0.8 mL/);
+ await page.locator('#stock-midazolam').selectOption('custom');
+ await page.locator('#custom-midazolam').pressSequentially('10');
+ assert.equal(await page.locator('#custom-midazolam').inputValue(),'10');
+ assert.match(await page.locator('[data-recipe="versed-post-intubation-0"] .dose-output').innerText(),/4 mg[\s\S]*0.4 mL/);
+ await page.locator('#stock-midazolam').selectOption('5');
+ await page.locator('#reference-protocol').selectOption('T715');
+ assert.equal(await page.locator('.drug-card').count(),5);
+ assert.equal(await page.locator('.protocol-path').count(),5);
+ await page.screenshot({path:'/Users/Shared/EMS Checklist/tmp/medications-desktop.png',fullPage:true});
+ await page.locator('#reference-protocol').selectOption('');
+ await page.locator('#reference-search').fill('push-dose');assert.equal(await page.locator('.drug-card').count(),1);
+ await open('drug-push-epi');await open('path-push-epi-rosc');
+ assert.match(await page.locator('[data-recipe="push-epi-rosc-0"] .dose-output').innerText(),/10–20 mcg[\s\S]*1–2 mL/);
+ assert.match(await page.locator('.mixing-guide').innerText(),/0.1 mg\/mL/);
+ await page.screenshot({path:'/Users/Shared/EMS Checklist/tmp/push-epi-desktop.png',fullPage:true});
+ await page.locator('#reference-search').fill('lidocaine');await open('drug-lidocaine');await open('path-lido-io-adult');
+ assert.match(await page.locator('[data-recipe="lido-io-adult-0"] .dose-output').innerText(),/requires 20 mg\/mL/);
+ await page.locator('#stock-lidocaine').selectOption('20');
+ assert.match(await page.locator('[data-recipe="lido-io-adult-0"] .dose-output').innerText(),/20–40 mg[\s\S]*1–2 mL/);
+ await page.locator('#reference-search').fill('versed');await page.locator('#ref-age').fill('5');await page.locator('#ref-weight').fill('13');await open('drug-midazolam');await open('path-versed-seizure-ped');
+ assert.match(await page.locator('[data-recipe="versed-seizure-ped-0"] .dose-output').innerText(),/5 mg[\s\S]*1 mL/);
+ await page.reload();assert.equal(await page.locator('#ref-weight').inputValue(),'13');
+ await open('drug-midazolam');assert.equal(await page.locator('#stock-midazolam').inputValue(),'5');
+ await page.locator('.nav-item[data-page="calculators"]').click();
+ await page.locator('#convert-value').fill('220.46226218487757');
+ assert.match(await page.locator('.calculator').first().locator('.utility-result').innerText(),/100 kg/);
+ await page.getByRole('button',{name:'Use as patient weight'}).click();assert.equal(Number(await page.locator('#ref-weight').inputValue()),100);
+ await page.locator('#calc-dose').fill('2');await page.locator('#calc-dose-unit').selectOption('mcg');await page.locator('#calc-basis').selectOption('kg');await page.locator('#calc-max').fill('150');await page.locator('#calc-stock-amount').fill('1');await page.locator('#calc-stock-volume').fill('10');
+ assert.match(await page.locator('.calculator').nth(1).locator('.utility-result').innerText(),/150 mcg[\s\S]*1.5 mL/);
+ await page.locator('#drip-volume').fill('100');await page.locator('#drip-minutes').fill('20');await page.locator('#drip-factor').selectOption('60');
+ assert.match(await page.locator('.calculator').nth(2).locator('.utility-result').innerText(),/300 mL\/hr[\s\S]*300 gtt\/min/);
+ await page.locator('#infusion-dose').fill('0.1');await page.locator('#infusion-amount').fill('4');await page.locator('#infusion-volume').fill('250');
+ assert.match(await page.locator('.calculator').nth(3).locator('.utility-result').innerText(),/37.5 mL\/hr/);
+ await page.locator('#dilution-amount').fill('1');await page.locator('#dilution-stock-volume').fill('10');await page.locator('#dilution-target').fill('10');await page.locator('#dilution-final-volume').fill('10');
+ assert.match(await page.locator('.calculator').nth(4).locator('.utility-result').innerText(),/1 mL[\s\S]*9 mL/);
+ await page.locator('#drip-minutes').fill('0');assert.match(await page.locator('.calculator').nth(2).locator('.utility-result').innerText(),/Enter valid values/);
+ await page.locator('#calc-dose').fill('');assert.match(await page.locator('.calculator').nth(1).locator('.utility-result').innerText(),/Enter valid values/);
+ await page.screenshot({path:'/Users/Shared/EMS Checklist/tmp/calculators-desktop.png',fullPage:true});
+ await page.setViewportSize({width:390,height:844});
+ for(const id of ['home','medications','calculators','sick']){
+  await page.goto(`http://127.0.0.1:4173/#${id}`);
+  assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true,`${id}: mobile overflow`);
+  if(id==='medications'){
+   await page.locator('#reference-search').fill('push-dose');await open('drug-push-epi');await open('path-push-epi-shock');
+   assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true,'expanded epi mobile overflow');
+  }
+  await page.screenshot({path:`/Users/Shared/EMS Checklist/tmp/${id}-meds-mobile.png`,fullPage:true});
+ }
+ await page.locator('[data-action="new"]').click();await page.locator('[data-action="confirm-new"]').click();
+ await page.goto('http://127.0.0.1:4173/#calculators');assert.equal(await page.locator('#ref-weight').inputValue(),'');assert.equal(await page.locator('#infusion-dose').inputValue(),'');
+ await page.goto('http://127.0.0.1:4173/#medications');await open('drug-midazolam');assert.equal(await page.locator('#stock-midazolam').inputValue(),'5');
+ assert.deepEqual(errors,[]);console.log('Medication browser checks passed: ROSC link, dose/stock volumes, protocol filters, IBW, source cautions, concentration gating, unit conversion, drip/infusion/dilution, invalid inputs, persistence, encounter reset, and mobile layouts.');
+}finally{await browser.close();}

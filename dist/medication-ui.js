@@ -1,0 +1,78 @@
+import {drugReference,categories} from './medication-data.js';
+import {calculateDose,fmt,kgFrom,poundsFrom,orderedDose,dripRate,infusionRate,dilute,number} from './calculations.js';
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const range=(low,high)=>low===high?fmt(low):`${fmt(low)}–${fmt(high)}`;
+export const referenceUI={search:'',category:'',protocol:'',open:new Set()};
+let concentrations={};try{concentrations=JSON.parse(sessionStorage.getItem('wfd-stock-v1')||'{}');}catch{}
+export function setConcentration(id,value,custom=false){concentrations[id]=custom||value==='custom'?{custom:true,value:value==='custom'?'':value}:value;try{sessionStorage.setItem('wfd-stock-v1',JSON.stringify(concentrations));}catch{}}
+const input=(fields,key,label,placeholder='',extra='')=>`<label class="field">${label}<input id="${key}" data-ref-field="${key}" type="text" inputmode="decimal" value="${esc(fields[key]??'')}" placeholder="${esc(placeholder)}" ${extra}></label>`;
+const select=(fields,key,label,options,defaultValue='')=>`<label class="field">${label}<select id="${key}" data-ref-field="${key}">${options.map(([value,label])=>`<option value="${esc(value)}" ${(fields[key]??defaultValue)===String(value)?'selected':''}>${esc(label)}</option>`).join('')}</select></label>`;
+const unitOptions=[['mg','mg'],['mcg','mcg'],['g','g'],['mEq','mEq']];
+export const patientKg=fields=>kgFrom(fields['ref-weight'],fields['ref-weight-unit']??'kg');
+function patientContext(fields){const kg=patientKg(fields);return `<section class="panel reference-context"><div class="reference-fields">
+  ${input(fields,'ref-age','Age · years','Required for age-specific pathways')}
+  <div class="weight-entry">${input(fields,'ref-weight','Patient weight','Measured / validated weight')}${select(fields,'ref-weight-unit','Unit',[['kg','kg'],['lb','lb']],'kg')}</div>
+  ${input(fields,'ref-ideal','Ideal weight · kg','Ketamine adult pain / restraint')}
+</div>${kg!==null?`<p class="weight-equivalent">${fmt(kg)} kg = ${fmt(poundsFrom(kg))} lb</p>`:''}</section>`;}
+function recipeCard(m,p,r,ri,fields){
+  const concentration=p.concentration??m.stock.concentration??number(concentrations[m.id]?.custom?concentrations[m.id].value:concentrations[m.id]);
+  const unit=p.concentrationUnit??m.stock.unit;
+  const priorKey=`prior-${p.id}-${ri}`;
+  const result=calculateDose(r,{weightKg:patientKg(fields),idealKg:fields['ref-ideal'],age:fields['ref-age'],concentration,concentrationUnit:unit,prior:fields[priorKey]});
+  const formula=r.kind==='weight'?`${range(r.low,r.high)} ${r.unit}/kg${r.ideal?' ideal weight':''}`:r.kind==='fixed'?`${range(r.low,r.high)} ${r.unit}`:r.rule==='glucagon-age'?'Age-based dose':'Weight-band dose';
+  const ceiling=r.max!==undefined?` · max ${fmt(r.max)} ${r.unit}`:'';
+  return `<article class="dose-card" data-recipe="${p.id}-${ri}"><div class="dose-card-title"><b>${esc(r.label)}</b>${r.route?`<span class="route-pill">${esc(r.route)}</span>`:''}</div>
+    ${r.blocked?'':`<p class="dose-formula">${esc(formula+ceiling)}${r.min!==undefined?` · min ${fmt(r.min)} ${esc(r.unit)}`:''}</p>`}
+    ${r.totalMax!==undefined||r.totalPerKg!==undefined?`${input(fields,priorKey,`Already given · ${r.unit} (0 if none)`,'0')}<p class="dose-limit">Total maximum: ${r.totalPerKg?`${r.totalPerKg} ${r.unit}/kg`:`${r.totalMax} ${r.unit}`}</p>`:''}
+    <div class="dose-output" aria-live="polite">${result.error?`<p class="calculation-empty">${esc(result.error)}</p>`:`<div><span>CALCULATED DOSE</span><strong>${range(result.low,result.high)} <small>${esc(result.unit)}</small></strong>${result.weight?`<p>${fmt(result.weight)} kg${result.ideal?' ideal body weight':''}</p>`:''}</div><div><span>${r.unit==='mL'?'SOLUTION VOLUME':'DRAW FROM STOCK'}</span><strong>${result.volumeLow===null?'—':range(result.volumeLow,result.volumeHigh)} <small>mL</small></strong><p>${result.volumeLow===null?'Confirm concentration above.':r.unit==='mL'?'Use specified solution.':`${fmt(concentration)} ${esc(unit)}/mL${p.concentration?' · pathway-specific stock':''}`}</p></div>${result.limited?'<p class="dose-limit">Protocol dose limit applied.</p>':''}${result.remaining!==null?`<p class="dose-limit">Remaining cumulative allowance: ${fmt(result.remaining)} ${esc(r.unit)}.</p>`:''}${r.prime&&result.volumeLow!==null?`<p class="dose-limit">Draw ${range(result.volumeLow+r.prime,result.volumeHigh+r.prime)} mL including ${r.prime} mL atomizer priming; dose volume above excludes priming.</p>`:''}`}</div>
+  </article>`;
+}
+function stockControl(m){const s=m.stock;if(s.confirmed)return `<div class="stock-summary"><b>${esc(s.label)}</b><span>${s.unit==='mL'?'Specified solution':m.id==='magnesium'||m.id==='ketamine'?'Department stock':'Protocol preparation'} · confirm label</span></div>`;
+  const saved=concentrations[m.id]??'',value=saved?.custom?saved.value:saved,custom=!!saved?.custom||value==='custom'||!!value&&!s.options.some(([n])=>Number(n)===Number(value));return `<div class="stock-control"><label class="field">${esc(s.label)}<select id="stock-${m.id}" data-stock="${m.id}"><option value="">Select / confirm concentration</option>${s.options.map(([n,label])=>`<option value="${n}" ${!custom&&String(value)===String(n)?'selected':''}>${esc(label)}</option>`).join('')}<option value="custom" ${custom?'selected':''}>Other concentration</option></select></label>${custom?`<label class="field">Product concentration · ${esc(s.unit)}/mL<input id="custom-${m.id}" data-stock-custom="${m.id}" type="text" value="${esc(value==='custom'?'':value)}" inputmode="decimal"></label>`:''}</div>`;
+}
+export function medicationReference(fields,source){
+  const search=referenceUI.search.toLowerCase();
+  const matches=drugReference.map(m=>{const nameMatch=m.name.toLowerCase().includes(search);const paths=m.pathways.filter(p=>(!referenceUI.protocol||p.code.split(' / ').includes(referenceUI.protocol))&&(!search||nameMatch||(p.title+' '+p.code+' '+p.recipes.map(r=>r.route??'').join(' ')).toLowerCase().includes(search)));return {m,paths};}).filter(({m,paths})=>paths.length&&(!referenceUI.category||m.category===referenceUI.category));
+  const codes=[...new Set(drugReference.flatMap(m=>m.pathways.flatMap(p=>p.code.split(' / '))))].sort();
+  return `<div class="page-heading"><div><div class="eyebrow">MEDICATION QUICK REFERENCE</div><h1>Medication doses</h1></div><button class="button primary" data-page="calculators">Dose & drip calculators ↗</button></div>
+    <div class="reference-note">2026 Southwest Ohio · Verify indication, route, concentration, and required orders. ${source('FULL PROTOCOL',1)}</div>
+    ${patientContext(fields)}
+    <section class="reference-toolbar"><label class="search">Search<input id="reference-search" aria-label="Search medications or indications" placeholder="Medication, indication, protocol…" value="${esc(referenceUI.search)}"></label>
+      <label class="field">Protocol<select id="reference-protocol"><option value="">All protocols</option>${codes.map(c=>`<option ${referenceUI.protocol===c?'selected':''}>${esc(c)}</option>`).join('')}</select></label>
+      <label class="field">Category<select id="reference-category"><option value="">All categories</option>${categories.map(c=>`<option ${referenceUI.category===c?'selected':''}>${esc(c)}</option>`).join('')}</select></label>
+    </section><p class="reference-count">${matches.length} medications · expand a drug, then its protocol</p>
+    <div class="drug-list">${matches.map(({m,paths})=>`<details class="drug-card ${m.color}" data-ref-open="drug-${m.id}" ${referenceUI.open.has('drug-'+m.id)?'open':''}><summary><span class="drug-marker">${esc(m.name[0])}</span><span class="drug-name"><b>${esc(m.name)}</b><small>${esc(m.category)} · ${paths.length} pathways</small></span><span class="expand-symbol" aria-hidden="true">+</span></summary>
+      <div class="drug-content">${stockControl(m)}${m.preparation?`<section class="mixing-guide"><h2>MAKE 10 mcg/mL · final volume 10 mL</h2><ol>${m.preparation.map(step=>`<li>${esc(step)}</li>`).join('')}</ol>${source('MIXING · SB205',54)}</section>`:''}
+      ${m.cautions?`<div class="med-cautions">${m.cautions.map(text=>`<p>${esc(text)}</p>`).join('')}</div>`:''}
+      ${paths.map(p=>`<details class="protocol-path" data-ref-open="path-${p.id}" ${referenceUI.open.has('path-'+p.id)?'open':''}><summary><span><b>${esc(p.title)}</b><small>${esc(p.code)}</small></span><span class="expand-symbol" aria-hidden="true">+</span></summary><div class="path-content">
+        <div class="path-protocols">${source('PROTOCOL · '+p.code,p.page)}${(p.refs??[]).map(ref=>source(...ref)).join('')}</div>
+        ${p.stockLabel?`<div class="path-stock">${esc(p.stockLabel)}</div>`:''}
+        ${p.notes.length?`<div class="path-notes">${p.notes.map(note=>`<p>${esc(note)}</p>`).join('')}</div>`:''}
+        <div class="dose-grid">${p.recipes.map((r,ri)=>recipeCard(m,p,r,ri,fields)).join('')}</div>
+      </div></details>`).join('')}</div>
+    </details>`).join('')||'<div class="empty-state">No matching medication or pathway.</div>'}</div>`;
+}
+const resultBox=(values,empty='Enter valid values to calculate.')=>`<div class="utility-result" aria-live="polite">${values?values.map(([label,value,unit])=>`<div><span>${label}</span><strong>${esc(value)} <small>${unit}</small></strong></div>`).join(''):`<p>${empty}</p>`}</div>`;
+export function calculators(fields,source){
+  const kg=patientKg(fields),convert=kgFrom(fields['convert-value'],fields['convert-unit']??'lb');
+  const ordered=orderedDose({dose:fields['calc-dose'],doseUnit:fields['calc-dose-unit']??'mg',perKg:fields['calc-basis']==='kg',weightKg:kg,max:fields['calc-max'],stockAmount:fields['calc-stock-amount'],stockUnit:fields['calc-stock-unit']??'mg',stockVolume:fields['calc-stock-volume']});
+  const drip=dripRate(fields['drip-volume'],fields['drip-minutes'],fields['drip-factor']);
+  const infusion=infusionRate({dose:fields['infusion-dose'],rateUnit:fields['infusion-unit']??'mcg/kg/min',weightKg:kg,stockAmount:fields['infusion-amount'],stockUnit:fields['infusion-stock-unit']??'mg',bagVolume:fields['infusion-volume'],factor:fields['infusion-factor']});
+  const dilution=dilute({stockAmount:fields['dilution-amount'],stockUnit:fields['dilution-stock-unit']??'mg',stockVolume:fields['dilution-stock-volume'],targetConcentration:fields['dilution-target'],targetUnit:fields['dilution-target-unit']??'mcg',finalVolume:fields['dilution-final-volume']});
+  return `<div class="page-heading"><div><div class="eyebrow">QUICK CALCULATORS</div><h1>Doses, drips & units</h1></div><button class="button primary" data-page="medications">Medication protocols ↗</button></div>
+  <div class="reference-note">Use the ordered dose and confirmed concentration. ${source('FULL PROTOCOL',1)}</div>${patientContext(fields)}
+  <div class="calculator-grid">
+    <section class="panel calculator"><h2>kg ↔ lb</h2><div class="calculator-fields">${input(fields,'convert-value','Weight','Value')}${select(fields,'convert-unit','From',[['lb','lb'],['kg','kg']],'lb')}</div>
+      ${resultBox(convert!==null?[['KILOGRAMS',fmt(convert),'kg'],['POUNDS',fmt(poundsFrom(convert)),'lb']]:null)}<button class="button small" data-use-weight="convert">Use as patient weight</button></section>
+    <section class="panel calculator"><h2>Ordered dose → mL</h2><div class="calculator-fields">
+      ${input(fields,'calc-dose','Ordered dose')}${select(fields,'calc-dose-unit','Dose unit',unitOptions,'mg')}${select(fields,'calc-basis','Dose basis',[['total','Total dose'],['kg','Per kg patient weight']],'total')}${input(fields,'calc-max','Maximum per dose · same unit','Optional')}
+      ${input(fields,'calc-stock-amount','Amount in vial / syringe')}${select(fields,'calc-stock-unit','Stock amount unit',unitOptions,'mg')}${input(fields,'calc-stock-volume','Vial / syringe volume · mL')}
+      </div>${resultBox(ordered?[['DOSE',fmt(ordered.amount),fields['calc-dose-unit']??'mg'],['DRAW VOLUME',fmt(ordered.volume),'mL']]:null)}${ordered?.limited?'<p class="dose-limit">Entered dose maximum applied.</p>':''}</section>
+    <section class="panel calculator"><h2>Fluid drip rate</h2><div class="calculator-fields">${input(fields,'drip-volume','Total volume · mL')}${input(fields,'drip-minutes','Infusion time · minutes')}${select(fields,'drip-factor','Tubing · gtt/mL',[['','Select tubing'],['10','10 · macrodrip'],['15','15 · macrodrip'],['20','20 · macrodrip'],['60','60 · microdrip']])}</div>
+      ${resultBox(drip?[['PUMP RATE',fmt(drip.hourly),'mL/hr'],['GRAVITY · NEAREST DROP',String(drip.roundedDrops),'gtt/min']]:null)}<p class="calculator-note">Rate = volume ÷ minutes × tubing factor.</p></section>
+    <section class="panel calculator"><h2>Medication infusion rate</h2><div class="calculator-fields">${input(fields,'infusion-dose','Ordered rate')}${select(fields,'infusion-unit','Rate unit',[['mcg/kg/min','mcg/kg/min'],['mcg/min','mcg/min'],['mg/min','mg/min'],['mg/hr','mg/hr'],['mcg/kg/hr','mcg/kg/hr']],'mcg/kg/min')}${input(fields,'infusion-amount','Medication amount in bag')}${select(fields,'infusion-stock-unit','Amount unit',[['mg','mg'],['mcg','mcg'],['g','g']],'mg')}${input(fields,'infusion-volume','Final bag volume · mL')}${select(fields,'infusion-factor','Tubing · gtt/mL (optional)',[['','Pump only'],['10','10'],['15','15'],['20','20'],['60','60']])}</div>
+      ${resultBox(infusion?[['PUMP RATE',fmt(infusion.hourly),'mL/hr'],...(infusion.drops!==null?[['GRAVITY · NEAREST DROP',String(Math.round(infusion.drops)),'gtt/min']]:[])]:null)}<p class="calculator-note">Use final prepared bag volume; rate is arithmetic for the entered order.</p></section>
+    <section class="panel calculator"><h2>Dilution</h2><div class="calculator-fields">${input(fields,'dilution-amount','Stock amount')}${select(fields,'dilution-stock-unit','Stock unit',[['mg','mg'],['mcg','mcg'],['g','g']],'mg')}${input(fields,'dilution-stock-volume','Stock volume · mL')}${input(fields,'dilution-target','Target concentration · per mL')}${select(fields,'dilution-target-unit','Target unit',[['mcg','mcg/mL'],['mg','mg/mL'],['g','g/mL']],'mcg')}${input(fields,'dilution-final-volume','Final total volume · mL')}</div>
+      ${resultBox(dilution?[['DRAW STOCK',fmt(dilution.draw),'mL'],['ADD COMPATIBLE DILUENT',fmt(dilution.diluent),'mL']]:null,'Enter valid values; target must be lower than stock concentration.')}<p class="calculator-note">Use protocol-compatible diluent. Final volume includes drug + diluent.</p></section>
+  </div>`;
+}

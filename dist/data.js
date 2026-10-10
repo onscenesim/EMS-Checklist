@@ -6,7 +6,7 @@ export const modules=[
       ['Scene & team',['Assign leader, airway, CPR, access / medications, and scene control','Check responsiveness, breathing, and pulse','Prepare suction and patient movement']],
       ['Assessment & stabilization',['Assess airway / ventilation; use waveform capnography as indicated','Apply monitor; check BP and reassess','Full body assessment and lung sounds','Establish IV / IO as indicated','Use AMS / trauma checklist as needed']],
       ['Cardiac arrest',['Start high-quality CPR; apply defibrillator pads','Identify rhythm; follow arrest protocol','Treat reversible causes','Recheck rhythm / pulse at protocol intervals']],
-      ['Transport & handoff',['Reassess and secure equipment before movement','Notify receiving hospital','After ROSC, follow C307']]
+      ['Transport & handoff',['Reassess and secure equipment before movement','Notify receiving hospital',{text:'After ROSC, follow C307',protocol:['POST-ROSC CARE · C307',83]}]]
     ]},
   {id:'cardio',title:'Defibrillation / cardioversion',short:'Defib / cardioversion',icon:'bolt',color:'amber',tag:'CARDIAC',source:'C300 · C303 · C306',page:75,
     refs:[['Defibrillation · C300',75],['Wide complex · C303',79],['Narrow complex · C306',82]],

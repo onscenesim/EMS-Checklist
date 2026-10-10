@@ -54,3 +54,38 @@
   .library-links{max-width:100%;width:100%}.library-row .source{font-size:12px;white-space:normal}
   .section-top:has(.source){flex-wrap:wrap}.rail-note .source{font-size:12px}
 }
+/* Indication-specific medication references and arithmetic tools. */
+.sidebar{overflow-y:auto}.sidebar .nav-item,.sidebar-label,.brand,.side-footer{flex-shrink:0}
+.quick-tool-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:20px}
+.quick-tool{display:flex;align-items:center;gap:12px;padding:18px 16px;background:#fff;border:1px solid var(--line);border-left:5px solid var(--accent);border-radius:9px;text-align:left}
+.quick-tool>svg:first-child{color:var(--accent)}.quick-tool>svg:last-child{margin-left:auto;width:15px}.quick-tool b{font-size:13px}.quick-tool small{display:block;margin-top:5px;color:#607087;font-size:11px}
+.reference-note{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;font-size:12px;color:#58667a;margin-bottom:20px}
+.reference-context{padding:18px 20px;background:#eaf0f6;border-color:#cdd9e7;margin-bottom:18px}
+.reference-fields{display:grid;grid-template-columns:1fr 1.3fr 1.2fr;gap:18px}.reference-fields .field{font-size:12px;color:#3e5068}
+.reference-fields input,.reference-fields select{background:#fff;font-size:14px}.weight-entry{display:grid;grid-template-columns:minmax(0,1fr) 65px;gap:8px}
+.weight-equivalent{font-size:12px;color:#36577a;margin-top:10px}
+.reference-toolbar{display:grid;grid-template-columns:1.5fr 1fr 1fr;gap:16px;align-items:end;margin:20px 0 12px}.reference-toolbar .search{height:44px;max-width:none;width:100%;font-size:0}.reference-toolbar .search input{font-size:13px}
+.reference-toolbar .field{font-size:12px}.reference-count{font-size:12px;color:#526277;margin-bottom:18px}
+.drug-card{background:#fff;border:1px solid #dae1e9;border-left:6px solid var(--accent);border-radius:9px;margin-bottom:12px;overflow:hidden}
+.drug-card>summary{display:flex;align-items:center;gap:14px;padding:17px 20px;list-style:none;background:var(--tint);color:#253348;min-height:80px}
+.drug-card summary::-webkit-details-marker,.protocol-path summary::-webkit-details-marker{display:none}
+.drug-marker{display:flex;justify-content:center;align-items:center;width:38px;height:38px;border-radius:8px;color:#fff;background:var(--accent);font-size:18px;font-weight:800;flex-shrink:0}
+.drug-name{min-width:0}.drug-name b{font-family:Manrope,system-ui,sans-serif;font-size:17px}.drug-name small{display:block;font-size:11px;color:#526277;margin-top:5px}
+.expand-symbol{font-size:23px;font-weight:400;margin-left:auto;flex-shrink:0}.drug-card[open]>summary>.expand-symbol,.protocol-path[open]>summary>.expand-symbol{transform:rotate(45deg)}
+.drug-content{padding:20px}.stock-summary{display:flex;flex-wrap:wrap;align-items:center;gap:7px 18px;margin-bottom:15px;padding:12px 14px;background:#f2f5f8;border-radius:6px;font-size:13px}.stock-summary span{font-size:11px;color:#526277}
+.stock-control{display:flex;flex-wrap:wrap;gap:15px;margin-bottom:18px}.stock-control>.field{flex:1;min-width:220px;font-size:13px;max-width:500px}.stock-control select,.stock-control input{font-size:14px;min-height:44px}
+.med-cautions{border-left:3px solid #c07f26;background:#fff7e9;padding:10px 14px;font-size:12px;color:#715021;margin-bottom:18px}.med-cautions p+p{margin-top:6px}
+.mixing-guide{border:2px solid #b3343f;border-radius:7px;padding:16px;margin-bottom:18px;background:#fff5f5}.mixing-guide h2{font-size:16px;color:#982834}.mixing-guide ol{padding-left:23px;font-size:14px;line-height:1.6;margin:13px 0}.mixing-guide li+li{margin-top:8px}
+.protocol-path{border:1px solid #dce3eb;border-radius:7px;margin:10px 0;overflow:hidden}.protocol-path>summary{display:flex;align-items:center;gap:12px;padding:15px 18px;list-style:none;color:#243a54;background:#f8fafc;min-height:65px}.protocol-path>summary b{font-size:14px}.protocol-path>summary small{display:block;color:#58718e;font-size:11px;margin-top:4px}
+.path-content{padding:18px}.path-protocols{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px}.path-stock{font-weight:700;font-size:13px;border:1px solid #b3343f;border-radius:5px;padding:9px 12px;margin-bottom:13px;color:#982834;background:#fff0f1}
+.path-notes{font-size:13px;line-height:1.55;color:#46556b;margin-bottom:16px}.path-notes p+p{margin-top:8px}
+.dose-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:13px}.dose-card{background:#f2f6fa;border:1px solid #d5e0ec;border-radius:7px;padding:16px;min-width:0}
+.dose-card-title{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:13px}.route-pill{padding:4px 7px;background:#dce7f3;border-radius:4px;font-size:10px;font-weight:700;color:#294f79}
+.dose-formula{font-size:13px;margin:10px 0;color:#385776}.dose-output{display:grid;gap:13px;grid-template-columns:1fr 1fr;margin-top:13px}.dose-output>div>span,.utility-result span{display:block;font-size:9px;font-weight:700;letter-spacing:.5px;color:#58708b;line-height:1.5;margin-bottom:7px}
+.dose-output strong{font-size:24px;line-height:1.3;overflow-wrap:anywhere;color:#173f6b;font-variant-numeric:tabular-nums}.dose-output strong small{font-size:13px}.dose-output>div>p{font-size:11px;color:#5d7087;margin-top:5px}.calculation-empty{grid-column:1/-1;font-size:12px;color:#74572b;line-height:1.55}.dose-limit{grid-column:1/-1;font-size:11px;color:#526277;margin-top:8px}
+.dose-card .field{font-size:11px;margin:12px 0 0}.dose-card input{background:#fff;font-size:13px}
+.calculator-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px}.calculator-grid .panel{margin:0}.calculator h2{font-size:17px;margin-bottom:20px}.calculator-fields{display:grid;grid-template-columns:1fr 1fr;gap:15px}.calculator .field{font-size:12px}.calculator input,.calculator select{background:#fff;font-size:14px;min-height:44px}
+.utility-result{display:grid;grid-template-columns:1fr 1fr;gap:16px;background:#eaf2f8;border:1px solid #d3e2ef;border-radius:7px;padding:16px;margin:20px 0 14px;min-height:70px}.utility-result>p{grid-column:1/-1;font-size:12px;color:#5c7085}.utility-result strong{font-size:25px;color:#173f6b;overflow-wrap:anywhere;font-variant-numeric:tabular-nums}.utility-result strong small{font-size:13px}.calculator-note{font-size:11px;color:#526277}
+@media(max-width:1180px){.reference-fields{gap:12px}.drug-name b{font-size:16px}}
+@media(max-width:960px){.reference-fields{grid-template-columns:1fr 1fr}.reference-fields>.field:last-child{grid-column:1/-1}.reference-toolbar{grid-template-columns:1fr 1fr}.reference-toolbar>.search{grid-column:1/-1}.calculator-grid{grid-template-columns:1fr}.quick-tool-grid{grid-template-columns:1fr}.page-heading:has(button){align-items:flex-start;flex-wrap:wrap}}
+@media(max-width:640px){.reference-context{padding:16px}.reference-fields{grid-template-columns:1fr}.reference-fields>.field:last-child{grid-column:auto}.reference-toolbar{gap:12px}.drug-card>summary{padding:16px 13px;gap:10px}.drug-name b{font-size:16px}.drug-marker{width:32px;height:32px}.drug-content{padding:13px}.stock-control>.field{min-width:0;flex-basis:100%}.protocol-path>summary{padding:14px 12px}.path-content{padding:13px}.path-protocols .source{font-size:12px;width:100%}.dose-grid{grid-template-columns:1fr}.dose-card{padding:14px}.dose-output strong{font-size:24px}.mixing-guide{padding:13px}.mixing-guide h2{font-size:14px}.mixing-guide ol{font-size:13px}.calculator-fields{gap:14px 10px}.calculator select{font-size:12px}.calculator-grid{gap:16px}.utility-result strong{font-size:23px}.reference-note .source{font-size:12px}.page-heading>button{width:100%;font-size:13px}.quick-tool-grid{gap:12px}}
