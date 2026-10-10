@@ -17,8 +17,11 @@ export function calculateDose(recipe,inputs={}){
   const age=number(inputs.age),weight=recipe.ideal?number(inputs.idealKg):number(inputs.weightKg);
   if(recipe.blocked)return {error:recipe.blocked};
   if(recipe.ageMin!==undefined||recipe.ageMax!==undefined){
-    if(age===null||age<0)return {error:'Enter age for this pathway.'};
-    if(age<(recipe.ageMin??0)||age>=(recipe.ageMax??Infinity))return {error:'Age is outside this protocol pathway.'};
+    if(age===null||age<0){
+      const eligible=recipe.ageMax===undefined?`ages ${recipe.ageMin??0} and older`:recipe.ageMin?`ages ${recipe.ageMin} to under ${recipe.ageMax}`:`ages under ${recipe.ageMax}`;
+      return {error:`Enter patient age in years above to confirm this dose applies to ${eligible}.`};
+    }
+    if(age<(recipe.ageMin??0)||age>=(recipe.ageMax??Infinity))return {error:'This dose does not apply to the entered age. Choose the matching adult / pediatric indication.'};
   }
   if(recipe.table&&age!==null&&age>=0&&age<16){
     const selected=number(inputs.tableIndex),index=selected===null?weights.indexOf(Number(inputs.weightKg)):selected;
@@ -49,7 +52,7 @@ export function calculateDose(recipe,inputs={}){
     if(recipe.rule==='seizure-im')low=high=weight<13?Math.min(weight*.2,2.4):weight<=40?5:10;
     else if(recipe.rule==='seizure-iv'){low=weight<=40?Math.min(weight*.1,5):2;high=weight<=40?low:5;}
     else if(recipe.rule==='anaphylaxis-im')low=high=weight<15?.15:weight<=30?.3:.5;
-    else if(recipe.rule==='glucagon-age'){if(age===null)return {error:'Enter age for this pathway.'};low=high=age<6?.5:1;}
+    else if(recipe.rule==='glucagon-age'){if(age===null)return {error:'Enter patient age in years above to calculate the age-based dose.'};low=high=age<6?.5:1;}
     else return {error:'Review source dosing.'};
   }
   if(!Number.isFinite(low)||!Number.isFinite(high)||low<=0||high<low)return {error:'Review dose inputs.'};
