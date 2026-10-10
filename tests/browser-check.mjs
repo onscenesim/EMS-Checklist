@@ -27,7 +27,7 @@ assert.deepEqual(await page.locator('.energy-grid b').allTextContents(),['30 J',
 assert.equal(await page.locator('tbody tr').count(),35);
 await page.locator('#med-search').fill('amiodarone');
 assert.equal(await page.locator('tbody tr').count(),1);
-assert.match(await page.locator('tbody tr').innerText(),/Not available/);
+assert.match(await page.locator('tbody tr').innerText(),/75 mg[\s\S]*1.55 mL/);
 await page.locator('#med-search').fill('');
 await page.screenshot({path:'/Users/Shared/EMS Checklist/tmp/pediatric-desktop.png',fullPage:true});
 await page.locator('[data-action="new"]').click();

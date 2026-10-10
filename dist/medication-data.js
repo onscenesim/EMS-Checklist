@@ -1,9 +1,10 @@
+import {medications} from './data.js';
 // Indication-specific references: Southwest Ohio EMS 2026, v2.9.26.
-// Full protocol sections govern where Appendix J / abbreviated cards differ.
+// Pediatric Appendix J entries take precedence for matching indications and routes.
 const fixed=(label,route,unit,low,high=low,extra={})=>({label,route,unit,kind:'fixed',low,high,...extra});
 const weighted=(label,route,unit,low,high=low,extra={})=>({label,route,unit,kind:'weight',low,high,...extra});
 const band=(label,route,unit,rule,extra={})=>({label,route,unit,kind:'band',rule,...extra});
-const blocked=text=>({label:'Protocol review',blocked:text});
+const blocked=text=>({label:text==='N/A'?'Dose':'Protocol review',blocked:text});
 const adult={ageMin:16},pediatric={ageMin:0,ageMax:16},pediatricPain={ageMin:5,ageMax:16};
 const pathway=(id,title,code,page,age,recipes,notes=[],extra={})=>({id,title,code,page,recipes:recipes.map(r=>({...age,...r})),notes,...extra});
 const stock=(unit,concentration,label,options=[],confirmed=false)=>({unit,concentration,label,options,confirmed});
@@ -25,11 +26,11 @@ export const drugReference=[
     pathway('ket-pain-ped-in','Acute pain · pediatric intranasal','P611',166,pediatricPain,[weighted('Single dose','IN','mg',.6,.6,{prime:.1})],['50 mg/mL preferred. Add 0.1 mL to prime atomizer; maximum 1 mL per nostril. Further doses: medical control.',...opioidPediatric]),
     pathway('ket-restraint','Severe agitation · RASS +4','M408',101,adult,[weighted('Single dose','IM','mg',4,4,{ideal:true,requiredConcentration:50})],['Use ideal body weight. At least 50 mg/mL concentration; give once into large muscle.','Paramedic attendance; never leave unattended. Reassess / document vitals and GCS every 5 min. Transport to hospital ED, not UC PES.']),
     pathway('ket-post-intubation','After intubation · hypotension risk','T715',210,{},[weighted('Initial','IV / IO','mg',2),weighted('Repeat every 5 min','IV / IO','mg',1)],['SBP <100 or risk of hypotension. Normotensive patients without BP-related risk may use either T715 regimen.','Resuscitate as indicated; push-dose epi may offset sedation-related hypotension.',...postIntubation]),
-    pathway('ket-induction','Induction / assisted intubation','A102',17,{},[blocked('A102 does not provide a regional induction dose. Use the agency-approved airway medication plan / medical control.')])
+    pathway('ket-induction','Induction / assisted intubation','A102',17,{},[blocked('N/A')])
   ]},
   {id:'midazolam',name:'Versed / midazolam',category:'Airway / seizures',color:'blue',stock:stock('mg',null,'Confirm vial concentration',[[5,'5 mg/mL'],[1,'1 mg/mL']]),cautions:['Prepare ventilation support; continuous ETCO₂. Check prior benzodiazepines / opioids.','Pediatric seizure dosing has weight bands; do not use the restraint formula for seizures.'],pathways:[
     pathway('versed-seizure-adult','Active seizure · adult','M410',106,adult,[fixed('Preferred single dose','IM','mg',10),fixed('Dose range','IN','mg',5,10,{totalMax:10}),fixed('Dose range','IV / IO','mg',2,5,{totalMax:10})],['IN / IV / IO: every 10 min until seizure resolves, maximum 10 mg total. IM: single 10 mg dose.']),
-    pathway('versed-seizure-ped','Active seizure · pediatric','P610',164,pediatric,[band('Preferred IM / alternative IN','IM / IN','mg','seizure-im'),band('IV / IO alternative','IV / IO','mg','seizure-iv')],['Single dose. IM preferred.','<13 kg: IM/IN 0.2 mg/kg, max 2.4 mg; IV/IO 0.1 mg/kg, max 5 mg.','13–40 kg: IM/IN 5 mg; IV/IO 0.1 mg/kg, max 5 mg. >40 kg: IM/IN 10 mg; IV/IO 2–5 mg.']),
+    pathway('versed-seizure-ped','Active seizure · pediatric','P610',164,pediatric,[band('Preferred IM / alternative IN','IM / IN','mg','seizure-im'),band('IV / IO alternative','IV / IO','mg','seizure-iv')],['Single dose. IM preferred; dose follows pediatric table.']),
     pathway('versed-cardioversion','Cardioversion · wide complex','C303',79,adult,[fixed('Titrate to effect','IV / IO / IM / IN','mg',2,5,{totalMax:10})],['If conscious without altered mental status. Titrate until speech slurs, max 10 mg total; do not delay urgent cardioversion.']),
     pathway('versed-cardioversion-narrow','Cardioversion · narrow complex','C306',82,adult,[fixed('Titrate to effect','IV / IO / IM / IN','mg',2,5,{totalMax:10})],['If conscious without altered mental status. Titrate until speech slurs, max 10 mg total; do not delay urgent cardioversion.']),
     pathway('versed-cardioversion-ped','Cardioversion · pediatric','P604',155,pediatric,[weighted('Dose','IV / IO','mg',.1,.1,{max:5})],['Conscious patient; medical-control order required.']),
@@ -59,19 +60,19 @@ export const drugReference=[
     pathway('epi-arrest-ped','Pediatric cardiac arrest · IV / IO','P601 / P602',152,pediatric,[weighted('Every 3–5 min','IV / IO','mg',.01,.01,{max:1})],['If newborn at delivery, use P600.'],{refs:[['PEA / ASYSTOLE · P602',153]]}),
     pathway('epi-arrest-ped-et','Pediatric arrest · ETT fallback','P601 / P602',152,pediatric,[weighted('Every 3–5 min','ETT','mg',.1,.1,{max:2.5})],['Only if IV / IO unavailable. ETT uses 1 mg/mL stock.'],{concentration:1,concentrationUnit:'mg',stockLabel:'ETT ONLY · 1 mg/mL',refs:[['PEA / ASYSTOLE · P602',153]]}),
     pathway('epi-brady-ped','Pediatric symptomatic bradycardia · IV / IO','P603',154,pediatric,[weighted('Every 3–5 min if persistent','IV / IO','mg',.01)],['Treat hypoxia / support ventilation first. P603 does not print an IV/IO dose ceiling here; confirm full protocol / medical control.']),
-    pathway('epi-brady-ped-et','Pediatric bradycardia · ETT fallback','P603',154,pediatric,[blocked('P603 has inconsistent ETT dose / volume wording. Confirm dose and concentration with medical control.')]),
-    pathway('epi-newborn','Newborn resuscitation','P600',151,{},[blocked('Use newborn-specific P600 dosing and medical control; the printed ETT dose / concentration / volume do not agree.')])
+    pathway('epi-brady-ped-et','Pediatric bradycardia · ETT fallback','P603',154,pediatric,[blocked('N/A')]),
+    pathway('epi-newborn','Newborn resuscitation','P600',151,{},[blocked('N/A')])
   ]},
   {id:'im-epi',name:'Epinephrine · IM',category:'Anaphylaxis / asthma',color:'orange',stock:stock('mg',1,'IM stock · 1 mg/mL',[],true),cautions:['IM anaphylaxis stock is 1 mg/mL. This is not the diluted IV push-dose syringe.'],pathways:[
     pathway('epi-anaphylaxis-adult','Anaphylaxis · adult','M409',105,adult,[fixed('Repeat every 5–15 min as needed','IM','mg',.3)],['Give promptly; monitor rhythm. If IV push-dose epi starts for persistent hypotension, stop IM doses.']),
-    pathway('epi-anaphylaxis-ped','Anaphylaxis · pediatric syringe dose','P609',163,pediatric,[band('Repeat every 5–15 min as needed','IM','mg','anaphylaxis-im')],['Anterolateral thigh. P609 syringe bands: <15 kg 0.15 mg; 15–30 kg 0.3 mg; >30 kg 0.5 mg.','Calculated from the full P609 syringe pathway. Auto-injectors use different bands; Appendix J uses a different formula.']),
+    pathway('epi-anaphylaxis-ped','Anaphylaxis · pediatric syringe dose','P609',163,pediatric,[band('Repeat every 5–15 min as needed','IM','mg','anaphylaxis-im')],['Anterolateral thigh.','Pediatric dose follows Appendix J. Auto-injectors have separate dosing.']),
     pathway('epi-asthma-adult','Asthma · impending respiratory failure','M403',92,adult,[fixed('Consider before IV magnesium','IM','mg',.3)],['Asthma only, not routine COPD. Follow M403 pathway.']),
     pathway('epi-asthma-ped','Asthma · pediatric severe pathway','P607',159,{ageMin:3,ageMax:16},[weighted('Consider per severe pathway','IM','mg',.01,.01,{max:.3})],['Use P607 respiratory assessment / escalation.'])
   ]},
   {id:'amiodarone',name:'Amiodarone',category:'Cardiac',color:'amber',stock:stock('mg',null,'Select vial concentration',[[50,'50 mg/mL']]),pathways:[
     pathway('amio-arrest','VF / pulseless VT · adult','C300',75,adult,[fixed('Initial','IV / IO push','mg',300),fixed('Repeat in 3–5 min if still VF/VT','IV / IO push','mg',150)]),
     pathway('amio-stable-vt','Stable wide-complex tachycardia','C304',80,adult,[fixed('Dose','IV / IO infusion','mg',150)],['Infuse over 10 min. If persistent, may repeat after 3–5 min at 150 mg over 10 min.']),
-    pathway('amio-ped-arrest','VF / pulseless VT · pediatric','P601',152,pediatric,[weighted('Dose','IV / IO','mg',5,5,{max:300})],['May repeat up to twice for refractory VF / pulseless VT.','Calculated from P601 formula. Appendix J 15 kg volume is inconsistent; do not use its 1.55 mL entry.'])
+    pathway('amio-ped-arrest','VF / pulseless VT · pediatric','P601',152,pediatric,[weighted('Dose','IV / IO','mg',5,5,{max:300})],['May repeat up to twice for refractory VF / pulseless VT.','Pediatric dose and reference volume follow Appendix J.'])
   ]},
   {id:'adenosine',name:'Adenosine',category:'Cardiac',color:'teal',stock:stock('mg',null,'Select vial concentration',[[3,'3 mg/mL']]),cautions:['Rapid IV push followed immediately by NS flush.','Do not treat an irregular rhythm / atrial fibrillation with adenosine per C305.'],pathways:[
     pathway('adenosine-adult','Stable narrow-complex tachycardia · adult','C305',81,adult,[fixed('Initial if weight <90 kg','IV rapid push','mg',6,6,{weightMax:90}),fixed('Initial if weight >90 kg','IV rapid push','mg',12,12,{weightMinExclusive:90}),fixed('One additional dose if unsuccessful','IV rapid push','mg',12)],['Follow with 10–20 mL NS.','C305 does not assign exactly 90 kg; it also mentions three doses while explicit steps describe two. Confirm boundary / further dosing with medical control.']),
@@ -110,7 +111,7 @@ export const drugReference=[
   ]},
   {id:'atropine',name:'Atropine',category:'Cardiac',color:'teal',stock:stock('mg',null,'Select syringe concentration',[[.1,'0.1 mg/mL (1 mg / 10 mL)']]),pathways:[
     pathway('atropine-adult','Symptomatic bradycardia · adult','C302',77,adult,[fixed('Every 3–5 min','IV / IO push','mg',1,1,{totalMax:3})],['Maximum 3 mg total. Do not delay pacing in serious instability.']),
-    pathway('atropine-ped','Persistent symptomatic bradycardia · pediatric','P603',154,pediatric,[weighted('Dose','IV / IO','mg',.02,.02,{min:.1,max:.5}),weighted('ETT alternative','ETT','mg',.04,.04,{max:2})],['Support ventilation / treat hypoxia first. IV/IO: minimum 0.1 mg, maximum 0.5 mg; ETT maximum 2 mg.']),
+    pathway('atropine-ped','Persistent symptomatic bradycardia · pediatric','P603',154,pediatric,[weighted('Dose','IV / IO','mg',.02,.02,{min:.1,max:.5}),weighted('ETT alternative','ETT','mg',.04,.04,{max:2})],['Support ventilation / treat hypoxia first. IV/IO dose follows pediatric table; ETT maximum 2 mg.']),
     pathway('atropine-organophosphate','Organophosphate / nerve agent exposure','M411 / App A',111,{},[blocked('Use the nerve-agent antidote kit / local hazardous-material protocol. The bradycardia dose ceiling does not apply.')],['M411: tachycardia is not a contraindication in organophosphate poisoning.'],{refs:[['NERVE AGENT KITS · App A',223]]})
   ]},
   {id:'dextrose',name:'Dextrose',category:'Metabolic',color:'blue',stock:stock('g',.1,'D10 prepared · 0.1 g/mL',[],true),cautions:['Confirm patent access; watch extravasation. D10 is preferred.','Children <3 years OR <15 kg: D10 only.'],pathways:[
@@ -127,7 +128,7 @@ export const drugReference=[
   ]},
   {id:'naloxone',name:'Naloxone',category:'Toxicology',color:'blue',stock:stock('mg',null,'Select injectable / atomizer concentration',[[1,'1 mg/mL injectable'],[.4,'0.4 mg/mL injectable']]),cautions:['Restore breathing; ventilation support first. Titrate to respirations, not full alertness.','Pre-dosed nasal devices follow their own label; calculated injectable volume is not a nasal-spray actuation count.'],pathways:[
     pathway('naloxone-adult','Opioid respiratory depression · adult','M411',110,adult,[fixed('Initial range','IV / IO / IM / IN','mg',.4,4,{totalMax:10})],['Lower initial dose preferred when breathing can be supported. Apneic / peri-arrest may need larger first dose.','Repeat in 3–5 min if not improved; max 10 mg total. IM / IN may take longer. Monitor for rebound respiratory depression.']),
-    pathway('naloxone-ped','Opioid respiratory depression · pediatric','M411',110,pediatric,[weighted('Initial','IV / IO / IM / IN','mg',.1,.1,{max:4,totalMax:10})],['Reassess respirations; repeat per M411 if needed. Maximum 4 mg per initial dose; maximum 10 mg total.'])
+    pathway('naloxone-ped','Opioid respiratory depression · pediatric','M411',110,pediatric,[weighted('Initial','IV / IO / IM / IN','mg',.1,.1,{max:4,totalMax:10})],['Reassess respirations; repeat per M411 if needed. Initial dose follows pediatric table; maximum 10 mg total.'])
   ]},
   {id:'ondansetron',name:'Ondansetron / Zofran',category:'Nausea',color:'teal',stock:stock('mg',null,'Select injectable concentration',[[2,'2 mg/mL']]),pathways:[
     pathway('zofran-adult','Nausea / vomiting · adult','M405',95,adult,[fixed('Initial','IV / IO / IM','mg',4,8),fixed('One repeat after 5 min if needed','IV / IO','mg',4)],['IV / IO: at least 30 sec, preferably over 2–5 min. Do not repeat IM / PO doses.','PO ODT is an option if IV unavailable; follow tablet label.']),
@@ -143,9 +144,9 @@ export const drugReference=[
     pathway('benadryl-adult','Allergic reaction · adult','M409',105,adult,[fixed('Dose range','IV / IM','mg',25,50)],['IM epinephrine first for anaphylaxis. Isolated rash without other symptoms may use diphenhydramine alone. PO option per protocol / product.']),
     pathway('benadryl-ped','Allergic reaction · pediatric','P609',163,pediatric,[weighted('Dose','IV / IM','mg',1,1,{max:50})],['Maximum 50 mg. IM epinephrine first for anaphylaxis; PO option per protocol / product.'])
   ]},
-  {id:'glucagon',name:'Glucagon',category:'Metabolic / allergy',color:'blue',stock:stock('mg',null,'Confirm reconstituted mg/mL on product',[[1,'1 mg/mL after reconstitution']]),cautions:['Appendix J incorrectly labels concentration in units/mL. Use the reconstituted product’s mg/mL label.'],pathways:[
+  {id:'glucagon',name:'Glucagon',category:'Metabolic / allergy',color:'blue',stock:stock('mg',null,'Confirm reconstituted mg/mL on product',[[1,'1 mg/mL after reconstitution']]),cautions:['Confirm reconstituted product concentration.'],pathways:[
     pathway('glucagon-adult','Hypoglycemia · adult, no IV / IO','M406',96,adult,[fixed('Dose','IM','mg',1)],['Continue attempts at access; follow with oral / IV dextrose as appropriate.']),
-    pathway('glucagon-ped','Hypoglycemia · pediatric, no IV / IO','P608',161,pediatric,[band('Dose','IM','mg','glucagon-age')],['Age <6: 0.5 mg; ≥6: 1 mg. Does not work reliably in younger children; continue access attempts.']),
+    pathway('glucagon-ped','Hypoglycemia · pediatric, no IV / IO','P608',161,pediatric,[band('Dose','IM','mg','glucagon-age')],['Dose follows pediatric table. Does not work reliably in younger children; continue access attempts.']),
     pathway('glucagon-anaphylaxis','Persistent anaphylaxis on beta blocker','M409',105,adult,[fixed('Consider dose','IM / IV','mg',1)])
   ]},
   {id:'cyanokit',name:'Hydroxocobalamin / Cyanokit',category:'Toxicology',color:'red',stock:stock('mg',25,'Reconstituted 5 g in 200 mL · 25 mg/mL',[],true),cautions:['Suspected / known cyanide poisoning after confined-space smoke exposure. Optional drug.','Use a separate line; do not administer other drugs through Cyanokit line.'],pathways:[
@@ -166,3 +167,23 @@ export const drugReference=[
   ]}
 ];
 export const categories=[...new Set(drugReference.map(m=>m.category))];
+
+// Map only the matching indication / route; unrelated uses retain their own protocol.
+const tableMappings={
+ 'ket-pain-ped-iv':[17], 'ket-pain-ped-in':[18], 'versed-seizure-ped':[23,24],
+ 'versed-cardioversion-ped':[25], 'versed-restraint-ped':[25,26],
+ 'epi-arrest-ped':[9], 'epi-anaphylaxis-ped':[10],
+ 'push-epi-shock-ped':[11], 'lido-ped-arrest':[20], 'lido-io-ped':[21],
+ 'amio-ped-arrest':[2], 'adenosine-ped':[1,null], 'atropine-ped':[3,null],
+ 'd10-ped':[5], 'd25-ped':[6], 'd50-ped':[7], 'hts-ped':[15],
+ 'fent-pain-ped':[12,13], 'morph-pain-ped':[27], 'naloxone-ped':[28],
+ 'zofran-ped':[30], 'steroid-asthma-ped':[22], 'benadryl-ped':[8],
+ 'glucagon-ped':[14], 'saline-trauma-ped':[29], 'saline-sepsis-ped':[29],
+ 'saline-glucose-ped':[29], 'acet-pain-ped':[0], 'txa-ped':[34]
+};
+const tableConcentrations={0:32,1:3,2:50,3:.1,4:1,5:.1,6:.25,7:.5,8:50,9:.1,10:1,11:10,12:50,13:50,14:1,15:1,16:10,17:50,18:50,19:100,20:20,21:20,22:62.5,23:5,24:5,25:5,26:5,27:10,28:1,29:1,30:2,34:10};
+for(const m of drugReference)for(const p of m.pathways){
+ const mapping=tableMappings[p.id];if(!mapping)continue;
+ p.refs=[...(p.refs??[]),['PEDIATRIC TABLE · App J',medications[mapping.find(i=>i!==null)].page]];
+ p.recipes.forEach((r,i)=>{if(mapping[i]!==undefined&&mapping[i]!==null)r.table={...medications[mapping[i]],concentrationValue:tableConcentrations[mapping[i]]};});
+}

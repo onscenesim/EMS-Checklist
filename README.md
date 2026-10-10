@@ -23,14 +23,14 @@ Open http://127.0.0.1:4173. Run `npm test` for reference-data checks.
 - `dist/medication-ui.js`: expandable drug / protocol cards, concentration confirmation, and calculators
 - `tests/calculations.test.mjs`: dose boundaries, concentration separation, weight bands, ceilings, and calculator arithmetic
 - `tests/medication-browser.mjs`: medication-tool interaction, persistence, invalid-input, and mobile checks
-- `tests/data.test.mjs`: data alignment, energy ceilings, concentration separation, and withheld cells
+- `tests/data.test.mjs`: data alignment, energy ceilings, concentration separation, and printed table entries
 - `tests/browser-check.mjs`: local Playwright interaction checks; uses this workspace's bundled runtime and Chrome
 
 No build step; `dist` is the editable app source and deployment directory.
 
 ## Initial functionality
 
-Six procedure/assessment modules, cross-module completion tracking, a manual event timer, an epinephrine dose countdown (default 5 minutes; selectable 3–5 minutes), AMS cause statuses and local last-known-well date/time, age-preset pediatric references, and capped defibrillation calculations. The pediatric age-preset page remains an Appendix J lookup. The separate Medication doses page calculates doses from entered actual weight (ideal weight for the specified adult ketamine indications), age, and indication. Its 26 color-coded drugs expand by protocol. Dose limits apply before stock-volume conversion; pathways with cumulative limits require the amount already given. Protocol links are displayed inside each expanded pathway.
+Six procedure/assessment modules, cross-module completion tracking, a manual event timer, an epinephrine dose countdown (default 5 minutes; selectable 3–5 minutes), AMS cause statuses and local last-known-well date/time, age-preset pediatric references, and capped defibrillation calculations. The pediatric age-preset page remains an Appendix J lookup. The separate Medication doses page calculates doses from entered actual weight (ideal weight for the specified adult ketamine indications), age, and indication. Its 26 color-coded drugs expand by protocol. Matching pediatric uses take their dose and reference volume from Appendix J; exact table weights select a column automatically, or the user can select the table column explicitly. The reference age / weight is shown separately from patient weight. Missing columns / cells show N/A, without interpolation. Protocol-calculated pathways apply dose limits before stock-volume conversion and require the amount already given where a cumulative limit applies. Table pathways preserve the printed dose and reference volume; other confirmed stock concentrations convert from the table dose. Protocol links are displayed inside each expanded pathway.
 
 Dose & drip calculators include kg/lb conversion, ordered dose to mL, fluid drip rate, medication infusion rate, and dilution. They calculate arithmetic from entered orders and confirmed stock, not treatment eligibility. Invalid inputs clear prior results. Department stocks: magnesium sulfate 5 g/10 mL and ketamine 500 mg/10 mL. Unspecified stocks (including Versed and lidocaine code prefill) require label confirmation before displaying volume. Confirmed concentrations persist separately through New encounter in the same browser tab.
 
@@ -46,12 +46,7 @@ This structure is not a complete protocol implementation. Complete clinical elig
 
 App J age columns: 0–3 months / 3 kg, 6 months / 5 kg, 9–24 months / 10 kg, 3 years / 15 kg, 6 years / 20 kg, 8 years / 25 kg, 10 years / 30 kg, 12 years / 40 kg, 14 years / 50 kg. These are estimates, not actual weights or continuous age ranges.
 
-The following source inconsistencies are intentionally withheld and flagged:
-- Amiodarone 15 kg: 75 mg and 1.55 mL at 50 mg/mL do not agree.
-- D25 at 5 kg: the table uses mg while neighboring cells and the dose formula use grams.
-- Glucagon: concentration is printed in units/mL while dose is in mg.
-
-Other values retain the source table's rounding. Display of an entry does not establish indication or age eligibility. Verify each row against the full protocol and department approval before clinical release.
+Pediatric table entries take precedence where sources differ. The 15 kg amiodarone entry, 5 kg D25 entry (including its printed mg unit), and glucagon entries retain the dose and reference volume exactly as printed. Missing cells show N/A. Table values remain reference lookups; indication, age eligibility, repeat dosing, and required orders are separate from the table entry.
 
 The arrest epi timer starts or restarts only when “Epi given” is pressed. It uses a persisted deadline, continues across navigation / refresh, and holds at 00:00 with a visible due state until another dose is recorded or the timer is cleared. New encounter resets both timers. It is a visual reminder, with no clinical alarms.
 
@@ -63,15 +58,17 @@ Source is separated from UI so subsequent revisions can focus on one module at a
 
 ## Medication source review
 
-Full protocol sections govern the new calculated pathways; PDF page links use the printed page number. The older Appendix J lookup still withholds its inconsistent cells. New pathways use the full protocol formula where it is explicit (for example, P601 amiodarone), rather than copying an inconsistent Appendix volume.
+PDF page links use the printed page number. By user instruction, matching pediatric medication references use Appendix J values where they disagree with another section. Both pediatric pages preserve printed table doses / volumes and display N/A for missing cells. Protocol formulas continue to apply to adult and indication-specific uses with no matching pediatric table row.
 
 Specific source boundaries are shown at the applicable card:
-- P609 pediatric IM epinephrine syringe bands differ from Appendix J and auto-injector bands. The calculated syringe card follows full P609: <15 kg 0.15 mg; 15–30 kg 0.3 mg; >30 kg 0.5 mg.
+- Pediatric IM epinephrine follows Appendix J rather than the different P609 syringe bands. Auto-injectors remain a separate use.
 - C305 adenosine omits exactly 90 kg and its prose / explicit steps disagree on dose count. Boundary / additional dosing requires clarification.
-- P600 newborn and P603 ETT epinephrine contain inconsistent dose / concentration / volume wording; those calculations are withheld.
+- P600 newborn and P603 ETT epinephrine have no matching dose in the pediatric table; those cards show N/A.
 - SB205 pediatric push-dose epinephrine has conflicting repeat intervals; the discrepancy is explicit.
 - C300 lidocaine does not print a cumulative ceiling; C304 includes a 3 mg/kg cumulative ceiling.
 - M419 explicitly prints a 500 mL maximum for its adult initial sepsis bolus; the card preserves it and calls for clarification of further resuscitation.
-- A102 does not specify regional induction dosing; the induction card links to the protocol without inventing a ketamine dose.
+- A102 does not specify regional induction dosing; the induction card displays N/A and retains its protocol link.
 
 Run `node tests/medication-browser.mjs` with the local server running for medication-tool UI checks. All three browser scripts use the workspace’s existing Playwright runtime and Chrome. Calculator tests are included in `npm test`.
+
+Run `node tests/pediatric-table-browser.mjs` to verify literal table units / volumes, N/A display, medication-card table precedence, explicit column selection, and mobile layout.

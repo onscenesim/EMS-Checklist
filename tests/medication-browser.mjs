@@ -39,6 +39,8 @@ try{
  await page.locator('#stock-lidocaine').selectOption('20');
  assert.match(await page.locator('[data-recipe="lido-io-adult-0"] .dose-output').innerText(),/20–40 mg[\s\S]*1–2 mL/);
  await page.locator('#reference-search').fill('versed');await page.locator('#ref-age').fill('5');await page.locator('#ref-weight').fill('13');await open('drug-midazolam');await open('path-versed-seizure-ped');
+ assert.equal(await page.locator('[data-recipe="versed-seizure-ped-0"] .dose-output').innerText(),'N/A');
+ await page.locator('#ref-table').selectOption('3');
  assert.match(await page.locator('[data-recipe="versed-seizure-ped-0"] .dose-output').innerText(),/5 mg[\s\S]*1 mL/);
  await page.reload();assert.equal(await page.locator('#ref-weight').inputValue(),'13');
  await open('drug-midazolam');assert.equal(await page.locator('#stock-midazolam').inputValue(),'5');

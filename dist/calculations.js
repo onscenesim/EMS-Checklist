@@ -1,3 +1,4 @@
+import {weights,ages} from './data.js';
 // Arithmetic uses unrounded values. Formatting never changes the calculated dose.
 export const massUnits={g:1000,mg:1,mcg:0.001};
 export const number=value=>value===''||value===null||value===undefined?null:Number.isFinite(Number(value))?Number(value):null;
@@ -18,6 +19,24 @@ export function calculateDose(recipe,inputs={}){
   if(recipe.ageMin!==undefined||recipe.ageMax!==undefined){
     if(age===null||age<0)return {error:'Enter age for this pathway.'};
     if(age<(recipe.ageMin??0)||age>=(recipe.ageMax??Infinity))return {error:'Age is outside this protocol pathway.'};
+  }
+  if(recipe.table&&age!==null&&age>=0&&age<16){
+    const selected=number(inputs.tableIndex),index=selected===null?weights.indexOf(Number(inputs.weightKg)):selected;
+    const t=recipe.table;
+    if(!Number.isInteger(index)||index<0||index>=weights.length||t.doses[index]===null)return {error:'N/A',table:true};
+    if(recipe.requiredConcentration&&Number(inputs.concentration)!==recipe.requiredConcentration)return {error:`This pathway requires ${recipe.requiredConcentration} mg/mL stock. Confirm the label.`,table:true};
+    const dose=t.doses[index],unit=t.doseUnits?.[index]??t.unit;
+    let remaining=null;
+    if(recipe.totalMax!==undefined){
+      const prior=number(inputs.prior);
+      if(prior===null||prior<0)return {error:`Enter amount already given in ${unit} (0 if none).`,table:true};
+      remaining=recipe.totalMax-prior;
+      if(remaining<=0)return {error:'Protocol cumulative maximum reached.',table:true};
+      if(remaining<dose)return {error:'Remaining allowance is below this dose. Contact medical control.',table:true};
+    }
+    const matched=Number(inputs.concentration)===t.concentrationValue;
+    const volume=unit==='mL'?dose:!positive(inputs.concentration)?null:matched&&t.volumes?t.volumes[index]:volumeFor(dose,unit,inputs.concentration,inputs.concentrationUnit);
+    return {low:dose,high:dose,unit,volumeLow:volume,volumeHigh:volume,remaining,limited:false,table:true,tableWeight:weights[index],tableAge:ages[index],printedVolume:unit==='mL'||matched&&!!t.volumes};
   }
   if((recipe.kind==='weight'||recipe.kind==='band'&&recipe.rule!=='glucagon-age')&&!positive(weight))return {error:recipe.ideal?'Enter ideal body weight (kg).':'Enter patient weight.'};
   if(recipe.weightMin!==undefined||recipe.weightMax!==undefined||recipe.weightMinExclusive!==undefined){

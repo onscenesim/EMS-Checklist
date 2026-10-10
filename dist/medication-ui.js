@@ -1,3 +1,4 @@
+import {ages,weights} from './data.js';
 import {drugReference,categories} from './medication-data.js';
 import {calculateDose,fmt,kgFrom,poundsFrom,orderedDose,dripRate,infusionRate,dilute,number} from './calculations.js';
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -9,22 +10,22 @@ const input=(fields,key,label,placeholder='',extra='')=>`<label class="field">${
 const select=(fields,key,label,options,defaultValue='')=>`<label class="field">${label}<select id="${key}" data-ref-field="${key}">${options.map(([value,label])=>`<option value="${esc(value)}" ${(fields[key]??defaultValue)===String(value)?'selected':''}>${esc(label)}</option>`).join('')}</select></label>`;
 const unitOptions=[['mg','mg'],['mcg','mcg'],['g','g'],['mEq','mEq']];
 export const patientKg=fields=>kgFrom(fields['ref-weight'],fields['ref-weight-unit']??'kg');
-function patientContext(fields){const kg=patientKg(fields);return `<section class="panel reference-context"><div class="reference-fields">
+function patientContext(fields,table=false){const kg=patientKg(fields),age=number(fields['ref-age']);return `<section class="panel reference-context"><div class="reference-fields">
   ${input(fields,'ref-age','Age · years','Required for age-specific pathways')}
   <div class="weight-entry">${input(fields,'ref-weight','Patient weight','Measured / validated weight')}${select(fields,'ref-weight-unit','Unit',[['kg','kg'],['lb','lb']],'kg')}</div>
   ${input(fields,'ref-ideal','Ideal weight · kg','Ketamine adult pain / restraint')}
-</div>${kg!==null?`<p class="weight-equivalent">${fmt(kg)} kg = ${fmt(poundsFrom(kg))} lb</p>`:''}</section>`;}
+</div>${table&&age!==null&&age>=0&&age<16?`<div class="pediatric-table-picker">${select(fields,'ref-table','Pediatric table column',[['','Auto · exact table weight'],...ages.map((label,i)=>[String(i),label+' · '+weights[i]+' kg'])])}<p class="calculator-note">Table doses take precedence. No interpolation; missing entry: N/A.</p></div>`:''}${kg!==null?`<p class="weight-equivalent">${fmt(kg)} kg = ${fmt(poundsFrom(kg))} lb</p>`:''}</section>`;}
 function recipeCard(m,p,r,ri,fields){
   const concentration=p.concentration??m.stock.concentration??number(concentrations[m.id]?.custom?concentrations[m.id].value:concentrations[m.id]);
   const unit=p.concentrationUnit??m.stock.unit;
   const priorKey=`prior-${p.id}-${ri}`;
-  const result=calculateDose(r,{weightKg:patientKg(fields),idealKg:fields['ref-ideal'],age:fields['ref-age'],concentration,concentrationUnit:unit,prior:fields[priorKey]});
+  const result=calculateDose(r,{weightKg:patientKg(fields),idealKg:fields['ref-ideal'],age:fields['ref-age'],concentration,concentrationUnit:unit,prior:fields[priorKey],tableIndex:fields['ref-table']});
   const formula=r.kind==='weight'?`${range(r.low,r.high)} ${r.unit}/kg${r.ideal?' ideal weight':''}`:r.kind==='fixed'?`${range(r.low,r.high)} ${r.unit}`:r.rule==='glucagon-age'?'Age-based dose':'Weight-band dose';
   const ceiling=r.max!==undefined?` · max ${fmt(r.max)} ${r.unit}`:'';
   return `<article class="dose-card" data-recipe="${p.id}-${ri}"><div class="dose-card-title"><b>${esc(r.label)}</b>${r.route?`<span class="route-pill">${esc(r.route)}</span>`:''}</div>
-    ${r.blocked?'':`<p class="dose-formula">${esc(formula+ceiling)}${r.min!==undefined?` · min ${fmt(r.min)} ${esc(r.unit)}`:''}</p>`}
+    ${r.blocked?'':result.table?'<p class="dose-formula">PEDIATRIC TABLE · App J</p>':`<p class="dose-formula">${esc(formula+ceiling)}${r.min!==undefined?` · min ${fmt(r.min)} ${esc(r.unit)}`:''}</p>`}
     ${r.totalMax!==undefined||r.totalPerKg!==undefined?`${input(fields,priorKey,`Already given · ${r.unit} (0 if none)`,'0')}<p class="dose-limit">Total maximum: ${r.totalPerKg?`${r.totalPerKg} ${r.unit}/kg`:`${r.totalMax} ${r.unit}`}</p>`:''}
-    <div class="dose-output" aria-live="polite">${result.error?`<p class="calculation-empty">${esc(result.error)}</p>`:`<div><span>CALCULATED DOSE</span><strong>${range(result.low,result.high)} <small>${esc(result.unit)}</small></strong>${result.weight?`<p>${fmt(result.weight)} kg${result.ideal?' ideal body weight':''}</p>`:''}</div><div><span>${r.unit==='mL'?'SOLUTION VOLUME':'DRAW FROM STOCK'}</span><strong>${result.volumeLow===null?'—':range(result.volumeLow,result.volumeHigh)} <small>mL</small></strong><p>${result.volumeLow===null?'Confirm concentration above.':r.unit==='mL'?'Use specified solution.':`${fmt(concentration)} ${esc(unit)}/mL${p.concentration?' · pathway-specific stock':''}`}</p></div>${result.limited?'<p class="dose-limit">Protocol dose limit applied.</p>':''}${result.remaining!==null?`<p class="dose-limit">Remaining cumulative allowance: ${fmt(result.remaining)} ${esc(r.unit)}.</p>`:''}${r.prime&&result.volumeLow!==null?`<p class="dose-limit">Draw ${range(result.volumeLow+r.prime,result.volumeHigh+r.prime)} mL including ${r.prime} mL atomizer priming; dose volume above excludes priming.</p>`:''}`}</div>
+    <div class="dose-output" aria-live="polite">${result.error?`<p class="calculation-empty">${esc(result.error)}</p>`:`<div><span>${result.table?'TABLE DOSE':'CALCULATED DOSE'}</span><strong>${range(result.low,result.high)} <small>${esc(result.unit)}</small></strong>${result.table?`<p>${esc(result.tableAge)} · ${result.tableWeight} kg reference</p>`:''}${result.weight?`<p>${fmt(result.weight)} kg${result.ideal?' ideal body weight':''}</p>`:''}</div><div><span>${result.printedVolume?'TABLE VOLUME':r.unit==='mL'?'SOLUTION VOLUME':'DRAW FROM STOCK'}</span><strong>${result.volumeLow===null?'—':range(result.volumeLow,result.volumeHigh)} <small>mL</small></strong><p>${result.volumeLow===null?'Confirm concentration above.':r.unit==='mL'?'Use specified solution.':`${fmt(concentration)} ${esc(unit)}/mL${p.concentration?' · pathway-specific stock':''}`}</p></div>${result.limited?'<p class="dose-limit">Protocol dose limit applied.</p>':''}${result.remaining!==null?`<p class="dose-limit">Remaining cumulative allowance: ${fmt(result.remaining)} ${esc(r.unit)}.</p>`:''}${r.prime&&result.volumeLow!==null?`<p class="dose-limit">Draw ${range(result.volumeLow+r.prime,result.volumeHigh+r.prime)} mL including ${r.prime} mL atomizer priming; dose volume above excludes priming.</p>`:''}`}</div>
   </article>`;
 }
 function stockControl(m){const s=m.stock;if(s.confirmed)return `<div class="stock-summary"><b>${esc(s.label)}</b><span>${s.unit==='mL'?'Specified solution':m.id==='magnesium'||m.id==='ketamine'?'Department stock':'Protocol preparation'} · confirm label</span></div>`;
@@ -36,7 +37,7 @@ export function medicationReference(fields,source){
   const codes=[...new Set(drugReference.flatMap(m=>m.pathways.flatMap(p=>p.code.split(' / '))))].sort();
   return `<div class="page-heading"><div><div class="eyebrow">MEDICATION QUICK REFERENCE</div><h1>Medication doses</h1></div><button class="button primary" data-page="calculators">Dose & drip calculators ↗</button></div>
     <div class="reference-note">2026 Southwest Ohio · Verify indication, route, concentration, and required orders. ${source('FULL PROTOCOL',1)}</div>
-    ${patientContext(fields)}
+    ${patientContext(fields,true)}
     <section class="reference-toolbar"><label class="search">Search<input id="reference-search" aria-label="Search medications or indications" placeholder="Medication, indication, protocol…" value="${esc(referenceUI.search)}"></label>
       <label class="field">Protocol<select id="reference-protocol"><option value="">All protocols</option>${codes.map(c=>`<option ${referenceUI.protocol===c?'selected':''}>${esc(c)}</option>`).join('')}</select></label>
       <label class="field">Category<select id="reference-category"><option value="">All categories</option>${categories.map(c=>`<option ${referenceUI.category===c?'selected':''}>${esc(c)}</option>`).join('')}</select></label>

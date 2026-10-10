@@ -1,0 +1,30 @@
+import {chromium} from '/Users/WorkSchool/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/playwright/index.mjs';
+import assert from 'node:assert/strict';
+const browser=await chromium.launch({headless:true,executablePath:'/Applications/Google Chrome.app/Contents/MacOS/Google Chrome'});
+try{
+ const page=await browser.newPage({viewport:{width:1440,height:1000}});
+ await page.goto('http://127.0.0.1:4173/#pediatric');
+ const row=name=>page.locator('tbody tr').filter({hasText:name});
+ await page.locator('[data-age="1"]').click();
+ assert.match(await row('Dextrose 25%').innerText(),/2.5 mg[\s\S]*10 mL/);
+ assert.match(await row('Glucagon').innerText(),/0.5 mg[\s\S]*0.5 mL/);
+ await page.locator('[data-age="3"]').click();
+ assert.match(await row('Amiodarone').innerText(),/75 mg[\s\S]*1.55 mL/);
+ assert.deepEqual(await row('Dextrose 25%').locator('td').allTextContents().then(x=>x.slice(2)),['N/A','N/A']);
+ assert.doesNotMatch(await page.locator('tbody').innerText(),/Not available|withheld|Review source/);
+ await page.locator('.nav-item[data-page="medications"]').click();
+ await page.locator('#ref-age').fill('12');await page.locator('#ref-weight').fill('40');
+ await page.locator('#reference-search').fill('Epinephrine · IM');
+ await page.locator('[data-ref-open="drug-im-epi"] > summary').click();
+ await page.locator('[data-ref-open="path-epi-anaphylaxis-ped"] > summary').click();
+ assert.match(await page.locator('[data-recipe="epi-anaphylaxis-ped-0"]').innerText(),/TABLE DOSE[\s\S]*0.3 mg[\s\S]*TABLE VOLUME[\s\S]*0.3 mL/);
+ await page.locator('#ref-weight').fill('37');
+ assert.equal(await page.locator('[data-recipe="epi-anaphylaxis-ped-0"] .dose-output').innerText(),'N/A');
+ await page.locator('#ref-table').selectOption('7');
+ assert.match(await page.locator('[data-recipe="epi-anaphylaxis-ped-0"] .dose-output').innerText(),/12 yr · 40 kg reference/);
+ await page.screenshot({path:'/Users/Shared/EMS Checklist/tmp/pediatric-table-medications.png',fullPage:true});
+ await page.setViewportSize({width:390,height:844});
+ assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);
+ await page.screenshot({path:'/Users/Shared/EMS Checklist/tmp/pediatric-table-mobile.png',fullPage:true});
+ console.log('Pediatric table checks passed: printed dose/unit/volume, N/A without search prompts, table precedence in medication cards, explicit column, and mobile layout.');
+}finally{await browser.close();}
