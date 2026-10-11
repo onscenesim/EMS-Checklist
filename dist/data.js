@@ -92,7 +92,7 @@ row('Ketamine · pain','IV/IO','50 mg/mL',[null,null,null,null,4,5,6,8,10],[null
 row('Ketamine · pain','IN','50 mg/mL',[null,null,null,null,12,15,18,24,30],[null,null,null,null,.24,.3,.36,.48,.6],'mg','10 mg/mL is not recommended for pediatric IN in App J.',238),
 row('Ketamine · pain','IN','100 mg/mL',[null,null,null,null,12,15,18,24,30],[null,null,null,null,.12,.15,.18,.24,.3],'mg','',238),
 row('Lidocaine · cardiac arrest','IV/IO','20 mg/mL',[3,5,10,15,20,25,30,40,50],[.15,.25,.5,.75,1,1.25,1.5,2,2.5],'mg','',238),
-row('Lidocaine · before IO infusion','IO','20 mg/mL',[null,null,null,null,null,null,null,1,1],null,'mL','',238),
+row('Lidocaine · before IO infusion','IO','20 mg/mL',[null,null,null,null,null,null,null,1,1],null,'mL','Prime extension tubing with lidocaine, not saline, for IO pain control. Let dwell 60 seconds before the saline flush. Small pediatric doses: follow device instructions for direct-hub administration.',238),
 row('Methylprednisolone','IV/IO/IM/PO','62.5 mg/mL',[null,null,null,30,30,60,60,60,60],[null,null,null,.5,.5,1,1,1,1],'mg','Volumes are rounded as printed in App J.',238),
 row('Midazolam · seizures','IM/IN/Buccal','5 mg/mL',[.6,1,2,5,5,5,5,10,10],[.12,.2,.4,1,1,1,1,2,2],'mg','P610 uses weight bands; do not interpolate from the row heading.',238),
 row('Midazolam · seizures','IV','5 mg/mL',[.3,.5,1,1.5,2,2.5,3,4,5],[.06,.1,.2,.3,.4,.5,.6,.8,1],'mg','',238),
@@ -105,6 +105,6 @@ row('Ondansetron','IV','2 mg/mL',[null,null,1.5,2,3,4,4,4,4],[null,null,.75,1,1.
 row('Ondansetron','PO','4 mg tablet',[null,null,null,4,4,4,4,4,4],null,'mg','',238),
 row('Prednisolone','PO','3 mg/mL',[null,null,null,30,30,60,60,60,60],[null,null,null,10,10,20,20,20,20],'mg','',238),
 row('Prednisone','PO','20 mg tablets',[null,null,null,30,30,60,60,60,60],null,'mg','30 mg = 1.5 tablets; 60 mg = 3 tablets.',238),
-row('Tranexamic acid','See S506','10 mg/mL',[45,75,150,225,300,375,450,1000,1000],[4.5,7.5,15,22.5,30,37.5,45,100,100],'mg','Confirm indication, age eligibility, preparation, and administration in S506.',238)
+row('Tranexamic acid','IV','10 mg/mL',[45,75,150,225,300,375,450,1000,1000],[4.5,7.5,15,22.5,30,37.5,45,100,100],'mg','Confirm indication, age eligibility, preparation, and administration in S506.',238)
 ];
 export function energies(index,adultMax){if(!Number.isInteger(index)||index<0||index>=weights.length||![200,360].includes(adultMax))return null;const w=weights[index];return [Math.min(Math.ceil(w*2),adultMax),Math.min(Math.ceil(w*4),adultMax),Math.min(Math.ceil(w*10),adultMax)];}
