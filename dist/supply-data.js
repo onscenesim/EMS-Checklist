@@ -292,6 +292,7 @@ stock('oxygen','Cot',`Cot oxygen bottle|Above 500 per form|O2 cylinder`);
 stock('movement','Cot',`Cot||stretcher
 Cot straps|3|
 Extra linen||sheet towel`);
+stock('iv','Crew-added supply',`Drip set — 10 gtt/mL||10 drop set 10 drop sets 10 gtt tubing`);
 // Keep the complete source inventory, then expose only items appropriate for restock.
 const catalog=new Map();
 for(const entry of entries){const key=entry.category+'|'+entry.name;let item=catalog.get(key);if(!item){item={id:entry.category+'-'+entry.name.toLowerCase().normalize('NFKD').replace(/[^a-z0-9]+/g,'-').replace(/-$/,''),name:entry.name,category:entry.category,aliases:entry.aliases,locations:[]};catalog.set(key,item);}else{item.aliases+=' '+entry.aliases;}item.locations.push({name:entry.location,stock:entry.stock});}
@@ -300,11 +301,19 @@ const durableNames=new Set([
  'ERG','NIOSH book','Pediatric bag','IV bag — blue','IV bag — red','First-in bag','Drug bag','Trauma bag','Quick reference charts','Hospital phone list','Protocol binder','Seal log book',
  'Oxygen key','Wall-mount oxygen regulator',
  'Stairchair','Vacuum splint kit','Vacuum leg splint','Vacuum arm splint','Vacuum ankle splint','Vacuum splint pump','Backboard','Pediatric board','Reeves roll-up board','KED','Hare traction splint','Backboard straps','Hard restraints','Pedi-Mate','Cot','Cot straps',
- 'Portable suction','Spare cot battery','LUCAS head strap','LUCAS backboard','Tactical helmet','Turnout gear','Monitor battery','Spare LUCAS battery','UE scope charger',
+ 'Portable suction','Spare cot battery','LUCAS head strap','LUCAS backboard','Tactical helmet','Turnout gear','Spare LUCAS battery','UE scope charger',
  'Monitor','BP cuff — small','BP cuff — medium','BP cuff — large','BP cuff — adult','3-lead cable','12-lead cable','Pulse oximeter','Test block','Stethoscope','Thermometer','Penlight','Glucometer',
  'Magill forceps — small','Magill forceps — large','Blade handle','Miller blade — size 3','Miller blade — size 4','Mac blade — size 3','Mac blade — size 4','UE scope','LifeVac','IO drill','Pressure infuser','Trauma shears','Ring cutter'
 ]);
 export const supplies=inventory.filter(item=>item.category!=='vehicle'&&!durableNames.has(item.name));
+// Quick picks reference the same inventory IDs and restock quantities as the full catalog.
+export const frequentlyUsed=[
+ ['18 G catheter','18 G IV catheter'],['20 G catheter','20 G IV catheter'],['22 G catheter','22 G IV catheter'],
+ ['IV start kit','IV start kit'],['10 mL saline flush','10 mL saline flush'],['Lockset','J loop · lockset'],
+ ['Drip set — 10 gtt/mL','10-drop set'],['Saline — 1,000 mL','0.9% normal saline · 1 liter bag'],
+ ['Nasal ETCO2','ETCO2 nasal cannula'],['Electrodes','Electrodes'],['Monitor paper','EKG paper'],
+ ['Monitor battery','New battery · monitor'],['Alcohol preps','Alcohol preps'],['Band-Aids','Band-Aids'],['Lancets','Glucometer lancets']
+].map(([name,label])=>{const item=supplies.find(s=>s.name===name);if(item)item.aliases+=' '+label;return {item,label};});
 export const supplyCategories=categories.filter(c=>supplies.some(item=>item.category===c.id)).map(c=>({...c,name:c.id==='power'?'Batteries & LUCAS':c.id==='reference'?'Replacement kits':c.name}));
 export const inventoryLocations=[...new Set(supplies.flatMap(item=>item.locations.map(l=>l.name)))];
 // Common crew terminology, singular/plural forms, and abbreviations.
@@ -312,10 +321,14 @@ const extraAliases=[
  [/^\d+ G catheter$/, 'IV cath caths IV catheter catheters intravenous cannula cannulas cannulation angiocath angiocaths angiocatheter IV needle IV needles venflon'],
  [/^IO needle/, 'intraosseous EZ-IO EZIO IO needles'],
  [/syringe/i, 'syringes cc ml'],
+ [/Nasal ETCO2/i, 'ETCO2 nasal cannula ETCO2 nasal cannulas capnography cannula capno NC'],
+ [/Monitor paper/i, 'EKG paper ECG paper rhythm paper printer paper'],
+ [/Monitor battery/i, 'new battery new batteries replacement battery Zoll battery monitor batteries'],
+ [/Lancets/i, 'glucometer lancet glucometer lancets fingerstick lancet'],
  [/saline flush/i, 'flush flushes saline flushes NS prefilled flush'],
  [/drip set/i, 'dripset dripsets drip sets tubing IV tubing giving set infusion set'],
  [/IV start kit/i, 'IV kit IV kits cannulation kit startkit'],
- [/Lockset/i, 'saline lock IV lock hep lock heplock extension tubing extension set'],
+ [/Lockset/i, 'saline lock IV lock hep lock heplock extension tubing extension set J loop J loops jloop jloops'],
  [/Tegaderm/i, 'transparent dressing clear dressing IV dressing'],
  [/Alcohol preps/i, 'alcohol wipes alcohol swabs alcohol pads prep pads'],
  [/gauze/i, 'gauze pads gauze sponges dressing dressings'],

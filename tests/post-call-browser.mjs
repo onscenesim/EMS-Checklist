@@ -25,7 +25,7 @@ try{
  await page.goto('http://127.0.0.1:4173');
  await page.locator('.post-call-launch').click();
  assert.equal(await page.title(),'Post-call checklist · Woodlawn FD');
- assert.equal(await page.locator('.supply-group').count(),10);
+ assert.equal(await page.locator('.supply-group:not(.frequently-used)').count(),10);
  assert.equal(await page.locator('#post-csn').getAttribute('type'),'checkbox');
  await page.locator('#post-csn').check();
  for(const id of ['post-nurse','post-patient','post-retrieve','post-hospital','post-quarters'])await page.locator('#'+id).check();
@@ -53,7 +53,7 @@ try{
  assert.equal(await page.locator('.supply-item').count(),0);
  assert.equal(await page.locator('.restock-item').count(),2);
  await page.getByRole('button',{name:'Show all supplies'}).click();
- assert.equal(await page.locator('.supply-group').count(),10);
+ assert.equal(await page.locator('.supply-group:not(.frequently-used)').count(),10);
  const lucas=supplies.find(s=>s.name==='LUCAS');
  assert.equal(await page.locator('#post-service').count(),0);
  assert.equal(await page.getByRole('button',{name:'Retrieve Equipment',exact:true}).count(),0);
