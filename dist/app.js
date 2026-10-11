@@ -63,6 +63,7 @@ function checklistSection(m,section,si){
   return `<section class="check-section priority-section${m.id==='trauma'?' march-section':''}${arrest?' cardiac-arrest-box':''}" data-priority="${checklistColors[m.id]?.[si]||sectionColors[si%sectionColors.length]}" ${arrest?'aria-labelledby="arrest-box-title"':''} ${m.id==='trauma'?`data-march="${['m','a','r','c','h'][si]}"`:''}>
     <h2 ${arrest?'id="arrest-box-title"':''}><span>${String(si+1).padStart(2,'0')}</span>${section[0]}</h2>
     ${arrest?`<nav class="protocol-links arrest-links" aria-label="Cardiac arrest protocols">${m.arrestRefs.map(ref=>source(...ref)).join('')}<button class="button small" data-page="arrest">Full cardiac arrest checklist ${icon('arrow')}</button></nav>${dispatchTimerPanel(state.fields,icon)}`:''}
+    ${arrest||code?'<aside class="arrest-priority-note" aria-label="Ongoing pads and airway reminder"><strong>Keep reassessing: pads on? Airway in?</strong><p>If either is missing, ensure it happens ASAP.</p><b>Pads first → then airway.</b></aside>':''}
     ${section[1].map((item,ii)=>checklistRow(m,item,si,ii)).join('')}
     ${arrest||code?arrestCodeTools():''}
   </section>`;
