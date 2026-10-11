@@ -32,8 +32,7 @@ try{
  await open('drug-ketamine');await open('path-ket-pain-iv');
  assert.match(await page.locator('[data-recipe="ket-pain-iv-0"] .dose-output').innerText(),/14 mg[\s\S]*0.28 mL/);
  await open('drug-midazolam');await open('path-versed-post-intubation');
- assert.match(await page.locator('[data-recipe="versed-post-intubation-0"] .dose-output').innerText(),/Confirm concentration/);
- await page.locator('#stock-midazolam').selectOption('5');
+ assert.equal(await page.locator('#stock-midazolam').inputValue(),'5');
  assert.match(await page.locator('[data-recipe="versed-post-intubation-0"] .dose-output').innerText(),/4 mg[\s\S]*0.8 mL/);
  await page.locator('#stock-midazolam').selectOption('custom');
  await page.locator('#custom-midazolam').pressSequentially('10');
