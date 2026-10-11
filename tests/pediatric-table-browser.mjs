@@ -6,6 +6,7 @@ try{
  await page.goto('http://127.0.0.1:4173/#pediatric');
  const row=name=>page.locator('tbody tr').filter({hasText:name});
  await page.locator('[data-age="1"]').click();
+ await page.locator('.full-medication-reference>summary').click();
  assert.match(await row('Dextrose 25%').innerText(),/2.5 mg[\s\S]*10 mL/);
  assert.match(await row('Glucagon').innerText(),/0.5 mg[\s\S]*0.5 mL/);
  await page.locator('[data-age="3"]').click();
