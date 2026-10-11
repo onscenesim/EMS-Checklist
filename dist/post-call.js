@@ -1,0 +1,45 @@
+import {supplies,supplyCategories,findSupplies} from './supply-data.js';
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const storageKey='wfd-restock-v1';
+let needed={};
+try{const saved=JSON.parse(localStorage.getItem(storageKey)||'{}');for(const item of supplies){const qty=saved[item.id];if(Number.isInteger(qty)&&qty>0&&qty<=999)needed[item.id]=qty;}}catch{}
+const ui={search:'',category:'',open:new Set(),message:''};
+let persistFailed=false;
+function save(){try{localStorage.setItem(storageKey,JSON.stringify(needed));persistFailed=false;}catch{persistFailed=true;}}
+const selected=()=>supplies.filter(item=>needed[item.id]);
+const stockDetail=item=>item.locations.map(l=>`${l.name}${l.stock?' · '+l.stock:''}`).join('; ');
+export function postCall(fields,icon){
+ const matches=findSupplies(ui.search,ui.category),list=selected();
+ const checklist=[['post-nurse','Nurse signature','Obtained'],['post-patient','Patient signature','Obtained'],['post-service','Back in service','Confirmed'],['post-quarters','In quarters','Confirmed']];
+ return `<div class="page-heading"><div><div class="eyebrow teal">AFTER THE CALL</div><h1>Post-call checklist</h1><p>Close out the call. Get the medic ready for the next one.</p></div><div class="large-icon teal">${icon('check')}</div></div>
+ <section class="panel post-closeout" aria-labelledby="closeout-title"><div class="section-top"><h2 id="closeout-title"><span class="post-step">01</span> Call closeout</h2><span class="post-count">${checklist.filter(([id])=>fields[id]).length} of 4 checked</span></div>
+ <div class="post-call-fields"><label class="field post-csn" for="post-csn">CSN<input id="post-csn" type="text" data-field="post-csn" value="${esc(fields['post-csn'])}" placeholder="Enter CSN" autocomplete="off"></label>
+ ${checklist.map(([id,label,caption])=>`<label class="post-check ${fields[id]?'is-done':''}"><input id="${id}" type="checkbox" data-field-check="${id}" ${fields[id]?'checked':''}><span><b>${label}</b><small>${fields[id]?caption:'To confirm'}</small></span></label>`).join('')}</div>
+ <p class="post-help">Signature checks record that signatures were obtained. Call closeout stays in this tab and clears with New encounter.</p></section>
+ <div class="post-restock-layout"><section class="post-catalog" aria-labelledby="catalog-title"><div class="section-top"><h2 id="catalog-title"><span class="post-step">02</span> Find supplies</h2><span class="post-count">${supplies.length} items</span></div><p class="post-intro">Search an item, size, or storage location. Tap to add it to your restock list.</p>
+ <div class="supply-toolbar"><label class="search">${icon('search')}<input id="supply-search" type="search" aria-label="Search supplies" placeholder="Try gauze, 18g, Zofran…" value="${esc(ui.search)}" autocomplete="off"></label><label class="field" for="supply-filter">Category<select id="supply-filter"><option value="">All categories</option>${supplyCategories.map(c=>`<option value="${c.id}" ${ui.category===c.id?'selected':''}>${esc(c.name)}</option>`).join('')}</select></label></div>
+ <div class="supply-result-line"><span role="status">${matches.length} ${matches.length===1?'item':'items'}${ui.search||ui.category?' found':' in the medic inventory'}</span>${ui.search||ui.category?'<button class="supply-reset" data-supply-action="reset-filters">Clear filters</button>':''}</div>
+ <div class="supply-groups">${supplyCategories.map(c=>{const items=matches.filter(s=>s.category===c.id);if(!items.length)return '';return `<details class="supply-group" data-supply-category="${c.id}" ${ui.search||ui.category||ui.open.has(c.id)?'open':''}><summary><span class="supply-category-icon">${icon(c.icon)}</span><b>${esc(c.name)}</b><span class="supply-group-count">${items.length}</span><span class="supply-chevron">⌄</span></summary><div class="supply-items">${items.map(item=>`<button class="supply-item ${needed[item.id]?'is-added':''}" data-supply-action="toggle" data-supply-id="${item.id}" aria-pressed="${!!needed[item.id]}" aria-label="${needed[item.id]?'Remove':'Add'} ${esc(item.name)} ${needed[item.id]?'from':'to'} supplies needed"><span class="supply-item-copy"><b>${esc(item.name)}</b><small>${esc(stockDetail(item))}</small></span><span class="supply-add">${icon(needed[item.id]?'check':'plus')}<span>${needed[item.id]?'Added':'Add'}</span></span></button>`).join('')}</div></details>`;}).join('')||`<div class="supply-empty">${icon('search')}<h3>No supplies found</h3><p>Try a shorter name, another size, or all categories.</p><button class="button" data-supply-action="reset-filters">Show all supplies</button></div>`}</div>
+ <p class="post-source">Inventory: supplied Medic Check Form · Stock amounts shown beside storage locations. Unspecified amounts are left blank.</p></section>
+ <aside class="restock-panel" aria-labelledby="restock-title"><div class="restock-heading"><div><div class="eyebrow teal">BACK AT BASE</div><h2 id="restock-title">Supplies needed <span>${list.length}</span></h2></div>${icon('grid')}</div><p class="restock-subtitle">${list.length?`${list.reduce((n,item)=>n+needed[item.id],0)} total to restock · ${list.length} ${list.length===1?'item':'items'}`:'Your restock list starts here.'}</p>
+ <div class="restock-items">${list.map(item=>`<div class="restock-item"><div class="restock-item-title"><b>${esc(item.name)}</b><button class="restock-remove" data-supply-action="remove" data-supply-id="${item.id}" aria-label="Remove ${esc(item.name)}">${icon('close')}</button></div><small>${esc(supplyCategories.find(c=>c.id===item.category).name)}</small><div class="restock-controls"><div class="restock-quantity" role="group" aria-label="Quantity for ${esc(item.name)}"><button data-supply-action="decrease" data-supply-id="${item.id}" aria-label="Decrease ${esc(item.name)} quantity" ${needed[item.id]<=1?'disabled':''}>−</button><span aria-label="Quantity">${needed[item.id]}</span><button data-supply-action="increase" data-supply-id="${item.id}" aria-label="Increase ${esc(item.name)} quantity" ${needed[item.id]>=999?'disabled':''}>+</button></div><button class="restocked-button" data-supply-action="restocked" data-supply-id="${item.id}">${icon('check')} Restocked</button></div></div>`).join('')||`<div class="restock-empty"><span>${icon('check')}</span><b>Nothing on the list yet</b><p>Add supplies used on the call.<br>They’ll be ready to review here.</p></div>`}</div>
+ ${list.length?'<button class="button copy-restock" data-supply-action="copy">Copy restock list</button>':''}<p class="restock-help">${persistFailed?'Saving is unavailable in this browser. Keep this page open to retain your list.':'Restock items stay in this browser across encounters until removed or marked restocked.'}</p><p class="restock-message" role="status" aria-live="polite">${esc(ui.message)}</p></aside></div>`;
+}
+export function bindPostCall(render){
+ const repaint=(focusId,control)=>{const y=window.scrollY,active=document.getElementById(focusId),position=active?.selectionStart;render();window.scrollTo(0,y);if(focusId){const next=document.getElementById(focusId);next?.focus({preventScroll:true});if(position!=null)next?.setSelectionRange(position,position);}else if(control)document.querySelector(`[data-supply-action="${control.action}"][data-supply-id="${control.id}"]`)?.focus({preventScroll:true});};
+ document.addEventListener('toggle',e=>{const id=e.target.dataset?.supplyCategory;if(id&&!ui.search&&!ui.category){if(e.target.open)ui.open.add(id);else ui.open.delete(id);}},true);
+ document.addEventListener('input',e=>{if(e.target.id==='supply-search'){ui.search=e.target.value;repaint('supply-search');}});
+ document.addEventListener('change',e=>{if(e.target.id==='supply-filter'){ui.category=e.target.value;repaint('supply-filter');}});
+ document.addEventListener('click',async e=>{
+  const button=e.target.closest('[data-supply-action]');if(!button)return;
+  const action=button.dataset.supplyAction,id=button.dataset.supplyId,item=supplies.find(s=>s.id===id);ui.message='';
+  if(action==='reset-filters'){ui.search='';ui.category='';repaint('supply-search');return;}
+  if(action==='copy'){const content='Supplies needed — back at base\n'+selected().map(s=>`${needed[s.id]} × ${s.name}`).join('\n');try{await navigator.clipboard.writeText(content);ui.message='Restock list copied.';}catch{ui.message='Copy is unavailable. You can select and copy the list from this page.';}repaint();document.querySelector('[data-supply-action="copy"]')?.focus({preventScroll:true});return;}
+  if(!item)return;
+  if(action==='toggle'){if(needed[id]){delete needed[id];ui.message=`${item.name} removed.`;}else{needed[id]=1;ui.message=`${item.name} added to supplies needed.`;}}
+  if(action==='increase')needed[id]=Math.min(999,(needed[id]||1)+1);
+  if(action==='decrease')needed[id]=Math.max(1,(needed[id]||1)-1);
+  if(action==='remove'||action==='restocked'){delete needed[id];ui.message=action==='restocked'?`${item.name} marked restocked.`:`${item.name} removed.`;}
+  save();repaint(null,{action,id});
+ });
+}

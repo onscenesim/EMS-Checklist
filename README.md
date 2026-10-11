@@ -71,3 +71,13 @@ Specific source boundaries are shown at the applicable card:
 Run `node tests/medication-browser.mjs` with the local server running for medication-tool UI checks. All three browser scripts use the workspace’s existing Playwright runtime and Chrome. Calculator tests are included in `npm test`.
 
 Run `node tests/pediatric-table-browser.mjs` to verify literal table units / volumes, N/A display, medication-card table precedence, explicit column selection, and mobile layout.
+
+## Post-call checklist and restock
+
+Post-call checklist is available from the sidebar and overview. CSN, nurse / patient signature-obtained checks, back in service, and in quarters use the existing tab-scoped encounter state. These record signature completion; they do not capture signatures. New encounter clears this closeout state.
+
+The supply catalog is transcribed from the user-supplied Medic Check Form.pdf (pages 1–4). `dist/supply-data.js` contains 248 searchable supply / equipment entries in 11 categories with the original storage locations and stated stock amounts. Repeated items within a category consolidate into one entry with every source location retained. Explicit sizes are separate items; OPA / NPA ranges stay as printed. Search includes names, common aliases, sizes, categories, and locations. Mechanical readings, seal numbers, signature / personnel fields, and the unnamed “New Option 1” field are not restock supplies. No source-form personal details are included.
+
+Adding an item starts the requested quantity at 1; stock reference quantities never prefill restock quantities. Quantities can be adjusted, copied, removed, or marked restocked. The non-patient restock queue is stored separately in browser localStorage (`wfd-restock-v1`) and survives navigation, reloads, and New encounter. It is specific to that browser and device; no shared inventory or automatic stock ordering is provided. Call closeout stays in sessionStorage with existing encounter data.
+
+Run `node tests/post-call-browser.mjs` with the local server running to verify the complete catalog is individually searchable, category and no-result filters, quantity editing, copy, persistence, new encounter separation, and desktop / phone layouts.

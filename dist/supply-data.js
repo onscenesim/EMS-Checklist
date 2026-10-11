@@ -1,0 +1,304 @@
+// Inventory reference: Medic Check Form.pdf supplied 2026-10-10, pp. 1–4.
+// Quantities describe stock at each location; they are not requested restock quantities.
+export const supplyCategories=[
+  ['airway','Airway & suction','airway'],['oxygen','Oxygen & ventilation','pulse'],
+  ['monitor','Monitoring & assessment','pulse'],['iv','IV & IO','syringe'],
+  ['meds','Medications & fluids','syringe'],['trauma','Trauma & dressings','shield'],
+  ['ppe','PPE & infection control','shield'],['movement','Moving & immobilizing','child'],
+  ['power','Equipment & batteries','bolt'],['vehicle','Vehicle & safety','grid'],
+  ['reference','Bags & reference supplies','book']
+].map(([id,name,icon])=>({id,name,icon}));
+const entries=[];
+function stock(category,location,rows){for(const row of rows.trim().split('\n')){const [name,stock,aliases='']=row.split('|');entries.push({category,location,name,stock,aliases});}}
+stock('ppe','Cab',`Gloves — small||S gloves
+Gloves — medium||M gloves
+Gloves — large||L gloves
+Gloves — extra large||XL gloves
+Surgical masks|At least 10|face mask`);
+stock('vehicle','Cab',`Report tablet||
+MDC||mobile data computer
+Mobile radio||
+Traffic vest|2|high visibility
+Passports|2|
+Tactical vest|2|`);
+stock('reference','Cab',`ERG||Emergency Response Guidebook
+NIOSH book||`);
+stock('vehicle','Mechanical',`Bay door opener||
+Fuel card||`);
+stock('oxygen','Exterior L-1',`Main oxygen bottle|Above 300 per form|O2 cylinder`);
+stock('vehicle','Exterior L-1',`Irons||Halligan flathead axe
+Hydrant wrench||`);
+stock('movement','Exterior L-2',`Stairchair||stair chair
+Megamover||mega mover
+Vacuum splint kit||vaccum
+Vacuum leg splint||
+Vacuum arm splint||
+Vacuum ankle splint||
+Vacuum splint pump||`);
+stock('movement','Exterior L-3',`Backboard|2|
+Pediatric board||pedi board
+Reeves roll-up board||
+KED||Kendrick extrication device
+Hare traction splint||
+Head blocks|2|CID bag
+Adult cervical collar|2|c collar CID bag
+Pediatric cervical collar|2|pedi c collar CID bag
+Sheet||CID bag linen
+Backboard straps|6 pairs|CID bag`);
+stock('power','Interior / exterior R-1 access',`Portable suction||
+Spare cot battery||
+LUCAS||mechanical CPR
+LUCAS suction cup||
+LUCAS head strap||
+LUCAS backboard||
+Tactical helmet|2|
+Turnout gear||`);
+stock('reference','Interior / exterior R-1 access',`Pediatric bag||pedi
+IV bag — blue||intravenous
+IV bag — red||intravenous
+First-in bag||first in
+Drug bag||`);
+stock('monitor','Interior / exterior R-1 access',`Monitor||cardiac`);
+stock('vehicle','Exterior R-2',`SCBA #1||self contained breathing apparatus
+SCBA #2||self contained breathing apparatus`);
+stock('power','Monitor',`Monitor battery|2|batteries`);
+stock('monitor','Monitor',`BP cuff — small||blood pressure S
+BP cuff — medium||blood pressure M
+BP cuff — large||blood pressure L
+3-lead cable||three lead
+12-lead cable||twelve lead
+Pulse oximeter||pulse ox
+Adult defibrillator pads||adult pads
+Pediatric defibrillator pads||pedi pads
+Pediatric pulse ox sticker||pedi finger
+Test block||
+Monitor paper||spare
+Electrodes|At least 20|ECG EKG stickers
+In-line ETCO2||inline capnography
+Nasal ETCO2||capnography`);
+stock('airway','First-in bag · top pouch',`Oral airways — 50–110 mm||OPA 50 60 70 80 90 100 110 mm
+Nasal airways — 20–36 Fr||NPA 20 22 24 26 28 30 32 34 36 FR
+KY jelly|2|lubricant
+Emesis bag|2|vomit mesh pocket`);
+stock('oxygen','First-in bag · mesh pockets',`Adult non-rebreather mask||NRB
+Adult nasal cannula||NC
+Pediatric non-rebreather mask||pedi NRB
+Pediatric nasal cannula||pedi NC`);
+stock('oxygen','First-in bag · main pouch',`Portable oxygen bottle|300 minimum per form|O2 cylinder
+Oxygen key||O2 wrench
+BVM||bag valve mask ambu`);
+stock('monitor','First-in bag · blue bag',`BP cuff — adult||blood pressure
+Stethoscope||
+Pulse oximeter||pulse ox
+Thermometer||
+Penlight||`);
+stock('monitor','First-in bag · glucometer pouch',`Glucometer||blood glucose meter
+Lancets|5|
+Test strips|More than 5|glucose`);
+stock('iv','First-in bag · glucometer pouch',`Alcohol preps||alcohol pads swabs`);
+stock('trauma','First-in bag · glucometer pouch',`Band-Aids|More than 5|bandaids adhesive bandage`);
+stock('trauma','First-in bag · trauma bag',`Trauma shears||scissors
+4 × 4 gauze|5|4x4
+Combine pad|5|combi ABD
+4-inch roll bandage|2|4x4 Kling
+2-inch roll bandage|2|2x4 Kling
+Coban|1 roll|self adherent
+Ring cutter||
+Tape|2 rolls|
+Triangular bandage||`);
+stock('reference','First-in bag · main pouch & lid',`Trauma bag||`);
+stock('airway','Drug bag · right zipper',`i-gel — size 3||igel i gel
+ i-gel — size 4||igel i gel
+ i-gel — size 5||igel i gel`.replace(/^ /gm,''));
+stock('trauma','Drug bag · left zipper',`Israeli trauma bandage|2|
+Tourniquet|2|torniquet
+4-inch Kling||4 in 4in
+Trauma shears||scissors
+Tape||
+Chest seal|2|
+Burn dressing||
+Needle decompression|2|`);
+stock('movement','Drug bag · left zipper',`Arm board|2|`);
+stock('ppe','Drug bag · left zipper',`Gown||`);
+stock('ppe','Drug bag · top zipper',`Sharps container||`);
+stock('iv','Drug bag · medicine (red)',`18 G needle — 1 inch|5|18g 1\"
+18 G filter needle — 1.5 inches|5|18g 1.5\"
+22 G needle — 1 inch|5|22g 1\"
+10 mL saline flush||10ml
+1 mL syringe|2|1ml
+3 mL syringe|2|3ml
+5 mL syringe|2|5ml
+10 mL syringe||10ml 10cc
+MAD device|2|mucosal atomization intranasal`);
+stock('meds','Drug bag · medicine (red)',`Atropine — 1 mg|3|atropine 1mg
+Epinephrine — 1:10,000|6|epi 1:10000
+Narcan — 1 mg|2|naloxone 1mg
+Aspirin||ASA
+Epinephrine — 1 mg, 1:1,000|2|epi 1mg 1:1000
+Amiodarone — 150 mg|3|150mg
+Adenosine — 6 mg||6mg
+Adenosine — 12 mg|2|12mg
+Zofran — 4 mg|2|ondansetron 4mg
+Solu-Medrol — 125 mg|2|solu medrol methylprednisolone 125mg
+Benadryl — 50 mg|2|diphenhydramine 50mg
+Nitroglycerin||nitro
+Glucagon||
+Pediatric acetaminophen|6|pedi Tylenol
+Oral glucose|2|
+DuoNeb|2|duo-neb duo neb ipratropium albuterol
+Albuterol|2|
+Oral Zofran||ondansetron`);
+stock('meds','Drug bag · universal (black)',`3% hypertonic solution — 500 mL||saline 500ml
+10% dextrose — 250 mL||D10 250ml
+Magnesium sulfate||
+Sodium bicarbonate||bicarb
+Lidocaine||
+D50 or D10||dextrose
+Nifedipine||
+Afrin||oxymetazoline
+Calcium chloride||`);
+stock('iv','Drug bag · universal (black)',`10 mL saline flush||10ml
+Stopcock||
+Drip set — 15 gtt/mL||15 gtts dripset`);
+stock('reference','Drug bag · universal (black)',`TXA kit||tranexamic acid`);
+stock('meds','TXA kit · universal (black)',`TXA — 1 g in 10 mL||tranexamic acid 1g 10ml
+Saline — 100 mL||normal saline NS 100ml`);
+stock('iv','TXA kit · universal (black)',`Drip set — 60 gtt/mL||60 gtts dripset microdrip
+10 mL syringe||10cc 10ml
+Transfer needle||`);
+stock('power','Drug bag · airway (green)',`C batteries|2|`);
+stock('iv','Drug bag · airway (green)',`20 mL syringe||20ml
+10 mL syringe||10ml 10cc`);
+stock('airway','Drug bag · airway (green)',`Magill forceps — small||sm
+Magill forceps — large||lg
+Colorimetric CO2 detector||colormetric
+ET tube — 6 mm||ETT 6.0
+ET tube — 6.5 mm||ETT
+ET tube — 7 mm||ETT 7.0
+ET tube — 7.5 mm||ETT
+ET tube — 8 mm||ETT 8.0
+Tube holder||ETT
+Bougie||
+Blade handle||laryngoscope
+Miller blade — size 3||
+Miller blade — size 4||
+Mac blade — size 3||Macintosh
+Mac blade — size 4||Macintosh
+UE scope||video laryngoscope
+D3 blade||
+D4 blade||`);
+stock('monitor','Drug bag · airway (green)',`In-line ETCO2||inline capnography`);
+stock('iv','Drug bag · intravenous (blue)',`Pressure infuser||
+IO drill||intraosseous EZ IO
+IO stabilizer||
+IO needle — 15 mm, red||15mm
+IO needle — 25 mm, blue||25mm
+IO needle — 45 mm, yellow||45mm`);
+stock('iv','IV bag · intravenous (blue)',`22 G catheter|2|22g IV
+20 G catheter|2|20g IV
+18 G catheter|2|18g IV
+16 G catheter|2|16g IV
+Tourniquet|2|torniquet
+Alcohol preps|5|alcohol pads swabs
+Tape|1 roll|
+Tegaderm|2|
+2 × 2 gauze|4|2x2
+Lockset|2|lock set
+Drip set — 15 gtt/mL||15 gtts dripset
+IV start kit|2|
+10 mL saline flush|2|10ml`);
+stock('meds','IV bag · intravenous (blue)',`Saline — 1,000 mL||normal saline NS 1000ml 1 liter`);
+stock('ppe','Above side door',`Gloves — medium||M gloves
+Gloves — large||L gloves
+Gloves — extra large||XL gloves`);
+stock('airway','Interior compartment 1',`Oral airways — 50–110 mm|1 each|OPA 50 60 70 80 90 100 110 mm
+Nasal airways — 20–36 Fr|1 each|NPA 20 22 24 26 28 30 32 34 36 FR
+Bulb syringe|2|
+Yankauer suction set||catheter
+KY jelly|3|lubricant
+ i-gel — size 3||igel i gel
+ i-gel — size 4||igel i gel
+ i-gel — size 5||igel i gel
+Suction catheter — 10 Fr||10FR
+Suction catheter — 12 Fr||12FR
+Suction catheter — 14 Fr||14FR
+Suction catheter — 16 Fr||16FR
+Suction catheter — 18 Fr||18FR`.replace(/^ /gm,''));
+stock('monitor','Interior compartment 1',`O2 inline / NC / Capoline|2 each|ETCO2 capnography capnoline`);
+stock('oxygen','Interior compartment 1',`Adult non-rebreather mask|2|NRB
+Adult nasal cannula|2|NC
+Pediatric non-rebreather mask|2|pedi NRB
+Pediatric nasal cannula|2|pedi NC
+Nebulizer|2|
+Nebulizer mask|2|
+CPAP — medium||med
+CPAP — large||lg
+Adult BVM||bag valve mask ambu
+Pediatric BVM||pedi bag valve mask ambu`);
+stock('vehicle','Action area',`Squad phone & charger||`);
+stock('airway','Action area',`Suction canister||
+Yankauer suction set||catheter`);
+stock('oxygen','Action area',`Wall-mount oxygen regulator||O2`);
+stock('trauma','Action area',`Trauma shears||scissors`);
+stock('monitor','Action area',`Stethoscope||
+Penlight||`);
+stock('power','Action area',`Spare LUCAS battery||`);
+stock('reference','Action area',`Quick reference charts||
+Hospital phone list||
+Protocol binder||
+Seal log book||`);
+stock('power','Behind jump seat compartment',`UE scope charger||`);
+stock('reference','Behind jump seat compartment',`Employee Narcan||employee naloxone seal`);
+stock('ppe','CPR seat · under cushion',`Tyvek suit|2|
+Biohazard bags|10|bio hazard
+PPE kit||`);
+stock('movement','CPR seat · under cushion',`Hard restraints|4|
+Soft restraints|4|`);
+stock('movement','Interior compartment 2',`SAM pelvic sling||
+SAM splint|2|`);
+stock('ppe','Interior compartment 2',`N95 mask|4|N-95`);
+stock('airway','Interior compartment 2',`Quick Trach — adult||quicktrach cricothyrotomy
+Quick Trach — pediatric||pedi quicktrach cricothyrotomy
+LifeVac||
+Bite stick|2|`);
+stock('trauma','Interior compartment 2',`SAM chest seal|2|
+Non-adhering dressing|5|non adhering
+Cold pack|3|ice
+Heat pack|3|hot
+Trauma shears||scissors
+Burn sheet|2|
+Chuk pad|2|chux underpad
+Triangular bandage|3|
+Trauma wound dressing|2|
+14 G decompression needle|4|14ga 14g needle decompression
+CAT tourniquet|2|combat application
+Coban|2|self adherent
+Nose pincher|2|epistaxis clamp
+4-inch Kling|4|4 in 4in
+2-inch Kling|2|2 in 2in
+Combine pad|5|combi ABD
+4 × 4 gauze|20|4x4
+2 × 2 gauze|10|2x2
+Band-Aids|10|bandaids adhesive bandage
+OB kit|2|obstetric childbirth
+Eye pad|2|
+Eye shield|2|`);
+stock('monitor','Interior compartment 2',`12-lead stickers||extra electrodes ECG EKG`);
+stock('movement','Interior compartment 3',`Towels|6|linen`);
+stock('oxygen','Bench seat · under seat',`Spare oxygen bottle||O2 cylinder`);
+stock('movement','Bench seat · under seat',`Spare linen||sheet towel
+Pedi-Mate||pediatric restraint`);
+stock('oxygen','Cot',`Cot oxygen bottle|Above 500 per form|O2 cylinder`);
+stock('movement','Cot',`Cot||stretcher
+Cot straps|3|
+Extra linen||sheet towel`);
+// Identical items have one searchable row, with all source locations retained.
+const catalog=new Map();
+for(const entry of entries){const key=entry.category+'|'+entry.name;let item=catalog.get(key);if(!item){item={id:entry.category+'-'+entry.name.toLowerCase().normalize('NFKD').replace(/[^a-z0-9]+/g,'-').replace(/-$/,''),name:entry.name,category:entry.category,aliases:entry.aliases,locations:[]};catalog.set(key,item);}item.locations.push({name:entry.location,stock:entry.stock});}
+export const supplies=[...catalog.values()];
+export const inventoryLocations=[...new Set(entries.map(e=>e.location))];
+export function findSupplies(query='',category=''){
+ const normalize=s=>s.toLowerCase().replace(/[^a-z0-9%.]+/g,' ').trim();
+ const tokens=normalize(query).split(/\s+/).filter(Boolean);
+ return supplies.filter(item=>(!category||item.category===category)&&tokens.every(token=>normalize(item.name+' '+item.aliases+' '+supplyCategories.find(c=>c.id===item.category).name+' '+item.locations.map(l=>l.name+' '+l.stock).join(' ')).includes(token)));
+}
