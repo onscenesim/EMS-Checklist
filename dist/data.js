@@ -6,7 +6,7 @@ export const modules=[
     arrestRefs:[['Arrest · SB204',50],['VF / VT · C300',75],['PEA / asystole · C301',76],['Post-ROSC · C307',83]],
     sections:[
       ['Get ahead of the crash',[
-        {id:'main-o2',text:'Turn main O2 on',note:'Before the call or en route: turn the main O2 on early so it is ready before the chaos.'},
+        {id:'main-o2',text:'Turn main O2 AND cabin power on',note:'Before the call or en route: turn the main O2 and cabin power on early so both are ready before the chaos.'},
         {id:'roles',text:'Assign roles before things get worse',note:'Leader · airway · access / medications · scene control'},
         {id:'pads-early',text:'Put pads on early',note:'Pacing / cardioversion ready.',tool:['cardio','Defib / cardioversion']},
         {id:'lucas-staged',text:'Place the LUCAS backboard under the patient while they still have a pulse'},
@@ -29,7 +29,7 @@ export const modules=[
     refs:[['Arrest · SB204',50],['VF / VT · C300',75],['PEA / asystole · C301',76],['Post-ROSC · C307',83]],
     sections:[
       ['Arrive ready',[
-        {id:'main-o2',text:'Turn main O2 on',note:'Before the call or en route: turn the main O2 on early so it is ready before the chaos.'},
+        {id:'main-o2',text:'Turn main O2 AND cabin power on',note:'Before the call or en route: turn the main O2 and cabin power on early so both are ready before the chaos.'},
         {id:'code-lead',text:'Name the code lead out loud',note:'Make sure everyone knows who is running the code.'},
         {id:'lucas-in',text:'Take the LUCAS in'},
         {id:'code-gear',text:'Bring the monitor, suction, airway bag, and drug bag'},
@@ -79,7 +79,7 @@ export const modules=[
   {id:'intubation',title:'Intubation',short:'Intubation',icon:'airway',color:'blue',tag:'AIRWAY',source:'T705 · T706 · A102 · T715',page:193,
     refs:[['Intubation · T706',193],['Airway · T705',189],['Assisted intubation · A102',17],['After intubation · T715',209]],
     sections:[
-      ['Prepare',[{id:'main-o2',text:'Turn main O2 on',note:'Confirm the main oxygen supply is on before airway setup.'},
+      ['Prepare',[{id:'main-o2',text:'Turn main O2 AND cabin power on',note:'Confirm the main oxygen supply and cabin power are on before airway setup.'},
         {id:'0',text:'Confirm indication, scope, and airway plan'},{id:'1',text:'Position / preoxygenate; optimize hemodynamics'},{id:'2',text:'Set up and test suction'},
         {id:'3',text:'Prepare adult ETT: 7.0 or 8.0 mm; bougie, lube, laryngoscope',note:'Choose size for patient anatomy; pediatric sizing: Broselow tape.'},
         {id:'4',text:'Prepare waveform capnography, tube holder, and backup airway'},
@@ -102,7 +102,7 @@ export const modules=[
   {id:'trauma',title:'Trauma',short:'Trauma',icon:'shield',color:'orange',tag:'ASSESSMENT',source:'SB206 · S500 · S501 · S506',page:56,
     refs:[['Trauma assessment · SB206',56],['Hemorrhagic shock · S500',135],['Head / spine · S501',137],['Pain control · S505',142]],
     sections:[
-      ['M · Bleeding',[{id:'bleeding',text:'Control bleeding'}]],
+      ['M · Bleeding',[{id:'main-o2',text:'Turn main O2 AND cabin power on',note:'Before the call or en route: get oxygen, cabin power, and heat ready early.',priorityReminder:'Heat turned up'},{id:'bleeding',text:'Control bleeding'}]],
       ['A · Airway',[{id:'airway',text:'Check and control airway'}]],
       ['R · Respirations',[{id:'chest-assessment',text:'Assess chest, ventilation, oxygenation'},{id:'chest-treatment',text:'Treat life-threatening chest injuries with decompression, chest seals'}]],
       ['C · Circulation',[{id:'strip-clothes',text:'Strip clothes'},{id:'body-sweep',text:'Full body sweep including armpits and back'},{id:'blood-thinners',text:'Check blood thinners and antiplatelets'},{id:'head-neck',text:'Assess head / neck injury and pupils'}]],

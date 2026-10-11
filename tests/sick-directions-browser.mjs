@@ -4,10 +4,11 @@ const browser=await chromium.launch({headless:true,executablePath:'/Applications
 try{
  const page=await browser.newPage({viewport:{width:1440,height:1100}}),errors=[];page.on('pageerror',e=>errors.push(e.message));
  await page.clock.install({time:new Date('2026-10-11T02:00:00-04:00')});
- for(const id of ['sick','arrest','intubation']){
+ for(const id of ['sick','arrest','intubation','trauma']){
   await page.goto(`http://127.0.0.1:4173/#${id}`);
-  assert.equal(await page.locator('[data-check]').first().locator('..').innerText().then(s=>s.split('\n')[0]),'Turn main O2 on');
-  assert.equal(await page.getByText('Turn main O2 on',{exact:true}).count(),1);
+  assert.equal(await page.locator('[data-check]').first().locator('..').innerText().then(s=>s.split('\n')[0]),'Turn main O2 AND cabin power on');
+  assert.equal(await page.getByText('Turn main O2 AND cabin power on',{exact:true}).count(),1);
+  if(id==='trauma')assert.equal(await page.locator('.oxygen-priority-extra').innerText(),'Heat turned up');
   assert.equal(await page.getByText(/ventilator/i).count(),0);
   if(id!=='intubation')assert.match(await page.locator('.oxygen-priority').innerText(),/BEFORE THE CALL \/ EN ROUTE/);
  }
