@@ -94,3 +94,10 @@ The expandable Burns section contains distinct colored, numbered priority remind
 Shock index (heart rate / systolic BP) is at the bottom of trauma and sick patient. Inputs are shared across both pages within the encounter. The result is arithmetic, without an automatic diagnosis or eligibility decision. Empty, nonpositive, and nonfinite inputs clear prior outputs. All new timestamps, reminders, and calculator inputs reset with New encounter; supply restock remains separate.
 
 Run `node tests/trauma-burn-browser.mjs` with the preview running for timestamps, reset / persistence, the updated MARCH list, burns expansion, valid / invalid calculations, rule-of-9s values, post-call reminders, and phone layouts. Arithmetic boundary tests are included in `npm test`.
+
+
+## Checklist visual organization
+
+All clinical checklist sections use the MARCH priority palette with tinted headings, numbered badges, and matching left borders. AMS timeline and causes have colored headings; post-call reminders and supply categories use the same palette. The main brand, overview badge, and favicon use the supplied Woodlawn FD Station 96 crest photograph, presented with CSS cropping. The asset is local to the Site.
+
+The trauma ketamine reference uses a green accordion matching the orange Burns accordion. Both expand independently, persist their open state through navigation and refresh within an encounter, and collapse on New encounter. The S505 reference values are unchanged.
