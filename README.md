@@ -101,3 +101,18 @@ Run `node tests/trauma-burn-browser.mjs` with the preview running for timestamps
 All clinical checklist sections use the MARCH priority palette with tinted headings, numbered badges, and matching left borders. AMS timeline and causes have colored headings; post-call reminders and supply categories use the same palette. The main brand, overview badge, and favicon use the supplied Woodlawn FD Station 96 crest photograph, presented with CSS cropping. The asset is local to the Site.
 
 The trauma ketamine reference uses a green accordion matching the orange Burns accordion. Both expand independently, persist their open state through navigation and refresh within an encounter, and collapse on New encounter. The S505 reference values are unchanged.
+
+
+## Pediatric first-look reference and sedation shortcuts
+
+The primary crest is now an SVG redrawn from the supplied Station 96 photograph, keeping the Maltese cross, Fire / EMS lettering, Woodlawn / Station 96 ring, WFD monogram, ladder, and hydrant. It has a transparent outer background and scales without raster blur.
+
+Pediatric selection shows Appendix J ETT sizes and manufacturer i-gel weight ranges beside defibrillation energy. Overlapping i-gel ranges show both valid candidates; device selection uses actual weight and anatomy. The Zoll energy ceiling defaults to 200 J on first load and New encounter, while an explicit 360 J selection remains available. Legacy blank ceilings migrate to 200 J.
+
+The eight critical medication groups preserve Appendix J values for fluids, amiodarone, lidocaine IO, the three epinephrine uses, Versed seizure / sedation routes, ketamine pain at 50 mg/mL, TXA, and bicarbonate. Ketamine pain rows below age 5 show TOO YOUNG. Missing table entries for other drugs stay N/A rather than inventing an age contraindication. The full 35-entry medication table is collapsed by default and retains filtering and printed values. Expansion state persists for the encounter.
+
+Sedation now has top-level Ketamine and Versed accordions using the existing indication-specific recipe engine, patient inputs, stock confirmation, pediatric table precedence, dose caps, and protocol links. P616 is prominent in the sedation protocol links, with its dosing page linked in the pediatric Versed pathway. Dosing accordion state persists through refresh and resets with New encounter. Ideal-weight entry is labeled optional for adult ketamine dosing; ideal-weight pathways still require that input before calculating.
+
+The cardioversion callout warns that SYNC may disable after a shock. Each arithmetic calculator has a bold plain-language explanation below it.
+
+Sources: Appendix J pp. 237–238, T706 p. 193, P616 pp. 173–174, M408 pp. 101–102, and T715 pp. 209–210 in the governing 2026 protocol. i-gel ranges: https://www.intersurgical.com/info/igel-anaesthesia. Run `node tests/pediatric-sedation-browser.mjs` and `node tests/pediatric-table-browser.mjs` for the new layout / age columns / routes / default / expansion checks; `npm test` includes source-value and device-range checks.

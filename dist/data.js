@@ -16,7 +16,7 @@ export const modules=[
       ['After therapy',['Recheck rhythm, pulse, perfusion, and BP','Obtain ECG after conversion as appropriate','Record therapy and response']]
     ]},
   {id:'sedation',title:'Sedation',short:'Sedation',icon:'syringe',color:'purple',tag:'PROCEDURE',source:'C303 · C306 · M408 · T715',page:79,
-    refs:[['Wide complex · C303',79],['Narrow complex · C306',82],['Restraint · M408',100],['After intubation · T715',209]],
+    refs:[['Wide complex · C303',79],['Narrow complex · C306',82],['Restraint · M408',100],['Pediatric restraint · P616',173],['After intubation · T715',209]],
     sections:[
       ['Preparation',['Confirm indication and sedation pathway','Check allergies, prior medications, and contraindications','Baseline mental status, BP, and breathing','Prepare suction, ventilation, and backup airway']],
       ['Medication safety',['Confirm agent, concentration, route, dose, and maximum','Obtain medical-control orders as required','Cross-check medication / route with team member']],
@@ -63,6 +63,10 @@ export const checklistId=(moduleId,sectionIndex,item,itemIndex)=>`${moduleId}-${
 export const causes=[['oxygen','Hypoxia / hypercapnia','Airway, oxygenation, ventilation, capnography'],['glucose','Glucose abnormality','Obtain and document blood glucose'],['stroke','Stroke / neurologic event','Stroke assessment, pupils, last known well'],['seizure','Seizure / postictal state','Witnessed activity, duration, recovery'],['toxic','Medication / toxin / alcohol','Recent doses, exposures, substances'],['cardiac','Cardiac cause / poor perfusion','ECG, blood pressure, rhythm'],['infection','Infection / sepsis','Temperature, suspected source, perfusion'],['trauma','Trauma / head injury','Injury survey, history, anticoagulants'],['metabolic','Other metabolic cause','History, comorbidities, available findings']];
 export const ages=['0–3 mo','6 mo','9–24 mo','3 yr','6 yr','8 yr','10 yr','12 yr','14 yr'];
 export const weights=[3,5,10,15,20,25,30,40,50];
+export const pediatricTubes=['3.0–3.5','3.5','4.0–4.5','5.0','5.5','6.0','6.5','7.0','7.0'];
+export const igelSource='https://www.intersurgical.com/info/igel-anaesthesia';
+export const igelSizes=[{size:1,min:2,max:5},{size:1.5,min:5,max:12},{size:2,min:10,max:25},{size:2.5,min:25,max:35},{size:3,min:30,max:60},{size:4,min:50,max:90},{size:5,min:90,max:Infinity}];
+export const igelForWeight=kg=>Number.isFinite(kg)&&kg>0?igelSizes.filter(s=>kg>=s.min&&kg<=s.max):[];
 // Source-table values, not interpolation. Null means not listed for this age category.
 // Each row retains its indication, route and concentration. Clinical release is pending review.
 const row=(name,route,concentration,doses,volumes,unit='mg',note='',page=237)=>({name,route,concentration,doses,volumes,unit,note,page});

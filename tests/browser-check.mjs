@@ -25,6 +25,7 @@ await page.locator('[data-age="3"]').click();
 await page.locator('#adult-max').selectOption('200');
 assert.deepEqual(await page.locator('.energy-grid b').allTextContents(),['30 J','60 J','60–150 J']);
 assert.equal(await page.locator('tbody tr').count(),35);
+await page.locator('.full-medication-reference>summary').click();
 await page.locator('#med-search').fill('amiodarone');
 assert.equal(await page.locator('tbody tr').count(),1);
 assert.match(await page.locator('tbody tr').innerText(),/75 mg[\s\S]*1.55 mL/);
