@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 const browser=await chromium.launch({headless:true,executablePath:'/Applications/Google Chrome.app/Contents/MacOS/Google Chrome'});
 try{
  const page=await browser.newPage({viewport:{width:1440,height:1100}}),errors=[];page.on('pageerror',e=>errors.push(e.message));
+ await page.addInitScript(()=>{if(!sessionStorage.getItem('wfd-stock-v1'))sessionStorage.setItem('wfd-stock-v1',JSON.stringify({midazolam:'1',morphine:'2',lidocaine:'10',txa:'10',bicarbonate:{custom:true,value:'.5'},'calcium-chloride':{custom:true,value:'50'}}));});
  await page.goto('http://127.0.0.1:4173/#sick');
  const rosc=page.locator('.arrest-rosc-direction').filter({hasText:'After ROSC, follow C307'});
  assert.match(await rosc.locator('a').getAttribute('href'),/#page=83$/);
@@ -28,17 +29,21 @@ try{
  assert.match(await page.locator('[data-recipe="mag-asthma-0"] .dose-output').innerText(),/Enter patient age in years into the calculator up top.*your patient/);
  await page.locator('#ref-age').fill('40');await page.locator('#ref-weight').fill('80');
 
+ assert.equal(await page.locator('#stock-magnesium').inputValue(),'');assert.match(await page.locator('[data-recipe="mag-asthma-0"] .dose-output').innerText(),/Confirm concentration/);
+ await page.locator('#stock-magnesium').selectOption('500');
  assert.match(await page.locator('[data-recipe="mag-asthma-0"] .dose-output').innerText(),/2 g[\s\S]*4 mL/);
+ await page.locator('#stock-magnesium').selectOption('custom');assert.match(await page.locator('[data-recipe="mag-asthma-0"] .dose-output').innerText(),/Confirm concentration/);
+ await page.locator('#custom-magnesium').fill('250');assert.match(await page.locator('[data-recipe="mag-asthma-0"] .dose-output').innerText(),/2 g[\s\S]*8 mL/);
+ await page.locator('#custom-magnesium').fill('0');assert.match(await page.locator('[data-recipe="mag-asthma-0"] .dose-output').innerText(),/Confirm concentration/);
+ await page.locator('#stock-magnesium').selectOption('500');
+ for(const [drug,path,expected] of [['morphine','morph-pain',/2–10 mg[\s\S]*0.2–1 mL/],['txa','txa-adult',/1 g[\s\S]*10 mL/],['bicarbonate','bicarb-hyperkalemia',/80 mEq[\s\S]*80 mL/],['calcium-chloride','cacl-hyperkalemia',/500–1000 mg[\s\S]*5–10 mL/]]){await open('drug-'+drug);await open('path-'+path);assert.equal(await page.locator('#stock-'+drug).count(),0);assert.match(await page.locator(`[data-recipe="${path}-0"] .dose-output`).innerText(),expected);}
+ assert.doesNotMatch(await page.locator('[data-ref-open="drug-txa"]').innerText(),/already diluted/i);assert.doesNotMatch(await page.locator('[data-ref-open="drug-calcium-chloride"]').innerText(),/gluconate/i);
+
  await open('drug-ketamine');await open('path-ket-pain-iv');
  assert.match(await page.locator('[data-recipe="ket-pain-iv-0"] .dose-output').innerText(),/14 mg[\s\S]*0.28 mL/);
  await open('drug-midazolam');await open('path-versed-post-intubation');
- assert.equal(await page.locator('#stock-midazolam').inputValue(),'5');
+ assert.equal(await page.locator('#stock-midazolam').count(),0);
  assert.match(await page.locator('[data-recipe="versed-post-intubation-0"] .dose-output').innerText(),/4 mg[\s\S]*0.8 mL/);
- await page.locator('#stock-midazolam').selectOption('custom');
- await page.locator('#custom-midazolam').pressSequentially('10');
- assert.equal(await page.locator('#custom-midazolam').inputValue(),'10');
- assert.match(await page.locator('[data-recipe="versed-post-intubation-0"] .dose-output').innerText(),/4 mg[\s\S]*0.4 mL/);
- await page.locator('#stock-midazolam').selectOption('5');
  await page.locator('#reference-protocol').selectOption('T715');
  assert.equal(await page.locator('.drug-card').count(),4);
  assert.equal(await page.locator('.protocol-path').count(),4);
@@ -50,15 +55,14 @@ try{
  assert.match(await page.locator('.mixing-guide').innerText(),/0.1 mg\/mL/);
  await page.screenshot({path:'/Users/Shared/EMS Checklist/tmp/push-epi-desktop.png',fullPage:true});
  await page.locator('#reference-search').fill('lidocaine');await open('drug-lidocaine');await open('path-lido-io-adult');
- assert.match(await page.locator('[data-recipe="lido-io-adult-0"] .dose-output').innerText(),/requires 20 mg\/mL/);
- await page.locator('#stock-lidocaine').selectOption('20');
+ assert.equal(await page.locator('#stock-lidocaine').count(),0);
  assert.match(await page.locator('[data-recipe="lido-io-adult-0"] .dose-output').innerText(),/20–40 mg[\s\S]*1–2 mL/);
  await page.locator('#reference-search').fill('versed');await page.locator('#ref-age').fill('5');await page.locator('#ref-weight').fill('13');await open('drug-midazolam');await open('path-versed-seizure-ped');
  assert.equal(await page.locator('[data-recipe="versed-seizure-ped-0"] .dose-output').innerText(),'N/A');
  await page.locator('#ref-table').selectOption('3');
  assert.match(await page.locator('[data-recipe="versed-seizure-ped-0"] .dose-output').innerText(),/5 mg[\s\S]*1 mL/);
  await page.reload();assert.equal(await page.locator('#ref-weight').inputValue(),'13');
- await open('drug-midazolam');assert.equal(await page.locator('#stock-midazolam').inputValue(),'5');
+ await open('drug-midazolam');assert.equal(await page.locator('#stock-midazolam').count(),0);
  await page.locator('.nav-item[data-page="calculators"]').click();
  await page.locator('#convert-value').fill('220.46226218487757');
  assert.match(await page.locator('.calculator').first().locator('.utility-result').innerText(),/100 kg/);
@@ -86,7 +90,8 @@ try{
  }
  await page.locator('[data-action="new"]').click();await page.locator('[data-action="confirm-new"]').click();
  await page.goto('http://127.0.0.1:4173/#calculators');assert.equal(await page.locator('#ref-weight').inputValue(),'');assert.equal(await page.locator('#infusion-dose').inputValue(),'');
- await page.goto('http://127.0.0.1:4173/#medications');await open('drug-midazolam');assert.equal(await page.locator('#stock-midazolam').inputValue(),'5');
+ await page.goto('http://127.0.0.1:4173/#medications');await open('drug-midazolam');assert.equal(await page.locator('#stock-midazolam').count(),0);await open('drug-magnesium');assert.equal(await page.locator('#stock-magnesium').inputValue(),'');
+ await page.locator('#ref-age').fill('40');await open('path-mag-asthma');assert.match(await page.locator('[data-recipe="mag-asthma-0"] .dose-output').innerText(),/Confirm concentration/);
  await page.locator('#reference-search').fill('');
  for(const card of await page.locator('.drug-card').all()){if(await card.getAttribute('open')!==null)await card.locator(':scope > summary').click();}
  await page.setViewportSize({width:1440,height:1100});
