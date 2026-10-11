@@ -150,3 +150,38 @@
 .pain-table td small{margin-top:3px;color:inherit;font-size:12px}
 .trauma-pain p.pain-administration{color:#344d68;font-size:13px;line-height:1.6}
 @media(max-width:640px){.march-section h2{font-size:16px}.burn-priorities li{padding:13px 12px;font-size:14px;gap:10px}.trauma-pain{padding:16px}.pain-table th,.pain-table td{padding:12px 7px}.pain-table tbody th{font-size:12px}.pain-table td b{font-size:20px}.pain-table td small{font-size:11px}.pain-stock span{font-size:12px}}
+
+/* Department crest and shared checklist priority palette. */
+.crest{display:block;position:relative;overflow:hidden;padding:0;width:68px;height:68px;flex:0 0 68px;border-radius:13px;border:1px solid #74786f;background:#343735}
+.crest img{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:125%;height:125%;max-width:none;object-fit:cover}
+.brand{padding:0;gap:10px;font-size:15px;letter-spacing:1px;margin-bottom:28px}
+.brand>span:not(.crest){min-width:0;white-space:nowrap}
+.brand span span{letter-spacing:1.5px}
+.edition .crest{width:52px;height:52px;flex-basis:52px;border-radius:10px}
+[data-priority="red"]{--priority:#a52a35;--priority-tint:#fff0f1}
+[data-priority="blue"]{--priority:#235da2;--priority-tint:#edf5ff}
+[data-priority="teal"]{--priority:#176d61;--priority-tint:#ebf8f3}
+[data-priority="purple"]{--priority:#75469a;--priority-tint:#f6efff}
+[data-priority="orange"]{--priority:#9b4b11;--priority-tint:#fff4e7}
+.priority-section{border-left:5px solid var(--priority)}
+.priority-section h2{background:var(--priority-tint);color:var(--priority);font-size:17px;border-bottom:1px solid color-mix(in srgb,var(--priority) 18%,white)}
+.priority-section h2>span{color:var(--priority);border:1px solid currentColor;border-radius:5px;padding:5px;font-size:11px}
+.priority-panel{border-left:5px solid var(--priority)}
+.priority-panel>.section-top,.priority-panel>h2{background:var(--priority-tint);color:var(--priority);padding:15px 17px;margin:-22px -22px 20px -22px;border-bottom:1px solid color-mix(in srgb,var(--priority) 18%,white)}
+.priority-panel .section-top h2,.priority-panel .section-top h2>span{color:var(--priority)}
+.post-check[data-priority]{border-left:4px solid var(--priority);background:var(--priority-tint)}
+.post-check[data-priority] b{color:var(--priority)}
+.post-check[data-priority] input{accent-color:var(--priority)}
+.post-check[data-priority].is-done{box-shadow:inset 0 0 0 1px var(--priority)}
+.supply-group[data-priority]{border-left:4px solid var(--priority)}
+.supply-group[data-priority]>summary{background:var(--priority-tint);color:var(--priority)}
+.supply-group[data-priority] .supply-category-icon{background:white;color:var(--priority)}
+.ketamine-panel{border-color:#c5ded0;border-left-color:#28774d}
+.ketamine-panel>summary{background:#ecf8ef}
+.ketamine-panel .burns-icon{border-color:#b8dac5;background:#daf0e1;color:#236b43}
+.ketamine-panel summary b,.ketamine-panel .burns-expand{color:#236b43}
+.ketamine-panel summary small{color:#3d7055}
+.ketamine-panel[open]>summary{border-bottom-color:#c5ded0}
+.ketamine-panel .trauma-pain{margin:0;border:0}
+.ketamine-panel .pain-stock{background:#ecf8ef;color:#236b43}
+@media(max-width:640px){.brand{font-size:16px;margin-bottom:18px}.crest{width:62px;height:62px;flex-basis:62px}.priority-section h2{font-size:16px}.priority-panel>.section-top,.priority-panel>h2{margin:-20px -20px 20px;padding:16px}.post-closeout.priority-panel>.section-top{margin:-18px -18px 18px}.ketamine-panel .trauma-pain{padding:16px}}

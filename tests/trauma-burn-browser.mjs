@@ -9,6 +9,8 @@ try{
  const expected=['Control bleeding','Check and control airway','Assess chest, ventilation, oxygenation','Treat life-threatening chest injuries with decompression, chest seals','Strip clothes','Full body sweep including armpits and back','Check blood thinners and antiplatelets','Assess head / neck injury and pupils','Turn on the heat and remove wet clothing','Remove constricting jewelry'];
  assert.deepEqual(await page.locator('.check-copy>span').allTextContents(),expected);
  assert.equal(await page.locator('.check-row').count(),10);
+ assert.equal(await page.locator('.ketamine-panel').getAttribute('open'),null);
+ await page.locator('.ketamine-panel>summary').click();
  assert.equal(await page.locator('.protocol-links a[href$="#page=142"]').count(),1);
  assert.equal(await page.locator('.trauma-pain a[href$="#page=143"]').count(),1);
  assert.match(await page.locator('.pain-stock').innerText(),/500 mg \/ 10 mL/);
@@ -41,9 +43,9 @@ try{
  await page.locator('#shock-sbp').fill('0');assert.equal(await page.locator('.shock-result strong').innerText(),'—');
  await page.locator('#shock-sbp').fill('100');
  await page.locator('.nav-item[data-page="trauma"]').click();
- assert.equal(await page.locator('.burns-panel').getAttribute('open'),null);
- await page.locator('.burns-panel>summary').click();
- assert.equal(await page.locator('.burns-panel').getAttribute('open'),'');
+ assert.equal(await page.locator('.burns-panel:not(.ketamine-panel)').getAttribute('open'),null);
+ await page.locator('.burns-panel:not(.ketamine-panel)>summary').click();
+ assert.equal(await page.locator('.burns-panel:not(.ketamine-panel)').getAttribute('open'),'');
  assert.deepEqual(await page.locator('.burn-priorities li').allTextContents(),[
   'Protect the airway; assess smoke inhalation and respiratory distress.',
   'Stop the burning process; remove affected clothing and constricting jewelry.',
@@ -51,23 +53,23 @@ try{
   'Consider CO / cyanide exposure.','Provide pain care.'
  ]);
  assert.equal(await page.locator('.burn-priorities li').evaluateAll(els=>new Set(els.map(el=>getComputedStyle(el).color)).size),5);
- for(const phrase of ['Assess associated trauma','transport to an appropriate facility and notify it','Time starts at the burn injury.','Enter a positive weight','Each percentage covers the whole listed region'])assert.equal((await page.locator('.burns-content').innerText()).includes(phrase),false);
- assert.equal(await page.locator('.burns-panel a[href$="#page=139"]').count(),1);
+ for(const phrase of ['Assess associated trauma','transport to an appropriate facility and notify it','Time starts at the burn injury.','Enter a positive weight','Each percentage covers the whole listed region'])assert.equal((await page.locator('.burns-content:not(.trauma-pain)').innerText()).includes(phrase),false);
+ assert.equal(await page.locator('.burns-panel:not(.ketamine-panel) a[href$="#page=139"]').count(),1);
  assert.deepEqual(await page.locator('.burn-table tbody tr').nth(4).locator('td').allTextContents(),['Each leg','18%','14%']);
  assert.deepEqual(await page.locator('.burn-table tbody tr').nth(5).locator('td').allTextContents(),['Genitals / perineum','1%','Not listed']);
  await page.locator('#burn-weight').fill('70');await page.locator('#burn-tbsa').fill('20');
  assert.deepEqual(await page.locator('.parkland-result strong').allTextContents(),['5,600 mL','2,800 mL','2,800 mL']);
- await page.reload();assert.equal(await page.locator('.burns-panel').getAttribute('open'),'');
+ await page.reload();assert.equal(await page.locator('.burns-panel:not(.ketamine-panel)').getAttribute('open'),'');
  assert.equal(await page.locator('#burn-weight').inputValue(),'70');
  await page.locator('#burn-tbsa').fill('101');assert.equal(await page.locator('.parkland-result strong').count(),0);
  await page.locator('#burn-tbsa').fill('0');assert.equal(await page.locator('.parkland-result strong').count(),0);
  await page.locator('#burn-tbsa').fill('20');await page.locator('#burn-unit').selectOption('lb');await page.locator('#burn-weight').fill('154.32358');
  assert.deepEqual(await page.locator('.parkland-result strong').allTextContents(),['5,600 mL','2,800 mL','2,800 mL']);
  await page.screenshot({path:'/Users/Shared/EMS Checklist/tmp/trauma-march-desktop.png',fullPage:true});
- await page.locator('.burns-panel').screenshot({path:'/Users/Shared/EMS Checklist/tmp/burns-desktop.png'});
+ await page.locator('.burns-panel:not(.ketamine-panel)').screenshot({path:'/Users/Shared/EMS Checklist/tmp/burns-desktop.png'});
  await page.setViewportSize({width:390,height:844});
  assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);
- await page.locator('.burns-panel').screenshot({path:'/Users/Shared/EMS Checklist/tmp/burns-mobile.png'});
+ await page.locator('.burns-panel:not(.ketamine-panel)').screenshot({path:'/Users/Shared/EMS Checklist/tmp/burns-mobile.png'});
  await page.locator('.trauma-pain').screenshot({path:'/Users/Shared/EMS Checklist/tmp/ketamine-pain-mobile.png'});
  await page.locator('.march-section[data-march="c"]').screenshot({path:'/Users/Shared/EMS Checklist/tmp/march-c-mobile.png'});
  await page.locator('.trauma-events').screenshot({path:'/Users/Shared/EMS Checklist/tmp/trauma-events-mobile.png'});
@@ -87,8 +89,8 @@ try{
  await page.goto('http://127.0.0.1:4173/#trauma');
  assert.equal(await alert.isDisabled(),false);assert.equal(await txa.isDisabled(),false);
  assert.equal(await page.locator('#shock-hr').inputValue(),'');assert.equal(await page.locator('.shock-result strong').innerText(),'—');
- assert.equal(await page.locator('.burns-panel').getAttribute('open'),null);
- await page.locator('.burns-panel>summary').click();assert.equal(await page.locator('#burn-weight').inputValue(),'');
+ assert.equal(await page.locator('.burns-panel:not(.ketamine-panel)').getAttribute('open'),null);
+ await page.locator('.burns-panel:not(.ketamine-panel)>summary').click();assert.equal(await page.locator('#burn-weight').inputValue(),'');
  // Old positional trauma checks must not check newly worded tasks.
  await page.evaluate(()=>sessionStorage.setItem('wfd-encounter-v1',JSON.stringify({checks:{'trauma-0-0':true,'trauma-3-0':true},fields:{'post-service':true}})));
  await page.reload();assert.equal(await page.locator('.checklist-progress b').innerText(),'0 of 10 complete');
