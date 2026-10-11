@@ -1,4 +1,4 @@
-import {traumaActions,shockPanel,burnsPanel,bindClinicalTools} from './clinical-tools.js';
+import {traumaActions,shockPanel,burnsPanel,painPanel,bindClinicalTools} from './clinical-tools.js';
 import {postCall,bindPostCall} from './post-call.js';
 import {medicationReference,calculators,referenceUI,setConcentration} from './medication-ui.js';
 import {kgFrom} from './calculations.js';
@@ -53,10 +53,10 @@ function detail(m){return `<button class="back" data-page="home">← All checkli
     ${m.id==='sedation'?'<div class="callout purple"><b>Use the indication-specific protocol.</b>Confirm required medical-control orders.</div>':''}
     ${m.id==='ams'?amsFields():''}
     <div class="checklist-progress"><b>${completed(m)} of ${count(m)} complete</b><span>${Math.round(completed(m)/count(m)*100)}%</span><div class="thin-progress"><span style="width:${completed(m)/count(m)*100}%"></span></div></div>
-    ${m.sections.map((section,si)=>`<section class="check-section"><h2><span>${String(si+1).padStart(2,'0')}</span>${section[0]}</h2>${section[1].map((item,ii)=>checklistRow(m,item,si,ii)).join('')}</section>`).join('')}
+    ${m.sections.map((section,si)=>`<section class="check-section${m.id==='trauma'?' march-section':''}" ${m.id==='trauma'?`data-march="${['m','a','r','c','h'][si]}"`:''}><h2><span>${String(si+1).padStart(2,'0')}</span>${section[0]}</h2>${section[1].map((item,ii)=>checklistRow(m,item,si,ii)).join('')}</section>`).join('')}
     ${m.id==='ams'?amsCauses():''}
     ${m.id==='sick'?`<section class="panel"><h2>Reversible causes</h2><div class="cause-tags">${['Hypoxia','Hypovolemia','Acidosis','Hypo- / hyperkalemia','Hypothermia','Tension pneumothorax','Tamponade','Thrombosis','Toxins','Trauma'].map(c=>`<span>${c}</span>`).join('')}</div></section>`:''}
-    ${m.id==='trauma'?burnsPanel(state.fields,source,icon):''}
+    ${m.id==='trauma'?painPanel(source)+burnsPanel(state.fields,source,icon):''}
     ${['trauma','sick'].includes(m.id)?shockPanel(state.fields,source,icon):''}
   </div><aside class="right-rail">${timerPanel()}<section class="panel"><h2>Related tools</h2>${(m.id==='ams'?['sick','trauma']:m.id==='intubation'?['sedation','sick']:['intubation','ams']).map(id=>{const r=modules.find(x=>x.id===id);return `<button class="tool-link" data-page="${id}">${icon(r.icon)}${r.short}${icon('arrow')}</button>`}).join('')}<button class="tool-link" data-page="medications">${icon('syringe')}Unusual drugs${icon('arrow')}</button><button class="tool-link" data-page="calculators">${icon('grid')}Dose & drip calculators${icon('arrow')}</button><button class="tool-link" data-page="pediatric">${icon('child')}Pediatric reference${icon('arrow')}</button></section></aside></div>`;}
 function field(id,label,type='text',placeholder=''){return `<label class="field">${label}<input type="${type}" data-field="${id}" value="${esc(state.fields[id])}" placeholder="${placeholder}"></label>`;}

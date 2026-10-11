@@ -49,7 +49,7 @@ export const modules=[
     refs:[['AMS · SB201',43],['Stroke · M414',117]],
     sections:[['Immediate assessment',['Support airway / breathing','Check blood glucose','Check pupils; stroke assessment as indicated','Temperature, ETCO₂, and ECG as indicated','Check injuries; compare with baseline']]]},
   {id:'trauma',title:'Trauma',short:'Trauma',icon:'shield',color:'orange',tag:'ASSESSMENT',source:'SB206 · S500 · S501 · S506',page:56,
-    refs:[['Trauma assessment · SB206',56],['Hemorrhagic shock · S500',135],['Head / spine · S501',137]],
+    refs:[['Trauma assessment · SB206',56],['Hemorrhagic shock · S500',135],['Head / spine · S501',137],['Pain control · S505',142]],
     sections:[
       ['M · Bleeding',[{id:'bleeding',text:'Control bleeding'}]],
       ['A · Airway',[{id:'airway',text:'Check and control airway'}]],
