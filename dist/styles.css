@@ -324,3 +324,30 @@ tr.unavailable .na{color:#7c8794}
 .arrest-priority-note p{font-size:13px;margin:6px 0}
 .arrest-priority-note b{display:block;font-size:15px;font-weight:800}
 @media(max-width:640px){.arrest-priority-note{margin:14px;padding:14px}.arrest-priority-note strong,.arrest-priority-note b{font-size:14px}}
+/* CPR cycle and distinct audible arrest reminders. */
+.pulse-panel{background:#fff;border:2px solid #174d89;border-radius:9px;padding:20px;margin-bottom:20px}
+.pulse-heading{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:18px}
+.arrest-tools .pulse-heading h2{display:flex;align-items:center;gap:9px;background:transparent;border:0;padding:0;font-size:18px;color:#174d89}
+.pulse-heading h2 svg{width:21px;height:21px;flex-shrink:0}
+.pulse-body{display:flex;align-items:center;gap:26px}
+.pulse-digits{font:800 52px Manrope,monospace;font-variant-numeric:tabular-nums;letter-spacing:1px;line-height:1.2;color:#174d89}
+.pulse-status{font-size:12px;color:#315674;margin-top:5px;min-height:20px;line-height:1.5}
+.pulse-controls{display:flex;flex:1;gap:10px;flex-wrap:wrap}
+.pulse-start{background:#174d89;color:#fff;border-color:#174d89;min-height:48px;font-size:14px}
+.pulse-precharge{display:grid;gap:7px;margin-top:18px;background:#fff4d9;border-left:5px solid #aa6700;padding:14px;border-radius:5px;color:#754600;line-height:1.5}
+.pulse-precharge strong{font-size:14px;font-weight:800}
+.pulse-precharge span{font-size:12px}
+.pulse-note,.timer-audio-note{font-size:11px;color:#655968;margin-top:14px;line-height:1.5}
+.pulse-panel.warning{background:#fffaee;border-color:#aa6700}
+.pulse-panel.warning .pulse-status{color:#754600;font-weight:800}
+.pulse-panel.warning .pulse-precharge{background:#ffe4a3;border-left-width:7px}
+.pulse-panel.due{background:#edf5ff}
+.pulse-panel.due .pulse-status{font-weight:800;color:#174d89}
+.epi-panel.warning{background:#fff4e6;border-color:#aa6700}
+.epi-panel.warning .epi-status{color:#754600;font-weight:800}
+.timer-sounds{background:#fff;border:1px solid #ccdbea;border-radius:8px;padding:16px;margin-bottom:22px}
+.timer-sounds b{font-size:14px;color:#183d65}
+.timer-sound-status{font-size:12px;line-height:1.5;color:#52647b;margin:6px 0 12px}
+.timer-sound-controls{display:flex;gap:8px;flex-wrap:wrap}
+.arrest-priority-note .precharge-emphasis{margin-top:14px;padding-top:12px;border-top:1px solid #d5a5ab;font-size:16px}
+@media(max-width:640px){.pulse-panel{padding:16px}.pulse-heading{margin-bottom:15px}.pulse-heading .source{width:100%;font-size:11px}.pulse-body{align-items:flex-start;flex-direction:column;gap:14px}.pulse-digits{font-size:54px}.pulse-controls{width:100%}.pulse-start{flex:1}.pulse-precharge strong{font-size:13px}.timer-sounds{padding:14px}.timer-sound-controls .button{flex:1}.arrest-priority-note .precharge-emphasis{font-size:14px}}

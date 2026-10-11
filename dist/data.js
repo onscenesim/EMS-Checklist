@@ -28,7 +28,8 @@ export const modules=[
         {id:'arrest-lucas',text:'Apply LUCAS if indicated; minimize CPR interruptions'},
         {id:'arrest-rhythm',text:'Identify rhythm; follow the arrest protocol'},
         {id:'arrest-causes',text:'Treat reversible causes'},
-        {id:'arrest-recheck',text:'Recheck rhythm / pulse at protocol intervals'},
+        {id:'arrest-precharge',text:'PRE-CHARGE DEFIB before the rhythm / pulse check',note:'Keep CPR going while charging. Shock only for a shockable rhythm after everyone is clear; disarm if no shock is indicated.',protocol:['CHARGE DURING CPR · SB204',51]},
+        {id:'arrest-recheck',text:'Recheck rhythm / pulse every 2 minutes'},
         {id:'arrest-rosc',text:'After ROSC, follow C307',protocol:['POST-ROSC CARE · C307',83]}
       ]]
     ]},
@@ -50,7 +51,8 @@ export const modules=[
         {id:'access-meds',text:'Establish IV / IO; prepare rhythm-specific medications'},
         {id:'lucas-applied',text:'Apply LUCAS if indicated; minimize CPR interruptions'},
         {id:'reversible-causes',text:'Work through reversible causes'},
-        {id:'rhythm-recheck',text:'Recheck rhythm / pulse at protocol intervals'}
+        {id:'defib-precharge',text:'PRE-CHARGE DEFIB before the rhythm / pulse check',note:'Keep CPR going while charging. Confirm a shockable rhythm and clear everyone before a shock; disarm if no shock is indicated.',protocol:['CHARGE DURING CPR · SB204',51]},
+        {id:'rhythm-recheck',text:'Recheck rhythm / pulse every 2 minutes'}
       ]],
       ['Prepare for possible ROSC',[
         {id:'rosc-movement',text:'Plan movement / extrication now',note:'Have the cot and movement equipment ready.'},
