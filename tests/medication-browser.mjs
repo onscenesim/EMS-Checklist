@@ -25,7 +25,7 @@ try{
   assert.equal(await page.locator(`[data-ref-open="drug-${drug}"] .stock-control`).count(),0);
  }
  await page.locator('#ref-age').fill('');await open('drug-magnesium');await open('path-mag-asthma');
- assert.match(await page.locator('[data-recipe="mag-asthma-0"] .dose-output').innerText(),/Enter patient age in years into the calculator up top.*ages 16 and older/);
+ assert.match(await page.locator('[data-recipe="mag-asthma-0"] .dose-output').innerText(),/Enter patient age in years into the calculator up top.*your patient/);
  await page.locator('#ref-age').fill('40');await page.locator('#ref-weight').fill('80');
 
  assert.match(await page.locator('[data-recipe="mag-asthma-0"] .dose-output').innerText(),/2 g[\s\S]*4 mL/);

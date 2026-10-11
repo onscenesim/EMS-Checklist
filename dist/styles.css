@@ -509,3 +509,29 @@ tr.unavailable .na{color:#7c8794}
 
 .sedation-dose-output strong>span{white-space:nowrap}
 @media(max-width:640px){.sedation-dose-output.long-values{grid-template-columns:1fr}.sedation-dose-output.long-values strong{font-size:28px}}
+.ketamine-height-guide{border:2px solid #096e63;border-radius:9px;overflow:hidden}
+.ketamine-height-heading{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px;background:#096e63;padding:14px 16px;color:#fff}
+.ketamine-height-heading b{font-size:19px;line-height:1.4}.ketamine-height-heading>span{font-size:13px;font-weight:800}
+.ketamine-height-table{width:100%;border-collapse:collapse;table-layout:fixed}
+.ketamine-height-table caption{padding:12px 15px;text-align:left;background:#e6f5f1;color:#096e63;font-size:13px;font-weight:800}
+.ketamine-height-table thead th{padding:12px 15px;text-align:left;font-size:11px;font-weight:800;color:#41665e;border-bottom:1px solid #c0ddd3}
+.ketamine-height-table thead small{display:block;font-size:10px;margin-top:4px}
+.ketamine-height-table th:nth-child(1){width:34%}.ketamine-height-table th:nth-child(2){width:28%}.ketamine-height-table th:nth-child(3){width:38%}
+.ketamine-height-table tbody tr:nth-child(even){background:#f1f9f6}
+.ketamine-height-table tbody th,.ketamine-height-table td{padding:15px;border-bottom:1px solid #c0ddd3;text-align:left;vertical-align:middle}
+.ketamine-height-table tbody th{font-size:22px;color:#274e43;line-height:1.4}
+.ketamine-height-table tbody th span{display:block}.ketamine-height-table tbody th span+span{font-size:16px}
+.ketamine-height-table td b{font:800 29px Manrope,system-ui,sans-serif;color:#096e63;white-space:nowrap}
+.ketamine-height-table td b small{font-size:14px;margin-left:5px}
+.ketamine-height-table .ketamine-height-volume{background:#e6f5f1}.ketamine-height-volume b{font-size:36px!important}
+.ketamine-split{display:block;font-size:9px;font-weight:800;color:#85430a;margin-top:7px;line-height:1.5}
+.ketamine-height-split{padding:14px 15px;background:#fff2df;color:#85430a;font-size:13px;line-height:1.6}
+.ketamine-height-gap{padding:12px 15px 0;color:#526277;font-size:11px;line-height:1.6}
+.ketamine-height-source{padding:12px 15px}.ketamine-height-source .source{display:inline-flex;font-size:11px}
+.ketamine-height-age{padding:16px;border-left:4px solid #b3343f;background:#fff0f1;color:#982834;font-size:15px;font-weight:700;line-height:1.6}
+.ketamine-height-age .source{display:inline-flex;margin-top:10px}
+@media(max-width:640px){.ketamine-height-heading{padding:13px 10px}.ketamine-height-heading b{font-size:17px}.ketamine-height-heading>span{font-size:12px}.ketamine-height-table caption{padding:11px 10px;font-size:12px}.ketamine-height-table thead th{padding:10px 7px;font-size:10px}.ketamine-height-table tbody th,.ketamine-height-table td{padding:13px 7px}.ketamine-height-table tbody th{font-size:17px}.ketamine-height-table tbody th span+span{font-size:13px}.ketamine-height-table td b{font-size:23px}.ketamine-height-table td b small{font-size:12px;margin-left:3px}.ketamine-height-volume b{font-size:28px!important}.ketamine-split{font-size:8px}.ketamine-height-split{padding:13px 10px;font-size:12px}}
+
+.ketamine-height-table tbody th>small{display:block;font-size:12px;line-height:1.5;color:#526e65}
+.sedation-quick .reference-fields{grid-template-columns:repeat(2,minmax(0,1fr))}
+@media(max-width:640px){.sedation-quick .reference-fields{grid-template-columns:1fr}}

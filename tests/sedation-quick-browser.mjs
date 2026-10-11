@@ -7,12 +7,14 @@ try{
  const dose=id=>page.locator(`[data-recipe="${id}"]`);
  assert.equal(await page.locator('.sedation-path').count(),3);
  assert.equal(await page.locator('.sedation-protocol-details[open]').count(),0);
- assert.match(await dose('versed-restraint-0').innerText(),/Enter patient age in years into the calculator up top to confirm this dose applies to ages 16 and older\./);
+ assert.deepEqual(await page.locator('.ketamine-height-table tbody tr td:nth-child(2) b').allTextContents(),['150mg','220mg','290mg','365mg','425mg']);assert.deepEqual(await page.locator('.ketamine-height-volume b').allTextContents(),['3mL','4.4mL','5.8mL','7.3mL','8.5mL']);assert.equal(await page.locator('.ketamine-split').count(),4);assert.equal(await page.locator('#ref-ideal').count(),0);
+ for(const width of [1440,390,320]){await page.setViewportSize({width,height:1100});assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);if(width===390)await page.locator('[data-sedation-path="ket-restraint"]').screenshot({path:'/Users/Shared/EMS Checklist/tmp/ketamine-height-mobile.png'});}
+ assert.match(await dose('versed-restraint-0').innerText(),/Enter patient age in years into the calculator up top to confirm this dose applies to your patient\./);
  assert.equal(await dose('versed-restraint-0').locator('.sedation-give').count(),0);
- await page.locator('#ref-age').fill('30');await page.locator('#ref-weight').fill('70');await page.locator('#ref-ideal').fill('60');await page.locator('#stock-midazolam').selectOption('5');
- assert.match(await dose('ket-restraint-0').innerText(),/240 mg[\s\S]*4.8 mL/);
+ await page.locator('#ref-age').fill('30');await page.locator('#ref-weight').fill('70');await page.locator('#stock-midazolam').selectOption('5');
+ assert.equal(await page.locator('[data-recipe="ket-restraint-0"]').count(),0);assert.equal(await page.locator('.ketamine-height-table tbody tr').count(),5);
  assert.match(await dose('versed-restraint-0').innerText(),/5 mg[\s\S]*1 mL/);assert.match(await dose('versed-restraint-1').innerText(),/10 mg[\s\S]*2 mL/);
- assert.equal(await dose('ket-restraint-0').locator('[data-route="IM"]').innerText(),'IM');
+ assert.match(await page.locator('.ketamine-height-heading').innerText(),/IM once/);
  assert.match(await page.locator('[data-sedation-path="versed-restraint"] .sedation-instructions').innerText(),/Repeat only with online medical control/);
  await page.locator('[data-sedation-group="intubated"]').click();assert.equal(await page.locator('.sedation-path').count(),2);
  assert.match(await dose('ket-post-intubation-0').innerText(),/140 mg[\s\S]*2.8 mL/);assert.match(await dose('ket-post-intubation-1').innerText(),/70 mg[\s\S]*1.4 mL/);

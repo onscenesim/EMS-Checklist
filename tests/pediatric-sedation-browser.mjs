@@ -27,8 +27,8 @@ try{
  await page.setViewportSize({width:390,height:844});assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);await page.screenshot({path:'/Users/Shared/EMS Checklist/tmp/pediatric-critical-mobile.png',fullPage:true});
  await page.setViewportSize({width:320,height:720});assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);
  await page.goto('http://127.0.0.1:4173/#sedation');assert.equal(await page.locator('.protocol-links a[href$="#page=173"]').count(),1);
- await page.locator('#ref-age').fill('30');await page.locator('#ref-weight').fill('70');await page.locator('#ref-ideal').fill('60');
- await page.locator('[data-ref-open="sedation-ketamine"]>summary').click();assert.match(await page.locator('[data-recipe="ket-restraint-0"]').innerText(),/240 mg[\s\S]*4.8 mL/);assert.match(await page.locator('[data-recipe="ket-post-intubation-0"]').innerText(),/140 mg[\s\S]*2.8 mL/);
+ await page.locator('#ref-age').fill('30');await page.locator('#ref-weight').fill('70');
+ await page.locator('[data-ref-open="sedation-ketamine"]>summary').click();assert.equal(await page.locator('.ketamine-height-table tbody tr').count(),5);assert.match(await page.locator('[data-recipe="ket-post-intubation-0"]').innerText(),/140 mg[\s\S]*2.8 mL/);
  await page.locator('[data-ref-open="sedation-midazolam"]>summary').click();await page.locator('#stock-midazolam').selectOption('5');assert.match(await page.locator('[data-recipe="versed-post-intubation-0"]').innerText(),/3.5 mg[\s\S]*0.7 mL/);
  await page.locator('#ref-age').fill('12');await page.locator('#ref-weight').fill('40');assert.match(await page.locator('[data-recipe="versed-restraint-ped-0"]').innerText(),/4 mg[\s\S]*0.8 mL/);assert.match(await page.locator('[data-recipe="versed-restraint-ped-1"]').innerText(),/8 mg[\s\S]*1.6 mL/);
  await page.reload();assert.equal(await page.locator('[data-ref-open="sedation-midazolam"]').getAttribute('open'),'');assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);
