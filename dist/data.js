@@ -82,7 +82,7 @@ row('Dextrose 50%','IV/IO','0.5 g/mL',[null,null,null,7.5,10,12.5,15,20,25],[nul
 row('Diphenhydramine','IM/IV','50 mg/mL',[null,null,10,15,20,25,30,40,50],[null,null,.2,.3,.4,.5,.6,.8,1]),
 row('Epinephrine · cardiac arrest','IV/IO','0.1 mg/mL',[.03,.05,.1,.15,.2,.25,.3,.4,.5],[.3,.5,1,1.5,2,2.5,3,4,5],'mg','P601: repeat every 3–5 minutes; maximum 1 mg per IV/IO dose.'),
 row('Epinephrine · anaphylaxis','IM','1 mg/mL',[null,.05,.1,.15,.2,.25,.3,.3,.3],[null,.05,.1,.15,.2,.25,.3,.3,.3]),
-row('Epinephrine · push dose','IV','10 mcg/mL',[3,5,10,15,20,20,20,20,20],[.3,.5,1,1.5,2,2,2,2,2],'mcg'),
+{...row('Epinephrine · push dose','IV','10 mcg/mL',[3,5,10,15,20,20,20,20,20],[.3,.5,1,1.5,2,2,2,2,2],'mcg'),perDose:true,dosingRule:'1 mcg/kg · max 20 mcg per dose'},
 row('Fentanyl','IV/IO/IM/SC','50 mcg/mL',[null,5,10,15,20,25,30,40,50],[null,.1,.2,.3,.4,.5,.6,.8,1],'mcg'),
 row('Fentanyl','IN','50 mcg/mL',[null,10,20,30,40,50,60,80,100],[null,.2,.4,.6,.8,1,1.2,1.6,2],'mcg'),
 row('Glucagon','IM','1 unit/mL · table label',[.5,.5,.5,.5,1,1,1,1,1],[.5,.5,.5,.5,1,1,1,1,1],'mg'),
