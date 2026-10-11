@@ -3,11 +3,12 @@ import assert from 'node:assert/strict';
 import {shockProtocols,shockPlan,adultShockSedation} from '../dist/defib-guide.js';
 test('adult shock energy paths preserve protocol distinctions and device-specific C300 maximum',()=>{
  assert.equal(shockPlan({}),null);assert.equal(shockPlan({'shock-protocol':'bad'}),null);
- const vf=shockPlan({'shock-protocol':'C300'});assert.equal(vf.initial,'MAX');assert.deepEqual(vf.steps,['MAX','MAX']);assert.equal(vf.mode,'UNSYNCHRONIZED');
- const wide=shockPlan({'shock-protocol':'C303'});assert.equal(wide.initial,'100');assert.deepEqual(wide.steps,['200','300','360']);assert.match(wide.syncNote,/impossible/);
- const regular=shockPlan({'shock-protocol':'C306'});assert.equal(regular.initial,'50–100');assert.deepEqual(regular.steps,['100','200','300','360']);assert.match(regular.note,/Skip settings already reached/);
- const irregular=shockPlan({'shock-protocol':'C306','shock-narrow-rhythm':'irregular-biphasic'});assert.equal(irregular.initial,'120–200');assert.deepEqual(irregular.steps,['200','300','360']);
- const monophasic=shockPlan({'shock-protocol':'C306','shock-narrow-rhythm':'irregular-monophasic'});assert.equal(monophasic.initial,'200');assert.deepEqual(monophasic.steps,['300','360']);
+ const vf=shockPlan({'shock-protocol':'C300'});assert.equal(vf.initial,'200');assert.deepEqual(vf.steps,['200','200']);assert.equal(vf.mode,'UNSYNCHRONIZED');
+ const wide=shockPlan({'shock-protocol':'C303'});assert.equal(wide.initial,'100');assert.deepEqual(wide.steps,['200']);assert.match(wide.syncNote,/impossible/);
+ const regular=shockPlan({'shock-protocol':'C306'});assert.equal(regular.initial,'50–100');assert.deepEqual(regular.steps,['100','200']);assert.match(regular.note,/Skip settings already reached/);
+ const irregular=shockPlan({'shock-protocol':'C306','shock-narrow-rhythm':'irregular-biphasic'});assert.equal(irregular.initial,'120–200');assert.deepEqual(irregular.steps,['200']);
+ const legacy=shockPlan({'shock-protocol':'C306','shock-narrow-rhythm':'irregular-monophasic'});assert.equal(legacy.rhythm,'irregular-biphasic');assert.deepEqual(legacy.steps,['200']);
+ for(const code of ['C300','C303','C306'])for(const rhythm of ['regular','irregular-biphasic','irregular-monophasic']){const plan=shockPlan({'shock-protocol':code,'shock-narrow-rhythm':rhythm});for(const dose of [plan.initial,...plan.steps])for(const value of dose.split('–'))assert.ok(Number(value)<=200,`${code} ${rhythm}: ${dose}`);}
  assert.deepEqual(shockProtocols.map(p=>p.page),[75,79,82]);
 });
 test('sedation is indication-specific, adult-only, and shares the existing medication reference',()=>{

@@ -454,3 +454,9 @@ tr.unavailable .na{color:#7c8794}
 .shock-sedation-link small{display:block;font-size:11px;line-height:1.4;color:#ede1ff;margin-top:5px}
 .sedation-path{scroll-margin-top:18px}
 @media(max-width:640px){.shock-guide-content{padding:15px}.shock-guide h2{flex-wrap:wrap;gap:9px}.shock-guide h2 small{flex-basis:100%;margin-left:0}.shock-protocol-choices{grid-template-columns:1fr;gap:8px}.shock-protocol-choices button{min-height:0;padding:12px 14px}.shock-protocol-choices b{font-size:17px;margin-bottom:4px}.shock-protocol-choices span{font-size:12px}.shock-protocol-choices small{font-size:10px}.shock-energy-sequence{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.shock-energy-step{padding:13px 7px}.shock-energy-step strong{font-size:30px}.shock-energy-step small{font-size:12px}.shock-plan-heading h3{font-size:16px}.shock-sedation{padding:14px}.shock-sedation-link{padding:14px;gap:9px}.shock-sedation-link b{font-size:14px}.shock-dose-note,.shock-sync-note{font-size:11px}}
+
+.shock-device{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px;border:1px solid #bfd3ea;background:#edf5ff;border-radius:7px;padding:13px 15px;margin-bottom:16px;color:#174d89;font-size:13px}
+.shock-device strong{font-size:18px}
+.shock-ceiling-note{padding:12px;border-left:4px solid #96500b;background:#fff3e5;font-size:12px;line-height:1.6;margin-top:14px;color:#794207}
+.shock-dose-source{display:flex;flex-wrap:wrap;gap:8px}
+.zenix-energy-cap{padding:10px 0 14px;color:#96500b;font-size:13px}
