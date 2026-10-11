@@ -48,15 +48,16 @@ export const modules=[
   {id:'ams',title:'Altered mental status',short:'Altered mental status',icon:'brain',color:'teal',tag:'ASSESSMENT',source:'SB201 · M414',page:43,
     refs:[['AMS · SB201',43],['Stroke · M414',117]],
     sections:[['Immediate assessment',['Support airway / breathing','Check blood glucose','Check pupils; stroke assessment as indicated','Temperature, ETCO₂, and ECG as indicated','Check injuries; compare with baseline']]]},
-  {id:'trauma',title:'Trauma',short:'Trauma',icon:'shield',color:'orange',tag:'ASSESSMENT',source:'SB206 · S500 · S501 · S509',page:56,
-    refs:[['Trauma assessment · SB206',56],['Hemorrhagic shock · S500',135],['Head / spine · S501',137],['Traumatic arrest · S509',148]],
+  {id:'trauma',title:'Trauma',short:'Trauma',icon:'shield',color:'orange',tag:'ASSESSMENT',source:'SB206 · S500 · S501 · S506',page:56,
+    refs:[['Trauma assessment · SB206',56],['Hemorrhagic shock · S500',135],['Head / spine · S501',137]],
     sections:[
-      ['M · Massive hemorrhage',['Control life-threatening external bleeding','Recheck bleeding; record tourniquet times']],
-      ['A · Airway',['Check airway; protect spine as indicated']],
-      ['R · Respirations',['Assess chest, ventilation, and oxygenation','Check life-threatening chest injuries per protocol']],
-      ['C · Circulation',['Check perfusion; full body sweep — include armpits and back','Check blood thinners / antiplatelets','Assess head / neck injury and pupils']],
-      ['H · Hypothermia / transport',['Prevent heat loss','Remove constricting jewelry as appropriate','Select trauma destination; notify hospital','Reassess during movement / transport']]
+      ['M · Bleeding',[{id:'bleeding',text:'Control bleeding'}]],
+      ['A · Airway',[{id:'airway',text:'Check and control airway'}]],
+      ['R · Respirations',[{id:'chest-assessment',text:'Assess chest, ventilation, oxygenation'},{id:'chest-treatment',text:'Treat life-threatening chest injuries with decompression, chest seals'}]],
+      ['C · Circulation',[{id:'strip-clothes',text:'Strip clothes'},{id:'body-sweep',text:'Full body sweep including armpits and back'},{id:'blood-thinners',text:'Check blood thinners and antiplatelets'},{id:'head-neck',text:'Assess head / neck injury and pupils'}]],
+      ['H · Heat',[{id:'warmth',text:'Turn on the heat and remove wet clothing'},{id:'jewelry',text:'Remove constricting jewelry'}]]
     ]}
+
 ];
 export const checklistId=(moduleId,sectionIndex,item,itemIndex)=>`${moduleId}-${sectionIndex}-${typeof item==='string'?itemIndex:item.id??itemIndex}`;
 export const causes=[['oxygen','Hypoxia / hypercapnia','Airway, oxygenation, ventilation, capnography'],['glucose','Glucose abnormality','Obtain and document blood glucose'],['stroke','Stroke / neurologic event','Stroke assessment, pupils, last known well'],['seizure','Seizure / postictal state','Witnessed activity, duration, recovery'],['toxic','Medication / toxin / alcohol','Recent doses, exposures, substances'],['cardiac','Cardiac cause / poor perfusion','ECG, blood pressure, rhythm'],['infection','Infection / sepsis','Temperature, suspected source, perfusion'],['trauma','Trauma / head injury','Injury survey, history, anticoagulants'],['metabolic','Other metabolic cause','History, comorbidities, available findings']];

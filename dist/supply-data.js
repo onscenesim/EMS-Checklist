@@ -306,8 +306,6 @@ const durableNames=new Set([
 ]);
 export const supplies=inventory.filter(item=>item.category!=='vehicle'&&!durableNames.has(item.name));
 export const supplyCategories=categories.filter(c=>supplies.some(item=>item.category===c.id)).map(c=>({...c,name:c.id==='power'?'Batteries & LUCAS':c.id==='reference'?'Replacement kits':c.name}));
-const retrievalNames=['LUCAS','Monitor','Drug bag','First-in bag','Pediatric bag','Portable suction','Backboard','Pediatric board','Stairchair','UE scope','IO drill','Spare LUCAS battery'];
-export const equipment=retrievalNames.map(name=>inventory.find(item=>item.name===name));
 export const inventoryLocations=[...new Set(supplies.flatMap(item=>item.locations.map(l=>l.name)))];
 // Common crew terminology, singular/plural forms, and abbreviations.
 const extraAliases=[
