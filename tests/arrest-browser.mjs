@@ -1,0 +1,73 @@
+import {chromium} from '/Users/WorkSchool/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/playwright/index.mjs';
+import assert from 'node:assert/strict';
+const browser=await chromium.launch({headless:true,executablePath:'/Applications/Google Chrome.app/Contents/MacOS/Google Chrome'});
+try{
+ const page=await browser.newPage({viewport:{width:1440,height:1100}}),errors=[];
+ page.on('pageerror',error=>errors.push(error.message));
+ await page.clock.install({time:new Date('2026-10-10T23:30:00-04:00')});
+ await page.goto('http://127.0.0.1:4173/#home');
+ assert.equal(await page.locator('.module-card').count(),7);
+ await page.locator('.module-card[data-page="arrest"]').click();
+ assert.equal(await page.locator('h1').innerText(),'Cardiac arrest');
+ assert.equal(await page.getByText('Take the LUCAS in',{exact:true}).count(),1);
+ assert.equal(await page.getByText('Name the code lead out loud',{exact:true}).count(),1);
+ assert.equal(await page.getByText('Plan post-ROSC sedation doses',{exact:true}).count(),1);
+ assert.equal(await page.locator('.epi-panel').count(),1);
+ assert.equal(await page.locator('.dispatch-digits').innerText(),'30:00');
+ await page.locator('[data-dispatch-timer="start"]').click();
+ const at=await page.evaluate(()=>JSON.parse(sessionStorage.getItem('wfd-encounter-v1')).fields['arrest-dispatch-at']);
+ assert.ok(Number.isFinite(at));
+ assert.equal(await page.locator('[data-dispatch-timer="start"]').isDisabled(),true);
+ assert.equal(await page.locator('.dispatch-record time').getAttribute('datetime'),new Date(at).toISOString());
+ await page.clock.fastForward(61_000);
+ assert.equal(await page.locator('.dispatch-digits').innerText(),'28:59');
+ await page.locator('[data-check="arrest-0-lucas-in"]').check();
+ await page.reload();
+ assert.equal(await page.locator('[data-check="arrest-0-lucas-in"]').isChecked(),true);
+ assert.equal(await page.locator('.dispatch-digits').innerText(),'28:59');
+ await page.locator('.nav-item[data-page="sick"]').click();
+ assert.equal(await page.locator('.cardiac-arrest-box .dispatch-timer').count(),1);
+ assert.equal(await page.locator('.cardiac-arrest-box .epi-panel').count(),1);
+ assert.equal(await page.locator('.dispatch-digits').innerText(),'28:59');
+ assert.equal(await page.locator('[data-check="sick-0-lucas-staged"]').isChecked(),false);
+ await page.locator('[data-check="sick-0-lucas-staged"]').check();
+ await page.locator('[data-action="epi-dose"]').click();
+ await page.locator('.cardiac-arrest-box [data-page="arrest"]').click();
+ assert.equal(await page.locator('[data-check="arrest-0-lucas-in"]').isChecked(),true);
+ assert.equal(await page.locator('.epi-status').innerText(),'Until next dose');
+ await page.clock.fastForward(1_739_000);
+ assert.equal(await page.locator('.dispatch-digits').innerText(),'00:00');
+ assert.equal(await page.locator('.dispatch-status').innerText(),'30 minutes reached');
+ await page.clock.fastForward(60_000);
+ assert.equal(await page.locator('.dispatch-digits').innerText(),'00:00');
+ await page.locator('[data-dispatch-timer="clear"]').click();
+ assert.equal(await page.locator('.dispatch-digits').innerText(),'30:00');
+ assert.equal(await page.locator('.dispatch-record').count(),0);
+ await page.locator('[data-dispatch-timer="start"]').click();
+ await page.locator('[data-action="new"]').click();
+ await page.locator('[data-action="cancel"]').click();
+ assert.equal(await page.locator('[data-dispatch-timer="start"]').isDisabled(),true);
+ await page.locator('[data-action="new"]').click();
+ await page.locator('[data-action="confirm-new"]').click();
+ await page.locator('.module-card[data-page="arrest"]').click();
+ assert.equal(await page.locator('[data-dispatch-timer="start"]').isDisabled(),false);
+ assert.equal(await page.locator('[data-check]:checked').count(),0);
+ assert.equal(await page.locator('.epi-status').innerText(),'Ready after first dose');
+ await page.getByRole('button',{name:'Ketamine / Versed dosing',exact:true}).click();
+ assert.equal(await page.locator('[data-clinical-open="sedation-ketamine"]').count(),1);
+ await page.goto('http://127.0.0.1:4173/#arrest');
+ await page.getByRole('button',{name:'Push-dose epi guide',exact:true}).click();
+ assert.equal(await page.locator('[data-ref-open="drug-push-epi"] .mixing-guide').isVisible(),true);
+ for(const width of [1440,1024,768,390,320]){
+  await page.setViewportSize({width,height:1100});
+  for(const id of ['arrest','sick','home']){
+   await page.goto(`http://127.0.0.1:4173/#${id}`);
+   assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true,`${id}: ${width}px overflow`);
+   if(['arrest','sick'].includes(id))assert.equal(await page.locator('[data-check]').evaluateAll(els=>new Set(els.map(el=>el.dataset.check)).size===els.length),true);
+   await page.evaluate(()=>window.scrollTo(0,0));
+   if((width===1440||width===390)&&id!=='sick')await page.screenshot({path:`/Users/Shared/EMS Checklist/tmp/${id}-standalone-${width}.png`,fullPage:true});
+  }
+ }
+ assert.deepEqual(errors,[]);
+ console.log('Passed: separate arrest entry, preparation reminders, dispatch timestamp/countdown shared with Sick Patient, independent checks, shared epi timer, reload/reset/expiry/clear, guide links, responsive layouts.');
+}finally{await browser.close();}
