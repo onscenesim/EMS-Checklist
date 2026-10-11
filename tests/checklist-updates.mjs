@@ -58,7 +58,7 @@ try{
   assert.equal(await page.getByText('Full body sweep including armpits and back',{exact:true}).count(),1);
   await page.locator('[data-action="new"]').click();
   await page.locator('[data-action="confirm-new"]').click();
-  assert.equal(await page.locator('.encounter-stat strong').innerText(),'00');
+  assert.equal(await page.evaluate(()=>Object.values(JSON.parse(sessionStorage.getItem('wfd-encounter-v1')).checks).filter(Boolean).length),0);
   await page.goto('http://127.0.0.1:4173/#sick');
   assert.equal(await page.locator('.epi-digits').innerText(),'05:00');
   assert.equal(await page.locator('.epi-status').innerText(),'Ready after first dose');

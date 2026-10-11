@@ -1,12 +1,36 @@
 export const protocol='https://www.academyofmedicine.org/aws/AOMC/asset_manager/get_file/937559?ver=5';
 export const modules=[
-  {id:'sick',title:'Sick patient / cardiac arrest',short:'Sick patient / arrest',icon:'pulse',color:'red',tag:'RESUSCITATION',source:'SB204 · SB212 · C300 · C301 · C307',page:50,
-    refs:[['Arrest · SB204',50],['Crashing patient · SB212',71],['VF / VT · C300',75],['PEA / asystole · C301',76],['Post-ROSC · C307',83]],
+  {id:'sick',title:'Sick patient',short:'Sick patient',icon:'pulse',color:'red',tag:'CRASHING PATIENT',source:'SB212 · SB205 · SB204 · C300 · C301 · C307',page:71,
+    subtitle:'Still has a pulse. Get ahead of the crash.',
+    refs:[['Crashing patient · SB212',71],['Shock / push-dose epi · SB205',53]],
+    arrestRefs:[['Arrest · SB204',50],['VF / VT · C300',75],['PEA / asystole · C301',76],['Post-ROSC · C307',83]],
     sections:[
-      ['Scene & team',['Assign leader, airway, CPR, access / medications, and scene control','Check responsiveness, breathing, and pulse','Prepare suction and patient movement']],
-      ['Assessment & stabilization',['Assess airway / ventilation; use waveform capnography as indicated','Apply monitor; check BP and reassess','Full body assessment and lung sounds','Establish IV / IO as indicated','Use AMS / trauma checklist as needed']],
-      ['Cardiac arrest',['Start high-quality CPR; apply defibrillator pads','Identify rhythm; follow arrest protocol','Treat reversible causes','Recheck rhythm / pulse at protocol intervals']],
-      ['Transport & handoff',['Reassess and secure equipment before movement','Notify receiving hospital',{text:'After ROSC, follow C307',protocol:['POST-ROSC CARE · C307',83]}]]
+      ['Get ahead of the crash',[
+        {id:'roles',text:'Assign roles before things get worse',note:'Leader · airway · access / medications · scene control'},
+        {id:'pads-early',text:'Put pads on early',note:'Pacing / cardioversion ready.',tool:['cardio','Defib / cardioversion']},
+        {id:'lucas-staged',text:'Stage the LUCAS backboard while they still have a pulse'},
+        {id:'push-dose-ready',text:'Prepare and clearly label push-dose epinephrine',protocol:['PUSH-DOSE EPI · SB205',53],tool:['medications','Push-dose epi guide','push-epi']}
+      ]],
+      ['Airway supplies ready',[
+        {id:'suction-ready',text:'Suction on and within reach'},
+        {id:'airway-staged',text:'Stage BVM, backup airway, ETT, bougie, and laryngoscope',note:'Have waveform capnography and the tube holder ready.',tool:['intubation','Intubation checklist']},
+        {id:'ventilator-ready',text:'Set up the ventilator before transport if needed'}
+      ]],
+      ['Before you move',[
+        {id:'bp-cycling',text:'Set BP to cycle every 2 minutes'},
+        {id:'backup-access',text:'Prepare a second IV / IO if needed'},
+        {id:'movement-plan',text:'Plan the move; keep suction and airway gear accessible'},
+        {id:'hospital-activation',text:'Activate the hospital early'}
+      ]],
+      ['Cardiac arrest',[
+        {id:'arrest-cpr',text:'Start high-quality CPR; apply pads'},
+        {id:'arrest-team',text:'Assign compressors and plan rotations'},
+        {id:'arrest-lucas',text:'Apply LUCAS if indicated; minimize CPR interruptions'},
+        {id:'arrest-rhythm',text:'Identify rhythm; follow the arrest protocol'},
+        {id:'arrest-causes',text:'Treat reversible causes'},
+        {id:'arrest-recheck',text:'Recheck rhythm / pulse at protocol intervals'},
+        {id:'arrest-rosc',text:'After ROSC, follow C307',protocol:['POST-ROSC CARE · C307',83]}
+      ]]
     ]},
   {id:'cardio',title:'Defibrillation / cardioversion',short:'Defib / cardioversion',icon:'bolt',color:'amber',tag:'CARDIAC',source:'C300 · C303 · C306',page:75,
     refs:[['Defibrillation · C300',75],['Wide complex · C303',79],['Narrow complex · C306',82]],
