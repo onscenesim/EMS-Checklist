@@ -8,10 +8,26 @@ try{
  assert.match(await rosc.locator('a').getAttribute('href'),/#page=83$/);
  assert.equal(await rosc.locator('input').isChecked(),false);
  await page.locator('.nav-item[data-page="medications"]').click();
- assert.equal(await page.locator('.drug-card').count(),26);
+ assert.equal(await page.locator('.drug-card').count(),16);
+ assert.equal(await page.locator('h1').innerText(),'Unusual drugs');
+ assert.deepEqual(await page.locator('.drug-card').evaluateAll(nodes=>nodes.slice(-4).map(n=>n.dataset.refOpen)),['drug-blood','drug-succinylcholine','drug-rocuronium','drug-cyanokit']);
+ assert.equal(await page.locator('.drug-card.not-carried.red').count(),4);
  await page.locator('#ref-age').fill('40');await page.locator('#ref-weight').fill('80');await page.locator('#ref-ideal').fill('70');
  const open=async key=>{const el=page.locator(`[data-ref-open="${key}"]`);if(!await el.getAttribute('open').then(x=>x!==null))await el.locator(':scope > summary').click();};
- await open('drug-magnesium');await open('path-mag-asthma');
+ await open('drug-blood');await open('path-blood-adult');
+ assert.match(await page.locator('[data-recipe="blood-adult-0"] .dose-output').innerText(),/1 unit/);
+ assert.doesNotMatch(await page.locator('[data-recipe="blood-adult-0"]').innerText(),/mL|concentration/);
+ await page.locator('#ref-age').fill('5');await page.locator('#ref-weight').fill('20');await open('path-blood-ped');
+ assert.match(await page.locator('[data-recipe="blood-ped-0"] .dose-output').innerText(),/200 mL/);
+ for(const [drug,path] of [['succinylcholine','sux-intubation'],['rocuronium','roc-intubation']]){
+  await open('drug-'+drug);await open('path-'+path);
+  assert.match(await page.locator(`[data-recipe="${path}-0"] .dose-output`).innerText(),/No regional dose/);
+  assert.equal(await page.locator(`[data-ref-open="drug-${drug}"] .stock-control`).count(),0);
+ }
+ await page.locator('#ref-age').fill('');await open('drug-magnesium');await open('path-mag-asthma');
+ assert.match(await page.locator('[data-recipe="mag-asthma-0"] .dose-output').innerText(),/Enter patient age in years above.*ages 16 and older/);
+ await page.locator('#ref-age').fill('40');await page.locator('#ref-weight').fill('80');
+
  assert.match(await page.locator('[data-recipe="mag-asthma-0"] .dose-output').innerText(),/2 g[\s\S]*4 mL/);
  await open('drug-ketamine');await open('path-ket-pain-iv');
  assert.match(await page.locator('[data-recipe="ket-pain-iv-0"] .dose-output').innerText(),/14 mg[\s\S]*0.28 mL/);
@@ -25,8 +41,8 @@ try{
  assert.match(await page.locator('[data-recipe="versed-post-intubation-0"] .dose-output').innerText(),/4 mg[\s\S]*0.4 mL/);
  await page.locator('#stock-midazolam').selectOption('5');
  await page.locator('#reference-protocol').selectOption('T715');
- assert.equal(await page.locator('.drug-card').count(),5);
- assert.equal(await page.locator('.protocol-path').count(),5);
+ assert.equal(await page.locator('.drug-card').count(),4);
+ assert.equal(await page.locator('.protocol-path').count(),4);
  await page.screenshot({path:'/Users/Shared/EMS Checklist/tmp/medications-desktop.png',fullPage:true});
  await page.locator('#reference-protocol').selectOption('');
  await page.locator('#reference-search').fill('push-dose');assert.equal(await page.locator('.drug-card').count(),1);
@@ -72,5 +88,16 @@ try{
  await page.locator('[data-action="new"]').click();await page.locator('[data-action="confirm-new"]').click();
  await page.goto('http://127.0.0.1:4173/#calculators');assert.equal(await page.locator('#ref-weight').inputValue(),'');assert.equal(await page.locator('#infusion-dose').inputValue(),'');
  await page.goto('http://127.0.0.1:4173/#medications');await open('drug-midazolam');assert.equal(await page.locator('#stock-midazolam').inputValue(),'5');
+ await page.locator('#reference-search').fill('');
+ for(const card of await page.locator('.drug-card').all()){if(await card.getAttribute('open')!==null)await card.locator(':scope > summary').click();}
+ await page.setViewportSize({width:1440,height:1100});
+ await page.screenshot({path:'/Users/Shared/EMS Checklist/tmp/unusual-drugs-desktop.png',fullPage:true});
+ await page.setViewportSize({width:390,height:844});
+ await page.locator('[data-ref-open="drug-blood"]').scrollIntoViewIfNeeded();
+ await page.screenshot({path:'/Users/Shared/EMS Checklist/tmp/unusual-drugs-bottom-mobile.png'});
+ await open('drug-blood');await open('path-blood-ped');await page.locator('#ref-age').fill('5');await page.locator('#ref-weight').fill('20');
+ assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true,'expanded blood mobile overflow');
+ await page.locator('[data-recipe="blood-ped-0"]').scrollIntoViewIfNeeded();
+ await page.screenshot({path:'/Users/Shared/EMS Checklist/tmp/blood-mobile.png'});
  assert.deepEqual(errors,[]);console.log('Medication browser checks passed: ROSC link, dose/stock volumes, protocol filters, IBW, source cautions, concentration gating, unit conversion, drip/infusion/dilution, invalid inputs, persistence, encounter reset, and mobile layouts.');
 }finally{await browser.close();}
