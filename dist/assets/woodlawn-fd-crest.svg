@@ -1,14 +1,30 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640" role="img" aria-labelledby="title desc">
 <title id="title">Woodlawn Fire Department, Station 96</title><desc id="desc">Digitized Woodlawn crest: cream Maltese cross, red W over F D, ladder, hydrant, Fire and EMS.</desc>
-<defs><path id="topRing" d="M207 287 A119 119 0 0 1 433 287"/><path id="bottomRing" d="M193 367 A140 140 0 0 0 447 367"/><path id="arm" d="M190 194 147 104 Q320 18 493 104 L450 194"/></defs>
+<defs><path id="topRing" d="M194 320 A126 126 0 0 1 446 320"/><path id="bottomRing" d="M172 320 A148 148 0 0 0 468 320"/><path id="arm" d="M190 194 147 104 Q320 18 493 104 L450 194"/></defs>
 <circle cx="320" cy="320" r="190" fill="#293331"/>
 <g fill="#293331" stroke="#f3ecd4" stroke-width="10" stroke-linejoin="round"><use href="#arm"/><use href="#arm" transform="rotate(90 320 320)"/><use href="#arm" transform="rotate(180 320 320)"/><use href="#arm" transform="rotate(270 320 320)"/></g>
 <g fill="#f3ecd4" font-family="Georgia,serif" font-weight="700" text-anchor="middle"><text x="320" y="132" font-size="57">FIRE</text><text x="320" y="548" font-size="55">EMS</text></g>
-<g stroke="#f3ecd4" stroke-width="8" stroke-linecap="round" fill="none"><path d="M106 254v129m25-129v129m-25-113h25m-25 19h25m-25 19h25m-25 19h25m-25 19h25m-25 19h25"/><path d="m89 377 61-108m-8 0 12-8-2 14" stroke-width="5"/></g>
-<g fill="#f3ecd4" stroke="#f3ecd4" stroke-width="4" stroke-linejoin="round"><path d="M513 286h42v82h-42z"/><path d="M506 279h56v12h-56zM505 367h59v13h-59zM511 269q22-31 44 0z"/><path d="M503 302h10v19h-10zM555 302h12v19h-12z"/><circle cx="534" cy="263" r="5"/><path d="M515 290h38v72h-38" fill="#293331" stroke-width="2"/></g>
+<!-- Ladder and hooked pike pole, fitted within the left cross arm. -->
+<g stroke="#f3ecd4" stroke-width="6" stroke-linecap="round" fill="none">
+ <path d="M105 267v112m25-112v112m-25-97h25m-25 16h25m-25 16h25m-25 16h25m-25 16h25m-25 16h25"/>
+ <path transform="translate(-6 0)" d="M91 375 147 279" stroke-width="4.5"/>
+</g>
+<path transform="translate(-6 0)" d="M144 282 151 266 153 259 Q154 255 157 254 L159 257 157 267 154 272 Q162 272 165 278 L164 285 160 281 Q157 276 151 280 L148 284Z" fill="#f3ecd4"/>
+<!-- Hydrant: smaller, inset from the arm border, with cap, body and side outlets. -->
+<g transform="translate(18 0) translate(512 320) scale(.72) translate(-534 -320)" fill="#f3ecd4">
+ <path d="M525 261v-6h18v6q12 5 13 16h-44q1-11 13-16Z"/>
+ <rect x="508" y="278" width="52" height="9" rx="2"/>
+ <rect x="518" y="286" width="32" height="76" rx="3"/>
+ <rect x="509" y="362" width="50" height="8" rx="2"/>
+ <rect x="506" y="373" width="56" height="9" rx="2"/>
+ <path d="M507 299h11v18h-11zm43 0h11v18h-11z"/>
+ <rect x="503" y="302" width="5" height="12" rx="1"/>
+ <rect x="561" y="302" width="5" height="12" rx="1"/>
+ <path d="M524 292v65m19-65v65" stroke="#b5b098" stroke-width="2"/>
+</g>
 <circle cx="320" cy="320" r="158" fill="#b5b098" stroke="#f3ecd4" stroke-width="6"/>
 <circle cx="320" cy="320" r="116" fill="#293331" stroke="#f3ecd4" stroke-width="5"/>
-<g fill="#f8f2db" font-family="Arial,Helvetica,sans-serif" font-size="36" font-weight="700" text-anchor="middle" letter-spacing="1"><text><textPath href="#topRing" startOffset="50%">WOODLAWN</textPath></text><text><textPath href="#bottomRing" startOffset="50%">STATION 96</textPath></text></g>
+<g fill="#f8f2db" font-family="Arial,Helvetica,sans-serif" font-size="27" font-weight="700" text-anchor="middle" letter-spacing="1.2"><text><textPath href="#topRing" startOffset="50%">WOODLAWN</textPath></text><text><textPath href="#bottomRing" startOffset="50%">STATION 96</textPath></text></g>
 <g font-family="Georgia,serif" font-weight="700" text-anchor="middle" fill="#d8d7cb" stroke="#f3ecd4" stroke-width="1.5"><text x="259" y="363" font-size="122">F</text><text x="377" y="363" font-size="122">D</text></g>
 <text x="320" y="374" font-family="Georgia,serif" font-weight="700" text-anchor="middle" font-size="167" fill="#d55448" stroke="#f3ecd4" stroke-width="3" paint-order="stroke fill">W</text>
 </svg>
