@@ -315,7 +315,7 @@ export const frequentlyUsed=[
  ['Nasal ETCO2','ETCO2 nasal cannula'],['Electrodes','Electrodes'],['Monitor paper','EKG paper'],
  ['Monitor battery','New battery · monitor'],['Alcohol preps','Alcohol preps'],['Band-Aids','Band-Aids'],['Lancets','Glucometer lancets'],
  ['Gloves — medium','Medium gloves'],['18 G filter needle — 1.5 inches','Filter needle · 18 G'],
- ['3 mL syringe','3 mL syringe'],['1 mL syringe','1 mL syringe'],['Radio battery','Radio battery']
+ ['3 mL syringe','3 mL syringe'],['1 mL syringe','1 mL syringe'],['Radio battery','Radio battery'],['Pediatric pulse ox sticker','Pediatric SpO₂ probe']
 ].map(([name,label])=>{const item=supplies.find(s=>s.name===name);if(item)item.aliases+=' '+label;return {item,label};});
 export const supplyCategories=categories.filter(c=>supplies.some(item=>item.category===c.id)).map(c=>({...c,name:c.id==='power'?'Batteries & LUCAS':c.id==='reference'?'Replacement kits':c.name}));
 export const inventoryLocations=[...new Set(supplies.flatMap(item=>item.locations.map(l=>l.name)))];
@@ -324,6 +324,7 @@ const extraAliases=[
  [/^\d+ G catheter$/, 'IV cath caths IV catheter catheters intravenous cannula cannulas cannulation angiocath angiocaths angiocatheter IV needle IV needles venflon'],
  [/^IO needle/, 'intraosseous EZ-IO EZIO IO needles'],
  [/syringe/i, 'syringes cc ml'],
+ [/Pediatric pulse ox sticker/i, 'pediatric SPO2 probe pedi SPO2 probe pediatric pulse ox probe pediatric oximeter sensor pediatric oxygen saturation sensor'],
  [/Nasal ETCO2/i, 'ETCO2 nasal cannula ETCO2 nasal cannulas capnography cannula capno NC'],
  [/Monitor paper/i, 'EKG paper ECG paper rhythm paper printer paper'],
  [/Monitor battery/i, 'new battery new batteries replacement battery Zoll battery monitor batteries'],

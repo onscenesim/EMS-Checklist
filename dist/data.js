@@ -47,7 +47,7 @@ export const modules=[
     ]},
   {id:'ams',title:'Altered mental status',short:'Altered mental status',icon:'brain',color:'teal',tag:'ASSESSMENT',source:'SB201 · M414',page:43,
     refs:[['AMS · SB201',43],['Stroke · M414',117]],
-    sections:[['Immediate assessment',['Support airway / breathing','Check blood glucose','Check pupils; stroke assessment as indicated','Temperature, ETCO₂, and ECG as indicated','Check injuries; compare with baseline']]]},
+    sections:[['Immediate neuro checks',[{id:'bgl',text:'Check BGL'},{id:'stroke',text:'Stroke assessment'},{id:'pupils',text:'Check pupils'}]]]},
   {id:'trauma',title:'Trauma',short:'Trauma',icon:'shield',color:'orange',tag:'ASSESSMENT',source:'SB206 · S500 · S501 · S506',page:56,
     refs:[['Trauma assessment · SB206',56],['Hemorrhagic shock · S500',135],['Head / spine · S501',137],['Pain control · S505',142]],
     sections:[
