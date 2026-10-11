@@ -10,6 +10,8 @@ let state;try{state=Object.assign(blank(),JSON.parse(sessionStorage.getItem('wfd
 let page=location.hash.slice(1)||'home',query='',modal=false;
 const pageLabel=()=>({home:'Overview','post-call':'Post-call checklist',pediatric:'Pediatric reference',protocol:'Protocol library',medications:'Unusual drugs',calculators:'Dose & drip calculators'}[page]||modules.find(m=>m.id===page)?.short||'Overview');
 const save=()=>{try{sessionStorage.setItem('wfd-encounter-v1',JSON.stringify(state));}catch{}};
+// CSN now records narrative completion; remove the retired free-text value.
+if(Object.hasOwn(state.fields,'post-csn')){delete state.fields['post-csn'];save();}
 const totalChecks=()=>modules.reduce((n,m)=>n+completed(m),0);
 const count=m=>m.sections.reduce((n,s)=>n+s[1].length,0);
 const completed=m=>m.sections.reduce((n,section,si)=>n+section[1].filter((item,ii)=>state.checks[checklistId(m.id,si,item,ii)]).length,0);

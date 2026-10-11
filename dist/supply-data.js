@@ -1,6 +1,6 @@
 // Inventory reference: Medic Check Form.pdf supplied 2026-10-10, pp. 1–4.
 // Quantities describe stock at each location; they are not requested restock quantities.
-export const supplyCategories=[
+const categories=[
   ['airway','Airway & suction','airway'],['oxygen','Oxygen & ventilation','pulse'],
   ['monitor','Monitoring & assessment','pulse'],['iv','IV & IO','syringe'],
   ['meds','Medications & fluids','syringe'],['trauma','Trauma & dressings','shield'],
@@ -292,13 +292,76 @@ stock('oxygen','Cot',`Cot oxygen bottle|Above 500 per form|O2 cylinder`);
 stock('movement','Cot',`Cot||stretcher
 Cot straps|3|
 Extra linen||sheet towel`);
-// Identical items have one searchable row, with all source locations retained.
+// Keep the complete source inventory, then expose only items appropriate for restock.
 const catalog=new Map();
-for(const entry of entries){const key=entry.category+'|'+entry.name;let item=catalog.get(key);if(!item){item={id:entry.category+'-'+entry.name.toLowerCase().normalize('NFKD').replace(/[^a-z0-9]+/g,'-').replace(/-$/,''),name:entry.name,category:entry.category,aliases:entry.aliases,locations:[]};catalog.set(key,item);}item.locations.push({name:entry.location,stock:entry.stock});}
-export const supplies=[...catalog.values()];
-export const inventoryLocations=[...new Set(entries.map(e=>e.location))];
+for(const entry of entries){const key=entry.category+'|'+entry.name;let item=catalog.get(key);if(!item){item={id:entry.category+'-'+entry.name.toLowerCase().normalize('NFKD').replace(/[^a-z0-9]+/g,'-').replace(/-$/,''),name:entry.name,category:entry.category,aliases:entry.aliases,locations:[]};catalog.set(key,item);}else{item.aliases+=' '+entry.aliases;}item.locations.push({name:entry.location,stock:entry.stock});}
+const inventory=[...catalog.values()];
+const durableNames=new Set([
+ 'ERG','NIOSH book','Pediatric bag','IV bag — blue','IV bag — red','First-in bag','Drug bag','Trauma bag','Quick reference charts','Hospital phone list','Protocol binder','Seal log book',
+ 'Oxygen key','Wall-mount oxygen regulator',
+ 'Stairchair','Vacuum splint kit','Vacuum leg splint','Vacuum arm splint','Vacuum ankle splint','Vacuum splint pump','Backboard','Pediatric board','Reeves roll-up board','KED','Hare traction splint','Backboard straps','Hard restraints','Pedi-Mate','Cot','Cot straps',
+ 'Portable suction','Spare cot battery','LUCAS head strap','LUCAS backboard','Tactical helmet','Turnout gear','Monitor battery','Spare LUCAS battery','UE scope charger',
+ 'Monitor','BP cuff — small','BP cuff — medium','BP cuff — large','BP cuff — adult','3-lead cable','12-lead cable','Pulse oximeter','Test block','Stethoscope','Thermometer','Penlight','Glucometer',
+ 'Magill forceps — small','Magill forceps — large','Blade handle','Miller blade — size 3','Miller blade — size 4','Mac blade — size 3','Mac blade — size 4','UE scope','LifeVac','IO drill','Pressure infuser','Trauma shears','Ring cutter'
+]);
+export const supplies=inventory.filter(item=>item.category!=='vehicle'&&!durableNames.has(item.name));
+export const supplyCategories=categories.filter(c=>supplies.some(item=>item.category===c.id)).map(c=>({...c,name:c.id==='power'?'Batteries & LUCAS':c.id==='reference'?'Replacement kits':c.name}));
+const retrievalNames=['LUCAS','Monitor','Drug bag','First-in bag','Pediatric bag','Portable suction','Backboard','Pediatric board','Stairchair','UE scope','IO drill','Spare LUCAS battery'];
+export const equipment=retrievalNames.map(name=>inventory.find(item=>item.name===name));
+export const inventoryLocations=[...new Set(supplies.flatMap(item=>item.locations.map(l=>l.name)))];
+// Common crew terminology, singular/plural forms, and abbreviations.
+const extraAliases=[
+ [/^\d+ G catheter$/, 'IV cath caths IV catheter catheters intravenous cannula cannulas cannulation angiocath angiocaths angiocatheter IV needle IV needles venflon'],
+ [/^IO needle/, 'intraosseous EZ-IO EZIO IO needles'],
+ [/syringe/i, 'syringes cc ml'],
+ [/saline flush/i, 'flush flushes saline flushes NS prefilled flush'],
+ [/drip set/i, 'dripset dripsets drip sets tubing IV tubing giving set infusion set'],
+ [/IV start kit/i, 'IV kit IV kits cannulation kit startkit'],
+ [/Lockset/i, 'saline lock IV lock hep lock heplock extension tubing extension set'],
+ [/Tegaderm/i, 'transparent dressing clear dressing IV dressing'],
+ [/Alcohol preps/i, 'alcohol wipes alcohol swabs alcohol pads prep pads'],
+ [/gauze/i, 'gauze pads gauze sponges dressing dressings'],
+ [/Combine pad/i, 'ABD pad ABD pads abdominal pad abdominal pads combine dressing'],
+ [/Coban/i, 'coflex self adherent wrap self adhesive wrap vet wrap'],
+ [/Kling|roll bandage/i, 'rolled gauze gauze roll roller bandage conforming bandage'],
+ [/Band-Aids/i, 'bandaid band aids bandaids adhesive bandages plasters'],
+ [/Tourniquet/i, 'tourniquets tq tqs'],
+ [/CAT tourniquet/i, 'combat tourniquet combat application tourniquet'],
+ [/Chest seal/i, 'chest seals occlusive dressing occlusive dressings'],
+ [/Chuk pad/i, 'chux chucks underpads absorbent pad'],
+ [/Emesis bag/i, 'barf bag vomit bag sick bag emesis bags'],
+ [/Gloves/i, 'exam gloves nitrile gloves'],
+ [/Oral airways/i, 'oral airway OPAs oropharyngeal airway'],
+ [/Nasal airways/i, 'nasal airway NPAs nasopharyngeal airway nasal trumpet nose trumpet'],
+ [/i-gel/i, 'igels i gels supraglottic airway SGA'],
+ [/ET tube/i, 'ET tubes ETTs endotracheal tube endotracheal tubes breathing tube'],
+ [/Yankauer/i, 'yankauer yankeur yankour rigid suction suction tip'],
+ [/Suction catheter/i, 'suction cath suction caths suction catheters'],
+ [/non-rebreather/i, 'nonrebreather non rebreather oxygen mask NRB masks'],
+ [/nasal cannula/i, 'nasal cannulas nasal prongs oxygen tubing NC'],
+ [/BVM/i, 'ambu bag ambubag bag valve mask resuscitator'],
+ [/oxygen bottle/i, 'oxygen tank O2 tank O2 bottle oxygen cylinder'],
+ [/Saline —/i, 'saline bag saline bags IV fluid IV fluids NS normal saline sodium chloride'],
+ [/Nitroglycerin/i, 'nitroglycerine nitrostat NTG'],
+ [/Epinephrine/i, 'adrenaline epinepherine'],
+ [/acetaminophen/i, 'paracetamol APAP tylenol'],
+ [/Zofran/i, 'ondansetron zofran ODT'],
+ [/LUCAS/, 'lucas device CPR machine chest compression device']
+];
+for(const item of supplies){for(const [pattern,aliases] of extraAliases){if(pattern.test(item.name))item.aliases+=' '+aliases;}if(/^\d+ G catheter$/.test(item.name)){const gauge=item.name.match(/^\d+/)[0];item.aliases+=` ${gauge} gauge ${gauge} ga ${gauge} g ${gauge}g`;}}
+const normalize=s=>s.toLowerCase().normalize('NFKD').replace(/(\d)\s*(?:gauge|ga|g)\b/g,'$1 g').replace(/[^a-z0-9%.]+/g,' ').trim();
+const commonWords={caths:'catheter',cath:'catheter',catheters:'catheter',cannulas:'cannula',cannulae:'cannula',needles:'needle',syringes:'syringe',flushes:'flush',pads:'pad',bandages:'bandage',dressings:'dressing',bags:'bag',tubes:'tube',gloves:'glove',wipes:'wipe',swabs:'swab',gtts:'gtt',gauge:'g',ga:'g'};
+const terms=s=>normalize(s).split(/\s+/).filter(Boolean).map(t=>commonWords[t]||t);
+// One insertion, deletion, substitution, or swapped pair. Never fuzz numbers / sizes.
+function minorTypo(a,b){
+ if(a===b)return true;
+ if(!/^[a-z]{4,}$/.test(a)||!/^[a-z]{4,}$/.test(b)||Math.abs(a.length-b.length)>1)return false;
+ if(a.length===b.length){const changed=[];for(let i=0;i<a.length;i++)if(a[i]!==b[i])changed.push(i);return changed.length===1||(changed.length===2&&changed[1]===changed[0]+1&&a[changed[0]]===b[changed[1]]&&a[changed[1]]===b[changed[0]]);}
+ const shorter=a.length<b.length?a:b,longer=a.length<b.length?b:a;
+ let i=0,j=0,skipped=false;while(i<shorter.length&&j<longer.length){if(shorter[i]===longer[j]){i++;j++;}else{if(skipped)return false;skipped=true;j++;}}return true;
+}
+const searchIndex=new Map(supplies.map(item=>[item.id,terms(item.name+' '+item.aliases+' '+supplyCategories.find(c=>c.id===item.category).name+' '+item.locations.map(l=>l.name+' '+l.stock).join(' '))]));
 export function findSupplies(query='',category=''){
- const normalize=s=>s.toLowerCase().replace(/[^a-z0-9%.]+/g,' ').trim();
- const tokens=normalize(query).split(/\s+/).filter(Boolean);
- return supplies.filter(item=>(!category||item.category===category)&&tokens.every(token=>normalize(item.name+' '+item.aliases+' '+supplyCategories.find(c=>c.id===item.category).name+' '+item.locations.map(l=>l.name+' '+l.stock).join(' ')).includes(token)));
+ const tokens=terms(query);
+ return supplies.filter(item=>(!category||item.category===category)&&tokens.every(token=>searchIndex.get(item.id).some(word=>word.includes(token)||minorTypo(token,word))));
 }
