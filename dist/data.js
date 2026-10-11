@@ -102,7 +102,7 @@ export const modules=[
   {id:'trauma',title:'Trauma',short:'Trauma',icon:'shield',color:'orange',tag:'ASSESSMENT',source:'SB206 · S500 · S501 · S506',page:56,
     refs:[['Trauma assessment · SB206',56],['Hemorrhagic shock · S500',135],['Head / spine · S501',137],['Pain control · S505',142]],
     sections:[
-      ['M · Bleeding',[{id:'main-o2',text:'Turn main O2 AND cabin power on',note:'Before the call or en route: get oxygen, cabin power, and heat ready early.',priorityReminder:'Heat turned up'},{id:'bleeding',text:'Control bleeding'}]],
+      ['M · Bleeding',[{id:'main-o2',text:'Turn main O2 AND cabin power on. Turn up the heat.',note:'Before the call or en route: get oxygen, cabin power, and heat ready early.'},{id:'bleeding',text:'Control bleeding'}]],
       ['A · Airway',[{id:'airway',text:'Check and control airway'}]],
       ['R · Respirations',[{id:'chest-assessment',text:'Assess chest, ventilation, oxygenation'},{id:'chest-treatment',text:'Treat life-threatening chest injuries with decompression, chest seals'}]],
       ['C · Circulation',[{id:'strip-clothes',text:'Strip clothes'},{id:'body-sweep',text:'Full body sweep including armpits and back'},{id:'blood-thinners',text:'Check blood thinners and antiplatelets'},{id:'head-neck',text:'Assess head / neck injury and pupils'}]],

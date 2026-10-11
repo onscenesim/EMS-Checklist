@@ -6,9 +6,9 @@ try{
  await page.clock.install({time:new Date('2026-10-11T02:00:00-04:00')});
  for(const id of ['sick','arrest','intubation','trauma']){
   await page.goto(`http://127.0.0.1:4173/#${id}`);
-  assert.equal(await page.locator('[data-check]').first().locator('..').innerText().then(s=>s.split('\n')[0]),'Turn main O2 AND cabin power on');
-  assert.equal(await page.getByText('Turn main O2 AND cabin power on',{exact:true}).count(),1);
-  if(id==='trauma')assert.equal(await page.locator('.oxygen-priority-extra').innerText(),'Heat turned up');
+  const readiness=id==='trauma'?'Turn main O2 AND cabin power on. Turn up the heat.':'Turn main O2 AND cabin power on';
+  assert.equal(await page.locator('[data-check]').first().locator('..').innerText().then(s=>s.split('\n')[0]),readiness);
+  assert.equal(await page.locator('.oxygen-priority').getByText(readiness,{exact:true}).count(),1);
   assert.equal(await page.getByText(/ventilator/i).count(),0);
   if(id!=='intubation')assert.match(await page.locator('.oxygen-priority').innerText(),/BEFORE THE CALL \/ EN ROUTE/);
  }
@@ -28,8 +28,8 @@ try{
  await page.reload();assert.equal(await panel.evaluate(el=>el.open),true);assert.equal(await page.locator('[data-check="sick-0-main-o2"]').isChecked(),true);
  for(const width of [1440,768,390,320]){
   await page.setViewportSize({width,height:1000});
-  for(const id of ['sick','arrest','intubation']){await page.goto(`http://127.0.0.1:4173/#${id}`);assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true,`${id}: ${width}px overflow`);assert.equal(await page.locator('[data-check]').evaluateAll(els=>new Set(els.map(el=>el.dataset.check)).size===els.length),true);}
-  if(width===1440||width===390){await page.goto('http://127.0.0.1:4173/#sick');await page.locator('.oxygen-priority').screenshot({path:`/Users/Shared/EMS Checklist/tmp/main-o2-${width}.png`});await panel.screenshot({path:`/Users/Shared/EMS Checklist/tmp/sick-arrest-directions-${width}.png`});}
+  for(const id of ['sick','arrest','intubation','trauma']){await page.goto(`http://127.0.0.1:4173/#${id}`);assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true,`${id}: ${width}px overflow`);assert.equal(await page.locator('[data-check]').evaluateAll(els=>new Set(els.map(el=>el.dataset.check)).size===els.length),true);}
+  if(width===1440||width===390){await page.goto('http://127.0.0.1:4173/#trauma');await page.locator('.oxygen-priority').screenshot({path:`/Users/Shared/EMS Checklist/tmp/trauma-readiness-${width}.png`});await page.goto('http://127.0.0.1:4173/#sick');await page.locator('.oxygen-priority').screenshot({path:`/Users/Shared/EMS Checklist/tmp/main-o2-${width}.png`});await panel.screenshot({path:`/Users/Shared/EMS Checklist/tmp/sick-arrest-directions-${width}.png`});}
  }
  await page.goto('http://127.0.0.1:4173/#sick');await page.locator('[data-action="new"]').click();await page.locator('[data-action="confirm-new"]').click();await page.goto('http://127.0.0.1:4173/#sick');assert.equal(await panel.evaluate(el=>el.open),false);assert.equal(await page.locator('[data-check="sick-0-main-o2"]').isChecked(),false);
  // Inserting O2 preserves the existing intubation preparation checklist identifiers.

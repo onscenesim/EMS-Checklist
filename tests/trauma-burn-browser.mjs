@@ -6,7 +6,7 @@ try{
  page.on('pageerror',e=>errors.push(e.message));
  await page.clock.install({time:new Date('2026-10-10T21:00:00-04:00')});
  await page.goto('http://127.0.0.1:4173/#trauma');
- const expected=['Turn main O2 AND cabin power on','Control bleeding','Check and control airway','Assess chest, ventilation, oxygenation','Treat life-threatening chest injuries with decompression, chest seals','Strip clothes','Full body sweep including armpits and back','Check blood thinners and antiplatelets','Assess head / neck injury and pupils','Turn on the heat and remove wet clothing','Remove constricting jewelry'];
+ const expected=['Turn main O2 AND cabin power on. Turn up the heat.','Control bleeding','Check and control airway','Assess chest, ventilation, oxygenation','Treat life-threatening chest injuries with decompression, chest seals','Strip clothes','Full body sweep including armpits and back','Check blood thinners and antiplatelets','Assess head / neck injury and pupils','Turn on the heat and remove wet clothing','Remove constricting jewelry'];
  assert.deepEqual(await page.locator('.check-copy>span').allTextContents(),expected);
  assert.equal(await page.locator('.check-row').count(),11);
  assert.equal(await page.locator('.ketamine-panel').getAttribute('open'),null);

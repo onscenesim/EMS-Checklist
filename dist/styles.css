@@ -407,5 +407,3 @@ tr.unavailable .na{color:#7c8794}
 .trauma-arrest-links{display:flex;gap:8px;flex-wrap:wrap}
 .trauma-arrest-links .source{font-size:10px}
 @media(max-width:640px){.trauma-arrest-panel>summary{padding:18px 14px;gap:11px}.trauma-arrest-panel summary b{font-size:19px}.trauma-arrest-panel summary small{font-size:11px}.trauma-arrest-content{padding:14px}.trauma-arrest-icon{width:36px;height:40px}.trauma-arrest-actions{grid-template-columns:1fr}.trauma-arrest-actions>section{padding:13px}.trauma-arrest-content h3{font-size:15px}.trauma-arrest-focus strong{font-size:16px}.trauma-arrest-content p{font-size:12px}.trauma-arrest-prep,.trauma-arrest-transport{padding:14px}.trauma-arrest-heading .source{font-size:10px}.trauma-arrest-exclusions{font-size:12px}}
-.oxygen-priority-extra{display:block;padding:0 20px 17px 62px;color:#754600;font-size:16px;line-height:1.4}
-@media(max-width:640px){.oxygen-priority-extra{padding:0 14px 16px 55px;font-size:15px}}
