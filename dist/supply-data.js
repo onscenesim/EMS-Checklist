@@ -293,6 +293,7 @@ stock('movement','Cot',`Cot||stretcher
 Cot straps|3|
 Extra linen||sheet towel`);
 stock('iv','Crew-added supply',`Drip set — 10 gtt/mL||10 drop set 10 drop sets 10 gtt tubing`);
+stock('power','Crew-added supply',`Radio battery||portable radio battery spare radio battery replacement radio battery walkie talkie battery`);
 // Keep the complete source inventory, then expose only items appropriate for restock.
 const catalog=new Map();
 for(const entry of entries){const key=entry.category+'|'+entry.name;let item=catalog.get(key);if(!item){item={id:entry.category+'-'+entry.name.toLowerCase().normalize('NFKD').replace(/[^a-z0-9]+/g,'-').replace(/-$/,''),name:entry.name,category:entry.category,aliases:entry.aliases,locations:[]};catalog.set(key,item);}else{item.aliases+=' '+entry.aliases;}item.locations.push({name:entry.location,stock:entry.stock});}
@@ -312,7 +313,9 @@ export const frequentlyUsed=[
  ['IV start kit','IV start kit'],['10 mL saline flush','10 mL saline flush'],['Lockset','J loop · lockset'],
  ['Drip set — 10 gtt/mL','10-drop set'],['Saline — 1,000 mL','0.9% normal saline · 1 liter bag'],
  ['Nasal ETCO2','ETCO2 nasal cannula'],['Electrodes','Electrodes'],['Monitor paper','EKG paper'],
- ['Monitor battery','New battery · monitor'],['Alcohol preps','Alcohol preps'],['Band-Aids','Band-Aids'],['Lancets','Glucometer lancets']
+ ['Monitor battery','New battery · monitor'],['Alcohol preps','Alcohol preps'],['Band-Aids','Band-Aids'],['Lancets','Glucometer lancets'],
+ ['Gloves — medium','Medium gloves'],['18 G filter needle — 1.5 inches','Filter needle · 18 G'],
+ ['3 mL syringe','3 mL syringe'],['1 mL syringe','1 mL syringe'],['Radio battery','Radio battery']
 ].map(([name,label])=>{const item=supplies.find(s=>s.name===name);if(item)item.aliases+=' '+label;return {item,label};});
 export const supplyCategories=categories.filter(c=>supplies.some(item=>item.category===c.id)).map(c=>({...c,name:c.id==='power'?'Batteries & LUCAS':c.id==='reference'?'Replacement kits':c.name}));
 export const inventoryLocations=[...new Set(supplies.flatMap(item=>item.locations.map(l=>l.name)))];
