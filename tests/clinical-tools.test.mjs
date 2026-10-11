@@ -1,6 +1,6 @@
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
-import {shockIndex,parkland,ruleOfNines} from '../dist/clinical-tools.js';
+import {shockIndex,parkland,ruleOfNines,ketaminePainTable} from '../dist/clinical-tools.js';
 test('shock index handles positive inputs, zero / missing pressures, and nonfinite results',()=>{
  assert.equal(shockIndex('120','100'),1.2);assert.equal(shockIndex(80,120),2/3);
  for(const [hr,sbp] of [['',100],[100,''],[0,100],[100,0],[-10,100],[100,-1],['NaN',100],[Infinity,100],[1e308,1e-308]])assert.equal(shockIndex(hr,sbp),null);
@@ -15,4 +15,11 @@ test('rule-of-9s retains S502 child percentages without inventing the unlisted c
  assert.equal(ruleOfNines.find(r=>r[0]==='Each leg')[2],14);
  assert.equal(ruleOfNines.find(r=>r[0]==='Genitals / perineum')[2],null);
  assert.equal(ruleOfNines.reduce((n,[region,adult])=>n+adult*(region.startsWith('Each ')?2:1),0),100);
+});
+
+test('S505 pain chart preserves height bands and IV / IM doses at carried 50 mg/mL',()=>{
+ assert.deepEqual(ketaminePainTable.map(r=>[r.height,r.ivMg,r.ivMl,r.imMg,r.imMl]),[
+  ['<4′11″',7.5,.15,30,.6],['5′–5.5″',10,.2,40,.8],['5.5′–5′11″',15,.3,60,1.2],['6′–6′5″',17.5,.35,70,1.4],['>6′5″',20,.4,80,1.6]
+ ]);
+ for(const r of ketaminePainTable){assert.equal(r.ivMg/50,r.ivMl);assert.equal(r.imMg/50,r.imMl);}
 });

@@ -9,6 +9,17 @@ try{
  const expected=['Control bleeding','Check and control airway','Assess chest, ventilation, oxygenation','Treat life-threatening chest injuries with decompression, chest seals','Strip clothes','Full body sweep including armpits and back','Check blood thinners and antiplatelets','Assess head / neck injury and pupils','Turn on the heat and remove wet clothing','Remove constricting jewelry'];
  assert.deepEqual(await page.locator('.check-copy>span').allTextContents(),expected);
  assert.equal(await page.locator('.check-row').count(),10);
+ assert.equal(await page.locator('.protocol-links a[href$="#page=142"]').count(),1);
+ assert.equal(await page.locator('.trauma-pain a[href$="#page=143"]').count(),1);
+ assert.match(await page.locator('.pain-stock').innerText(),/500 mg \/ 10 mL/);
+ assert.match(await page.locator('.pain-stock').innerText(),/50 mg\/mL · age 16\+/);
+ assert.equal((await page.locator('.trauma-pain').innerText()).includes('10mg/mL'),false);
+ assert.deepEqual(await page.locator('.pain-table tbody tr').evaluateAll(rows=>rows.map(r=>[...r.children].map(c=>c.innerText.replace(/\s+/g,' ')))),[
+  ['<4′11″','0.15 mL 7.5 mg','0.6 mL 30 mg'],['5′–5.5″','0.2 mL 10 mg','0.8 mL 40 mg'],['5.5′–5′11″','0.3 mL 15 mg','1.2 mL 60 mg'],['6′–6′5″','0.35 mL 17.5 mg','1.4 mL 70 mg'],['>6′5″','0.4 mL 20 mg','1.6 mL 80 mg']
+ ]);
+ assert.equal(await page.locator('.march-section').count(),5);
+ assert.equal(await page.locator('.march-section h2').evaluateAll(els=>new Set(els.map(el=>getComputedStyle(el).color)).size),5);
+
  assert.equal(await page.locator('a[href$="#page=144"]').count(),1);
  assert.equal(await page.locator('a[href$="#page=145"]').count(),1);
  const alert=page.getByRole('button',{name:'Called trauma alert',exact:true}),txa=page.getByRole('button',{name:'GIVE TXA',exact:true});
@@ -33,6 +44,14 @@ try{
  assert.equal(await page.locator('.burns-panel').getAttribute('open'),null);
  await page.locator('.burns-panel>summary').click();
  assert.equal(await page.locator('.burns-panel').getAttribute('open'),'');
+ assert.deepEqual(await page.locator('.burn-priorities li').allTextContents(),[
+  'Protect the airway; assess smoke inhalation and respiratory distress.',
+  'Stop the burning process; remove affected clothing and constricting jewelry.',
+  'Turn up the heat. Cover burns with a clean, dry sheet.',
+  'Consider CO / cyanide exposure.','Provide pain care.'
+ ]);
+ assert.equal(await page.locator('.burn-priorities li').evaluateAll(els=>new Set(els.map(el=>getComputedStyle(el).color)).size),5);
+ for(const phrase of ['Assess associated trauma','transport to an appropriate facility and notify it','Time starts at the burn injury.','Enter a positive weight','Each percentage covers the whole listed region'])assert.equal((await page.locator('.burns-content').innerText()).includes(phrase),false);
  assert.equal(await page.locator('.burns-panel a[href$="#page=139"]').count(),1);
  assert.deepEqual(await page.locator('.burn-table tbody tr').nth(4).locator('td').allTextContents(),['Each leg','18%','14%']);
  assert.deepEqual(await page.locator('.burn-table tbody tr').nth(5).locator('td').allTextContents(),['Genitals / perineum','1%','Not listed']);
@@ -49,6 +68,8 @@ try{
  await page.setViewportSize({width:390,height:844});
  assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);
  await page.locator('.burns-panel').screenshot({path:'/Users/Shared/EMS Checklist/tmp/burns-mobile.png'});
+ await page.locator('.trauma-pain').screenshot({path:'/Users/Shared/EMS Checklist/tmp/ketamine-pain-mobile.png'});
+ await page.locator('.march-section[data-march="c"]').screenshot({path:'/Users/Shared/EMS Checklist/tmp/march-c-mobile.png'});
  await page.locator('.trauma-events').screenshot({path:'/Users/Shared/EMS Checklist/tmp/trauma-events-mobile.png'});
  await page.setViewportSize({width:320,height:720});assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);
  await page.goto('http://127.0.0.1:4173/#post-call');
