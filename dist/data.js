@@ -32,6 +32,39 @@ export const modules=[
         {id:'arrest-rosc',text:'After ROSC, follow C307',protocol:['POST-ROSC CARE · C307',83]}
       ]]
     ]},
+  {id:'arrest',title:'Cardiac arrest',short:'Cardiac arrest',icon:'heart',color:'red',tag:'EXPECTED ARREST',source:'SB204 · C300 · C301 · C307 · T715',page:50,
+    subtitle:'Arrive ready for a code. Prepare for a pulse to come back.',
+    refs:[['Arrest · SB204',50],['VF / VT · C300',75],['PEA / asystole · C301',76],['Post-ROSC · C307',83]],
+    sections:[
+      ['Arrive ready',[
+        {id:'code-lead',text:'Name the code lead out loud',note:'Make sure everyone knows who is running the code.'},
+        {id:'lucas-in',text:'Take the LUCAS in'},
+        {id:'code-gear',text:'Bring the monitor, suction, airway bag, and drug bag'},
+        {id:'code-roles',text:'Assign airway, compressions, IV / IO + medications, and scene control'}
+      ]],
+      ['Run the code',[
+        {id:'cpr-pads',text:'Start CPR; pads on and connected'},
+        {id:'firm-surface',text:'Get the patient out of bed / onto a firm CPR surface'},
+        {id:'compressors',text:'Plan compressor rotations'},
+        {id:'rhythm',text:'Identify the rhythm; follow the arrest protocol'},
+        {id:'access-meds',text:'Establish IV / IO; prepare rhythm-specific medications'},
+        {id:'lucas-applied',text:'Apply LUCAS if indicated; minimize CPR interruptions'},
+        {id:'reversible-causes',text:'Work through reversible causes'},
+        {id:'rhythm-recheck',text:'Recheck rhythm / pulse at protocol intervals'}
+      ]],
+      ['Prepare for possible ROSC',[
+        {id:'rosc-movement',text:'Plan movement / extrication now',note:'Have the cot and movement equipment ready.'},
+        {id:'rosc-epi',text:'Have a clearly labeled push-dose epi syringe ready',protocol:['POST-ROSC PRESSORS · C307',84],tool:['medications','Push-dose epi guide','push-epi']},
+        {id:'rosc-sedation',text:'Plan post-ROSC sedation doses',protocol:['SEDATION AFTER INTUBATION · T715',209],tool:['sedation','Ketamine / Versed dosing']},
+        {id:'rosc-ventilator',text:'Stage the ventilator if needed'}
+      ]],
+      ['When the pulse comes back',[
+        {id:'rosc-care',text:'Follow post-ROSC care',protocol:['POST-ROSC CARE · C307',83]},
+        {id:'rosc-monitoring',text:'Recheck airway, ETCO₂, BP, and perfusion; keep pads on'},
+        {id:'rosc-ecg',text:'Get the post-ROSC 12-lead'},
+        {id:'rosc-hospital',text:'Notify the hospital; confirm the movement plan'}
+      ]]
+    ]},
   {id:'cardio',title:'Defibrillation / cardioversion',short:'Defib / cardioversion',icon:'bolt',color:'amber',tag:'CARDIAC',source:'C300 · C303 · C306',page:75,
     refs:[['Defibrillation · C300',75],['Wide complex · C303',79],['Narrow complex · C306',82]],
     sections:[
