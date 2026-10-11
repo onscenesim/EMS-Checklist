@@ -4,9 +4,9 @@ const browser=await chromium.launch({headless:true,executablePath:'/Applications
 try{
  const page=await browser.newPage({viewport:{width:1440,height:1100}}),errors=[];page.on('pageerror',e=>errors.push(e.message));
  await page.goto('http://127.0.0.1:4173/#sick');
- const rosc=page.locator('.check-row').filter({hasText:'After ROSC, follow C307'});
+ const rosc=page.locator('.arrest-rosc-direction').filter({hasText:'After ROSC, follow C307'});
  assert.match(await rosc.locator('a').getAttribute('href'),/#page=83$/);
- assert.equal(await rosc.locator('input').isChecked(),false);
+ assert.equal(await rosc.locator('input').count(),0);
  await page.locator('.nav-item[data-page="medications"]').click();
  assert.equal(await page.locator('.drug-card').count(),16);
  assert.equal(await page.locator('h1').innerText(),'Unusual drugs');
@@ -25,7 +25,7 @@ try{
   assert.equal(await page.locator(`[data-ref-open="drug-${drug}"] .stock-control`).count(),0);
  }
  await page.locator('#ref-age').fill('');await open('drug-magnesium');await open('path-mag-asthma');
- assert.match(await page.locator('[data-recipe="mag-asthma-0"] .dose-output').innerText(),/Enter patient age in years above.*ages 16 and older/);
+ assert.match(await page.locator('[data-recipe="mag-asthma-0"] .dose-output').innerText(),/Enter patient age in years into the calculator up top.*ages 16 and older/);
  await page.locator('#ref-age').fill('40');await page.locator('#ref-weight').fill('80');
 
  assert.match(await page.locator('[data-recipe="mag-asthma-0"] .dose-output').innerText(),/2 g[\s\S]*4 mL/);

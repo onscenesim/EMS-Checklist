@@ -33,6 +33,6 @@ test('blood uses units for adults and volume by weight for children; paralytics 
  const pediatric=calc('blood-ped',{age:5,weightKg:20,concentration:null});assert.equal(pediatric.low,200);assert.equal(pediatric.volumeLow,200);
  assert.equal(calc('blood-ped',{age:5,weightKg:20},1).low,200);
  for(const id of ['sux-intubation','roc-intubation'])assert.match(calc(id).error,/No regional dose/);
- assert.match(calc('mag-asthma',{age:''}).error,/Enter patient age in years above.*ages 16 and older/);
+ assert.match(calc('mag-asthma',{age:''}).error,/Enter patient age in years into the calculator up top.*ages 16 and older/);
  assert.match(calc('ket-pain-ped-iv',{age:''}).error,/ages 5 to under 16/);
 });

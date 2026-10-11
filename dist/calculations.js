@@ -19,7 +19,7 @@ export function calculateDose(recipe,inputs={}){
   if(recipe.ageMin!==undefined||recipe.ageMax!==undefined){
     if(age===null||age<0){
       const eligible=recipe.ageMax===undefined?`ages ${recipe.ageMin??0} and older`:recipe.ageMin?`ages ${recipe.ageMin} to under ${recipe.ageMax}`:`ages under ${recipe.ageMax}`;
-      return {error:`Enter patient age in years above to confirm this dose applies to ${eligible}.`};
+      return {error:`Enter patient age in years into the calculator up top to confirm this dose applies to ${eligible}.`};
     }
     if(age<(recipe.ageMin??0)||age>=(recipe.ageMax??Infinity))return {error:'This dose does not apply to the entered age. Choose the matching adult / pediatric indication.'};
   }
