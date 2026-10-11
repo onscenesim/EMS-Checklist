@@ -315,3 +315,9 @@ tr.unavailable .na{color:#7c8794}
 .cardiac-arrest-box .dispatch-heading h2{background:transparent;border:0;padding:0}
 @media(max-width:640px){.dispatch-timer{padding:16px}.dispatch-heading{align-items:flex-start;gap:8px}.dispatch-heading h2{font-size:14px}.dispatch-heading h2 svg{width:17px;height:17px}.dispatch-digits{font-size:29px}.dispatch-start{font-size:16px;min-height:64px;padding:12px;gap:10px}.dispatch-start svg{width:21px;height:21px}.cardiac-arrest-box>.dispatch-timer{margin:0 13px 15px}}
 .arrest-tools .epi-heading h2{background:transparent;border:0;padding:0;font-size:18px}
+
+.arrest-priority-note{margin:16px 20px;padding:16px 18px;border-left:5px solid #b3343f;border-radius:6px;background:#fff0f1;color:#982834;line-height:1.5}
+.arrest-priority-note strong{display:block;font-size:15px}
+.arrest-priority-note p{font-size:13px;margin:6px 0}
+.arrest-priority-note b{display:block;font-size:15px;font-weight:800}
+@media(max-width:640px){.arrest-priority-note{margin:14px;padding:14px}.arrest-priority-note strong,.arrest-priority-note b{font-size:14px}}
