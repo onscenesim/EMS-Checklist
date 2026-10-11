@@ -55,7 +55,7 @@ try{
   await sedation.getByRole('button',{name:'Sedation checklist'}).click();
   assert.equal(await page.locator('.check-row').filter({hasText:'Provide post-intubation analgesia / sedation'}).locator('a[href$="#page=209"]').count(),1);
   await page.locator('.nav-item[data-page="trauma"]').click();
-  assert.equal(await page.getByText('Check perfusion; full body sweep — include armpits and back',{exact:true}).count(),1);
+  assert.equal(await page.getByText('Full body sweep including armpits and back',{exact:true}).count(),1);
   await page.locator('[data-action="new"]').click();
   await page.locator('[data-action="confirm-new"]').click();
   assert.equal(await page.locator('.encounter-stat strong').innerText(),'00');
