@@ -61,9 +61,9 @@ export const modules=[
   {id:'cardio',title:'Defibrillation / cardioversion',short:'Defib / cardioversion',icon:'bolt',color:'amber',tag:'CARDIAC',source:'C300 · C303 · C306',page:75,
     refs:[['Defibrillation · C300',75],['Wide complex · C303',79],['Narrow complex · C306',82]],
     sections:[
-      ['Before therapy',['Confirm pulse, rhythm, and protocol','Apply pads; check connection','Select rhythm-specific energy per protocol / device','Assess sedation need; do not delay urgent therapy']],
-      ['Synchronized cardioversion',['Enable SYNC; confirm R-wave markers','Clear patient; verify no contact','Deliver synchronized shock as indicated','Recheck SYNC before every shock']],
-      ['After therapy',['Recheck rhythm, pulse, perfusion, and BP','Obtain ECG after conversion as appropriate','Record therapy and response']]
+      ['Shock dosing guide',[]],
+      ['Synchronized cardioversion',[{id:'0',text:'Enable Sync; confirm R wave markers'},{id:'1',text:'CLEAR'},{id:'3',text:'Recheck Sync before next shock'}]],
+      ['After therapy',[{id:'repeat-vitals',text:'Repeat vitals post shock'},{id:'12-lead',text:'Obtain 12 lead post shock'}]]
     ]},
   {id:'sedation',title:'Sedation',short:'Sedation',icon:'syringe',color:'purple',tag:'PROCEDURE',source:'C303 · C306 · M408 · T715',page:79,
     refs:[['Wide complex · C303',79],['Narrow complex · C306',82],['Restraint · M408',100],['Pediatric restraint · P616',173],['After intubation · T715',209]],

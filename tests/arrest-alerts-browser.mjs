@@ -41,7 +41,7 @@ try{
  await page.locator('[data-action="test-pulse-sound"]').click();assert.equal(await page.evaluate(()=>window.alertTones.length),12);
  for(const width of [1440,768,390,320]){
   await page.setViewportSize({width,height:1100});
-  for(const id of ['arrest','sick','cardio']){await page.goto(`http://127.0.0.1:4173/#${id}`);assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true,`${id}: ${width}px overflow`);assert.ok(await page.getByText(/PRE-CHARGE DEFIB/).count()>0);}
+  for(const id of ['arrest','sick','cardio']){await page.goto(`http://127.0.0.1:4173/#${id}`);assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true,`${id}: ${width}px overflow`);if(id==='cardio')assert.equal(await page.locator('.shock-guide').count(),1);else assert.ok(await page.getByText(/PRE-CHARGE DEFIB/).count()>0);}
   if(width===1440||width===390){await page.goto('http://127.0.0.1:4173/#arrest');await page.locator('.pulse-panel').screenshot({path:`/Users/Shared/EMS Checklist/tmp/pulse-timer-${width}.png`});}
  }
  await page.goto('http://127.0.0.1:4173/#arrest');await page.locator('[data-action="new"]').click();await page.locator('[data-action="confirm-new"]').click();

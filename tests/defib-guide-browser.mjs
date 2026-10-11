@@ -1,0 +1,26 @@
+import {chromium} from '/Users/WorkSchool/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/playwright/index.mjs';
+import assert from 'node:assert/strict';
+const browser=await chromium.launch({headless:true,executablePath:'/Applications/Google Chrome.app/Contents/MacOS/Google Chrome'});
+try{
+ const page=await browser.newPage({viewport:{width:1440,height:1100}}),errors=[];page.on('pageerror',e=>errors.push(e.message));
+ await page.goto('http://127.0.0.1:4173/#cardio');
+ assert.equal(await page.getByText('Before therapy',{exact:true}).count(),0);assert.equal(await page.locator('.shock-guide [data-check]').count(),0);
+ assert.equal(await page.locator('[data-shock-protocol]').count(),3);assert.equal(await page.locator('.shock-plan').count(),0);
+ assert.deepEqual(await page.locator('.check-copy>span').allTextContents(),['Enable Sync; confirm R wave markers','CLEAR','Recheck Sync before next shock','Repeat vitals post shock','Obtain 12 lead post shock']);
+ assert.equal(await page.locator('.checklist-progress b').innerText(),'0 of 5 complete');
+ await page.locator('[data-shock-protocol="C300"]').click();assert.deepEqual(await page.locator('.shock-energy-step strong').allTextContents(),['MAX','MAX','MAX']);assert.equal(await page.locator('.shock-mode').innerText(),'UNSYNCHRONIZED');assert.equal(await page.locator('.shock-sedation-dose').count(),0);
+ await page.locator('[data-shock-protocol="C303"]').click();assert.deepEqual(await page.locator('.shock-energy-step strong').allTextContents(),['100J','200J','300J','360J']);assert.equal(await page.locator('.shock-sedation-dose strong').innerText(),'2–5 mg');assert.match(await page.locator('.shock-sedation p').innerText(),/Maximum 10 mg total/);assert.deepEqual(await page.locator('.shock-sedation-routes span').allTextContents(),['IV','IO','IM','IN']);
+ await page.locator('[data-cardio-sedation]').click();assert.equal(await page.locator('h1').innerText(),'Sedation');assert.equal(await page.locator('[data-sedation-path="versed-cardioversion"]').isVisible(),true);
+ await page.goto('http://127.0.0.1:4173/#cardio');assert.equal(await page.locator('[data-shock-protocol="C303"]').getAttribute('aria-pressed'),'true');
+ await page.locator('[data-shock-protocol="C306"]').click();assert.deepEqual(await page.locator('.shock-energy-step strong').allTextContents(),['50–100J','100J','200J','300J','360J']);
+ await page.locator('[data-shock-rhythm="irregular-biphasic"]').click();assert.deepEqual(await page.locator('.shock-energy-step strong').allTextContents(),['120–200J','200J','300J','360J']);
+ await page.locator('[data-shock-rhythm="irregular-monophasic"]').click();assert.deepEqual(await page.locator('.shock-energy-step strong').allTextContents(),['200J','300J','360J']);
+ await page.reload();assert.equal(await page.locator('[data-shock-rhythm="irregular-monophasic"]').getAttribute('aria-pressed'),'true');assert.match(await page.locator('.shock-sedation-heading').innerText(),/C306/);
+ await page.locator('[data-cardio-sedation]').click();assert.equal(await page.locator('[data-sedation-path="versed-cardioversion-narrow"]').isVisible(),true);
+ await page.goto('http://127.0.0.1:4173/#cardio');await page.locator('[data-check="cardio-1-1"]').check();await page.reload();assert.equal(await page.locator('[data-check="cardio-1-1"]').isChecked(),true);
+ for(const width of [1440,768,390,320]){await page.setViewportSize({width,height:1100});for(const code of ['C300','C303','C306']){await page.locator(`[data-shock-protocol="${code}"]`).click();assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true,`${code} ${width}px overflow`);if(code==='C306'){for(const rhythm of ['regular','irregular-biphasic','irregular-monophasic']){await page.locator(`[data-shock-rhythm="${rhythm}"]`).click();assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true,`${rhythm} ${width}px overflow`);}}}if(width===1440||width===390){await page.locator('[data-shock-protocol="C303"]').click();await page.screenshot({path:`/Users/Shared/EMS Checklist/tmp/defib-guide-${width}.png`,fullPage:true});}}
+ await page.locator('[data-action="new"]').click();await page.locator('[data-action="confirm-new"]').click();await page.goto('http://127.0.0.1:4173/#cardio');assert.equal(await page.locator('.shock-plan').count(),0);assert.equal(await page.locator('[data-check]:checked').count(),0);
+ // Retired after-therapy checks must not silently mark newly worded actions complete.
+ await page.evaluate(()=>sessionStorage.setItem('wfd-encounter-v1',JSON.stringify({checks:{'cardio-2-0':true,'cardio-2-1':true,'cardio-1-3':true}})));await page.reload();assert.equal(await page.locator('[data-check="cardio-2-repeat-vitals"]').isChecked(),false);assert.equal(await page.locator('[data-check="cardio-2-12-lead"]').isChecked(),false);assert.equal(await page.locator('[data-check="cardio-1-3"]').isChecked(),true);
+ assert.deepEqual(errors,[]);console.log('Passed: adult protocol / rhythm energy choices, matching sedation doses and indication links, simplified checks, persistence/reset, retired checks, keyboard buttons, responsive layouts.');
+}finally{await browser.close();}
