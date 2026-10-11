@@ -26,6 +26,7 @@ try{
  assert.equal(await page.locator('[data-check="arrest-0-lucas-in"]').isChecked(),true);
  assert.equal(await page.locator('.dispatch-digits').innerText(),'28:59');
  await page.locator('.nav-item[data-page="sick"]').click();
+ await page.locator('.sick-arrest-panel > summary').click();
  assert.equal(await page.locator('.cardiac-arrest-box .dispatch-timer').count(),1);
  assert.equal(await page.locator('.cardiac-arrest-box .epi-panel').count(),1);
  assert.equal(await page.locator('.dispatch-digits').innerText(),'28:59');

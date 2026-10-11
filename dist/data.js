@@ -6,37 +6,30 @@ export const modules=[
     arrestRefs:[['Arrest · SB204',50],['VF / VT · C300',75],['PEA / asystole · C301',76],['Post-ROSC · C307',83]],
     sections:[
       ['Get ahead of the crash',[
+        {id:'main-o2',text:'Turn main O2 AND cabin power on',note:'Before the call or en route: turn the main O2 and cabin power on early so both are ready before the chaos.'},
         {id:'roles',text:'Assign roles before things get worse',note:'Leader · airway · access / medications · scene control'},
         {id:'pads-early',text:'Put pads on early',note:'Pacing / cardioversion ready.',tool:['cardio','Defib / cardioversion']},
-        {id:'lucas-staged',text:'Stage the LUCAS backboard while they still have a pulse'},
+        {id:'lucas-staged',text:'Place the LUCAS backboard under the patient while they still have a pulse'},
         {id:'push-dose-ready',text:'Prepare and clearly label push-dose epinephrine',protocol:['PUSH-DOSE EPI · SB205',53],tool:['medications','Push-dose epi guide','push-epi']}
       ]],
       ['Airway supplies ready',[
         {id:'suction-ready',text:'Suction on and within reach'},
-        {id:'airway-staged',text:'Stage BVM, backup airway, ETT, bougie, and laryngoscope',note:'Have waveform capnography and the tube holder ready.',tool:['intubation','Intubation checklist']},
-        {id:'ventilator-ready',text:'Set up the ventilator before transport if needed'}
+        {id:'airway-staged',text:'Stage BVM, backup airway, ETT, bougie, and laryngoscope',note:'Have waveform capnography and the tube holder ready.',tool:['intubation','Intubation checklist']}
       ]],
       ['Before you move',[
         {id:'bp-cycling',text:'Set BP to cycle every 2 minutes'},
         {id:'backup-access',text:'Prepare a second IV / IO if needed'},
-        {id:'movement-plan',text:'Plan the move; keep suction and airway gear accessible'},
+        {id:'movement-plan',text:'Ensure airway is 100% secure and ETCO₂ is being watched'},
         {id:'hospital-activation',text:'Activate the hospital early'}
-      ]],
-      ['Cardiac arrest',[
-        {id:'arrest-cpr',text:'Start high-quality CPR; apply pads'},
-        {id:'arrest-team',text:'Assign compressors and plan rotations'},
-        {id:'arrest-lucas',text:'Apply LUCAS if indicated; minimize CPR interruptions'},
-        {id:'arrest-rhythm',text:'Identify rhythm; follow the arrest protocol'},
-        {id:'arrest-causes',text:'Treat reversible causes'},
-        {id:'arrest-recheck',text:'Recheck rhythm / pulse at protocol intervals'},
-        {id:'arrest-rosc',text:'After ROSC, follow C307',protocol:['POST-ROSC CARE · C307',83]}
       ]]
+
     ]},
   {id:'arrest',title:'Cardiac arrest',short:'Cardiac arrest',icon:'heart',color:'red',tag:'EXPECTED ARREST',source:'SB204 · C300 · C301 · C307 · T715',page:50,
     subtitle:'Arrive ready for a code. Prepare for a pulse to come back.',
     refs:[['Arrest · SB204',50],['VF / VT · C300',75],['PEA / asystole · C301',76],['Post-ROSC · C307',83]],
     sections:[
       ['Arrive ready',[
+        {id:'main-o2',text:'Turn main O2 AND cabin power on',note:'Before the call or en route: turn the main O2 and cabin power on early so both are ready before the chaos.'},
         {id:'code-lead',text:'Name the code lead out loud',note:'Make sure everyone knows who is running the code.'},
         {id:'lucas-in',text:'Take the LUCAS in'},
         {id:'code-gear',text:'Bring the monitor, suction, airway bag, and drug bag'},
@@ -50,13 +43,13 @@ export const modules=[
         {id:'access-meds',text:'Establish IV / IO; prepare rhythm-specific medications'},
         {id:'lucas-applied',text:'Apply LUCAS if indicated; minimize CPR interruptions'},
         {id:'reversible-causes',text:'Work through reversible causes'},
-        {id:'rhythm-recheck',text:'Recheck rhythm / pulse at protocol intervals'}
+        {id:'defib-precharge',text:'PRE-CHARGE DEFIB before the rhythm / pulse check',note:'Keep CPR going while charging. Confirm a shockable rhythm and clear everyone before a shock; disarm if no shock is indicated.',protocol:['CHARGE DURING CPR · SB204',51]},
+        {id:'rhythm-recheck',text:'Recheck rhythm / pulse every 2 minutes'}
       ]],
       ['Prepare for possible ROSC',[
         {id:'rosc-movement',text:'Plan movement / extrication now',note:'Have the cot and movement equipment ready.'},
         {id:'rosc-epi',text:'Have a clearly labeled push-dose epi syringe ready',protocol:['POST-ROSC PRESSORS · C307',84],tool:['medications','Push-dose epi guide','push-epi']},
-        {id:'rosc-sedation',text:'Plan post-ROSC sedation doses',protocol:['SEDATION AFTER INTUBATION · T715',209],tool:['sedation','Ketamine / Versed dosing']},
-        {id:'rosc-ventilator',text:'Stage the ventilator if needed'}
+        {id:'rosc-sedation',text:'Plan post-ROSC sedation doses',protocol:['SEDATION AFTER INTUBATION · T715',209],tool:['sedation','Ketamine / Versed dosing']}
       ]],
       ['When the pulse comes back',[
         {id:'rosc-care',text:'Follow post-ROSC care',protocol:['POST-ROSC CARE · C307',83]},
@@ -68,9 +61,9 @@ export const modules=[
   {id:'cardio',title:'Defibrillation / cardioversion',short:'Defib / cardioversion',icon:'bolt',color:'amber',tag:'CARDIAC',source:'C300 · C303 · C306',page:75,
     refs:[['Defibrillation · C300',75],['Wide complex · C303',79],['Narrow complex · C306',82]],
     sections:[
-      ['Before therapy',['Confirm pulse, rhythm, and protocol','Apply pads; check connection','Select rhythm-specific energy per protocol / device','Assess sedation need; do not delay urgent therapy']],
-      ['Synchronized cardioversion',['Enable SYNC; confirm R-wave markers','Clear patient; verify no contact','Deliver synchronized shock as indicated','Recheck SYNC before every shock']],
-      ['After therapy',['Recheck rhythm, pulse, perfusion, and BP','Obtain ECG after conversion as appropriate','Record therapy and response']]
+      ['Shock dosing guide',[]],
+      ['Synchronized cardioversion',[{id:'0',text:'Enable Sync; confirm R wave markers'},{id:'1',text:'CLEAR'},{id:'3',text:'Recheck Sync before next shock'}]],
+      ['After therapy',[{id:'repeat-vitals',text:'Repeat vitals post shock'},{id:'12-lead',text:'Obtain 12 lead post shock'}]]
     ]},
   {id:'sedation',title:'Sedation',short:'Sedation',icon:'syringe',color:'purple',tag:'PROCEDURE',source:'C303 · C306 · M408 · T715',page:79,
     refs:[['Wide complex · C303',79],['Narrow complex · C306',82],['Restraint · M408',100],['Pediatric restraint · P616',173],['After intubation · T715',209]],
@@ -86,9 +79,10 @@ export const modules=[
   {id:'intubation',title:'Intubation',short:'Intubation',icon:'airway',color:'blue',tag:'AIRWAY',source:'T705 · T706 · A102 · T715',page:193,
     refs:[['Intubation · T706',193],['Airway · T705',189],['Assisted intubation · A102',17],['After intubation · T715',209]],
     sections:[
-      ['Prepare',['Confirm indication, scope, and airway plan','Position / preoxygenate; optimize hemodynamics','Set up and test suction',
-        {text:'Prepare adult ETT: 7.0 or 8.0 mm; bougie, lube, laryngoscope',note:'Choose size for patient anatomy; pediatric sizing: Broselow tape.'},
-        'Prepare waveform capnography, tube holder, and backup airway',
+      ['Prepare',[{id:'main-o2',text:'Turn main O2 AND cabin power on',note:'Confirm the main oxygen supply and cabin power are on before airway setup.'},
+        {id:'0',text:'Confirm indication, scope, and airway plan'},{id:'1',text:'Position / preoxygenate; optimize hemodynamics'},{id:'2',text:'Set up and test suction'},
+        {id:'3',text:'Prepare adult ETT: 7.0 or 8.0 mm; bougie, lube, laryngoscope',note:'Choose size for patient anatomy; pediatric sizing: Broselow tape.'},
+        {id:'4',text:'Prepare waveform capnography, tube holder, and backup airway'},
         {id:'push-dose-epi',text:'Have push-dose epinephrine ready',protocol:['PUSH-DOSE EPI · SB205',53]}
       ]],
       ['Intubate',['Assign operator and backup','Intubate per T706; do not interrupt CPR','Confirm continuous waveform ETCO₂ and bilateral breath sounds',
@@ -108,7 +102,7 @@ export const modules=[
   {id:'trauma',title:'Trauma',short:'Trauma',icon:'shield',color:'orange',tag:'ASSESSMENT',source:'SB206 · S500 · S501 · S506',page:56,
     refs:[['Trauma assessment · SB206',56],['Hemorrhagic shock · S500',135],['Head / spine · S501',137],['Pain control · S505',142]],
     sections:[
-      ['M · Bleeding',[{id:'bleeding',text:'Control bleeding'}]],
+      ['M · Bleeding',[{id:'main-o2',text:'Turn main O2 AND cabin power on. Turn up the heat.',note:'Before the call or en route: get oxygen, cabin power, and heat ready early.'},{id:'bleeding',text:'Control bleeding'}]],
       ['A · Airway',[{id:'airway',text:'Check and control airway'}]],
       ['R · Respirations',[{id:'chest-assessment',text:'Assess chest, ventilation, oxygenation'},{id:'chest-treatment',text:'Treat life-threatening chest injuries with decompression, chest seals'}]],
       ['C · Circulation',[{id:'strip-clothes',text:'Strip clothes'},{id:'body-sweep',text:'Full body sweep including armpits and back'},{id:'blood-thinners',text:'Check blood thinners and antiplatelets'},{id:'head-neck',text:'Assess head / neck injury and pupils'}]],

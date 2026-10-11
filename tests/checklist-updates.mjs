@@ -6,6 +6,7 @@ try{
   const errors=[];page.on('pageerror',error=>errors.push(error.message));
   await page.clock.install({time:new Date('2026-10-09T19:00:00-04:00')});
   await page.goto('http://127.0.0.1:4173/#sick');
+  if(!await page.locator('.sick-arrest-panel').evaluate(el=>el.open))await page.locator('.sick-arrest-panel > summary').click();
   assert.equal(await page.locator('.epi-digits').innerText(),'05:00');
   assert.equal(await page.locator('#epi-interval').inputValue(),'5');
   await page.getByRole('button',{name:'Epi given · start 5 min',exact:true}).click();
@@ -27,7 +28,7 @@ try{
   await page.getByRole('button',{name:'Epi given · restart 5 min',exact:true}).click();
   assert.equal(await page.locator('.epi-digits').innerText(),'05:00');
   assert.equal(await page.locator('.epi-panel.due').count(),0);
-  await page.getByRole('button',{name:'Clear timer',exact:true}).click();
+  await page.locator('.epi-panel').getByRole('button',{name:'Clear timer',exact:true}).click();
   await page.locator('#epi-interval').selectOption('3');
   assert.equal(await page.locator('.epi-digits').innerText(),'03:00');
   await page.getByRole('button',{name:'Epi given · start 3 min',exact:true}).click();
@@ -60,6 +61,7 @@ try{
   await page.locator('[data-action="confirm-new"]').click();
   assert.equal(await page.evaluate(()=>Object.values(JSON.parse(sessionStorage.getItem('wfd-encounter-v1')).checks).filter(Boolean).length),0);
   await page.goto('http://127.0.0.1:4173/#sick');
+  if(!await page.locator('.sick-arrest-panel').evaluate(el=>el.open))await page.locator('.sick-arrest-panel > summary').click();
   assert.equal(await page.locator('.epi-digits').innerText(),'05:00');
   assert.equal(await page.locator('.epi-status').innerText(),'Ready after first dose');
   await page.setViewportSize({width:390,height:844});
@@ -74,7 +76,7 @@ try{
   assert.equal(await page.locator('[data-check="intubation-0-4"]').isChecked(),true);
   assert.equal(await page.locator('[data-check="intubation-0-push-dose-epi"]').isChecked(),false);
   assert.equal(await page.locator('[data-check="intubation-2-documentation"]').isChecked(),false);
-  assert.equal(await page.locator('.checklist-progress b').innerText(),'1 of 15 complete');
+  assert.equal(await page.locator('.checklist-progress b').innerText(),'1 of 16 complete');
   assert.deepEqual(errors,[]);
   console.log('Updated checklist checks passed: countdown, due state, dose restart, navigation/reload persistence, interval, encounter reset, inline protocol independence, sedation links, adult airway references, trauma sweep, existing progress, and mobile layouts.');
 }finally{await browser.close();}

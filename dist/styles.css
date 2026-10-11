@@ -324,3 +324,216 @@ tr.unavailable .na{color:#7c8794}
 .arrest-priority-note p{font-size:13px;margin:6px 0}
 .arrest-priority-note b{display:block;font-size:15px;font-weight:800}
 @media(max-width:640px){.arrest-priority-note{margin:14px;padding:14px}.arrest-priority-note strong,.arrest-priority-note b{font-size:14px}}
+/* CPR cycle and distinct audible arrest reminders. */
+.pulse-panel{background:#fff;border:2px solid #174d89;border-radius:9px;padding:20px;margin-bottom:20px}
+.pulse-heading{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:18px}
+.arrest-tools .pulse-heading h2{display:flex;align-items:center;gap:9px;background:transparent;border:0;padding:0;font-size:18px;color:#174d89}
+.pulse-heading h2 svg{width:21px;height:21px;flex-shrink:0}
+.pulse-body{display:flex;align-items:center;gap:26px}
+.pulse-digits{font:800 52px Manrope,monospace;font-variant-numeric:tabular-nums;letter-spacing:1px;line-height:1.2;color:#174d89}
+.pulse-status{font-size:12px;color:#315674;margin-top:5px;min-height:20px;line-height:1.5}
+.pulse-controls{display:flex;flex:1;gap:10px;flex-wrap:wrap}
+.pulse-start{background:#174d89;color:#fff;border-color:#174d89;min-height:48px;font-size:14px}
+.pulse-precharge{display:grid;gap:7px;margin-top:18px;background:#fff4d9;border-left:5px solid #aa6700;padding:14px;border-radius:5px;color:#754600;line-height:1.5}
+.pulse-precharge strong{font-size:14px;font-weight:800}
+.pulse-precharge span{font-size:12px}
+.pulse-note,.timer-audio-note{font-size:11px;color:#655968;margin-top:14px;line-height:1.5}
+.pulse-panel.warning{background:#fffaee;border-color:#aa6700}
+.pulse-panel.warning .pulse-status{color:#754600;font-weight:800}
+.pulse-panel.warning .pulse-precharge{background:#ffe4a3;border-left-width:7px}
+.pulse-panel.due{background:#edf5ff}
+.pulse-panel.due .pulse-status{font-weight:800;color:#174d89}
+.epi-panel.warning{background:#fff4e6;border-color:#aa6700}
+.epi-panel.warning .epi-status{color:#754600;font-weight:800}
+.timer-sounds{background:#fff;border:1px solid #ccdbea;border-radius:8px;padding:16px;margin-bottom:22px}
+.timer-sounds b{font-size:14px;color:#183d65}
+.timer-sound-status{font-size:12px;line-height:1.5;color:#52647b;margin:6px 0 12px}
+.timer-sound-controls{display:flex;gap:8px;flex-wrap:wrap}
+.arrest-priority-note .precharge-emphasis{margin-top:14px;padding-top:12px;border-top:1px solid #d5a5ab;font-size:16px}
+@media(max-width:640px){.pulse-panel{padding:16px}.pulse-heading{margin-bottom:15px}.pulse-heading .source{width:100%;font-size:11px}.pulse-body{align-items:flex-start;flex-direction:column;gap:14px}.pulse-digits{font-size:54px}.pulse-controls{width:100%}.pulse-start{flex:1}.pulse-precharge strong{font-size:13px}.timer-sounds{padding:14px}.timer-sound-controls .button{flex:1}.arrest-priority-note .precharge-emphasis{font-size:14px}}
+/* Early oxygen readiness and focused arrest directions within Sick patient. */
+.oxygen-priority{border:2px solid #aa6700;border-left-width:6px;border-radius:9px;background:#fff7e5;margin-bottom:22px;overflow:hidden}
+.oxygen-priority-label{display:flex;align-items:center;gap:8px;padding:13px 20px 0;font-size:11px;font-weight:800;letter-spacing:.6px;line-height:1.5;color:#754600}
+.oxygen-priority-label svg{width:18px;height:18px;flex-shrink:0}
+.oxygen-priority .check-row{border:0;padding:15px 20px 18px}
+.oxygen-priority .check-copy>span{font-size:21px;font-weight:800;color:#754600}
+.oxygen-priority .check-copy small{color:#755d38;font-size:12px;line-height:1.6}
+.oxygen-priority .check-row.checked{background:#edf6ed}
+.sick-arrest-panel{background:#fff8f8;border-radius:9px;margin-bottom:22px;overflow:hidden}
+.sick-arrest-panel>summary{display:flex;align-items:center;gap:14px;list-style:none;padding:22px 20px;background:#b3343f;color:#fff;cursor:pointer;min-height:88px}
+.sick-arrest-panel>summary::-webkit-details-marker{display:none}
+.sick-arrest-panel>summary:focus-visible{outline:3px solid #174d89;outline-offset:-4px}
+.sick-arrest-panel summary b{display:block;font:800 20px Manrope,system-ui,sans-serif;line-height:1.4}
+.sick-arrest-panel summary small{display:block;font-size:12px;line-height:1.5;margin-top:5px;color:#ffe4e7}
+.sick-arrest-icon{display:flex;align-items:center;justify-content:center;width:43px;height:43px;border-radius:7px;background:#ffffff20;flex-shrink:0}
+.sick-arrest-icon svg{width:27px;height:27px}
+.sick-arrest-expand{margin-left:auto;font-size:30px;font-weight:600;flex-shrink:0}
+.sick-arrest-panel[open] .sick-arrest-expand{transform:rotate(45deg)}
+.sick-arrest-content .arrest-priority-note{margin:20px}
+.arrest-rosc-direction{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin:0 20px 20px;padding:15px 18px;border-left:5px solid #176d61;border-radius:6px;background:#eaf7f4;color:#176d61}
+.arrest-rosc-direction b{font-size:16px}
+.sick-arrest-content>.dispatch-timer{margin:0 20px 20px}
+.sick-arrest-content .arrest-tools{padding-top:0;padding-bottom:0}
+@media(max-width:640px){.oxygen-priority-label{padding:12px 14px 0;font-size:10px;letter-spacing:.3px}.oxygen-priority .check-row{padding:13px 14px 16px}.oxygen-priority .check-copy>span{font-size:20px}.sick-arrest-panel>summary{padding:18px 14px;gap:11px}.sick-arrest-panel summary b{font-size:19px}.sick-arrest-panel summary small{font-size:11px}.sick-arrest-icon{width:36px;height:40px}.sick-arrest-content .arrest-priority-note{margin:15px 14px}.arrest-rosc-direction{margin:0 14px 15px;padding:14px}.arrest-rosc-direction b{font-size:15px}.sick-arrest-content>.dispatch-timer{margin:0 14px 15px}}
+/* A shared trauma-arrest brief for pre-arrival preparation and transport. */
+.trauma-arrest-panel{border:2px solid #a33b28;border-radius:9px;overflow:hidden;background:#fff;margin-bottom:24px}
+.trauma-arrest-panel>summary{display:flex;align-items:center;gap:14px;list-style:none;background:#a33b28;color:#fff;padding:20px;cursor:pointer;min-height:86px}
+.trauma-arrest-panel>summary::-webkit-details-marker{display:none}
+.trauma-arrest-panel>summary:focus-visible{outline:3px solid #174d89;outline-offset:-4px}
+.trauma-arrest-panel summary b{display:block;font:800 20px Manrope,system-ui,sans-serif;line-height:1.4}
+.trauma-arrest-panel summary small{display:block;font-size:12px;line-height:1.5;color:#ffe9df;margin-top:5px}
+.trauma-arrest-icon{display:flex;align-items:center;justify-content:center;background:#ffffff20;width:43px;height:43px;border-radius:7px;flex-shrink:0}
+.trauma-arrest-icon svg{width:27px;height:27px}
+.trauma-arrest-expand{font-size:30px;font-weight:600;margin-left:auto;flex-shrink:0}
+.trauma-arrest-panel[open] .trauma-arrest-expand{transform:rotate(45deg)}
+.trauma-arrest-content{padding:20px;line-height:1.6}
+.trauma-arrest-heading{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:18px}
+.trauma-arrest-heading>span{font-size:10px;letter-spacing:.8px;font-weight:800;color:#853722}
+.trauma-arrest-content h3{font-size:16px;line-height:1.4;color:#853722;margin-bottom:7px}
+.trauma-arrest-content p{font-size:13px;color:#465970;line-height:1.6}
+.trauma-arrest-prep{padding:16px;background:#fff5e4;border-left:5px solid #aa6700;border-radius:6px;margin-bottom:16px}
+.trauma-arrest-focus{padding:16px;background:#fff0ee;border-radius:6px;margin-bottom:18px;color:#853722}
+.trauma-arrest-focus strong{font-size:17px;line-height:1.4;display:block;margin-bottom:7px}
+.trauma-arrest-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-bottom:18px}
+.trauma-arrest-actions>section{display:flex;gap:12px;padding:15px;border:1px solid #e0d4cd;border-radius:7px;background:#fffaf7;min-width:0}
+.trauma-arrest-actions>section>span{font-size:14px;font-weight:800;color:#a33b28;flex-shrink:0}
+.trauma-arrest-actions>section>div{min-width:0}
+.trauma-arrest-actions .source{display:inline-flex;font-size:10px;margin-top:10px;padding:8px 10px}
+.trauma-arrest-transport{border:1px solid #ccdbea;background:#f4f8fd;border-radius:7px;padding:16px;margin-bottom:16px}
+.trauma-arrest-transport h3{color:#174d89}
+.trauma-arrest-transport p+p{margin-top:10px}
+.trauma-arrest-rhythms{padding-bottom:13px;border-bottom:1px solid #ccdbea;margin-bottom:13px}
+.trauma-arrest-exclusions{padding:15px;border-left:5px solid #b3343f;border-radius:6px;background:#fff0f1;color:#982834;font-size:13px;line-height:1.6;margin-bottom:16px}
+.trauma-arrest-links{display:flex;gap:8px;flex-wrap:wrap}
+.trauma-arrest-links .source{font-size:10px}
+@media(max-width:640px){.trauma-arrest-panel>summary{padding:18px 14px;gap:11px}.trauma-arrest-panel summary b{font-size:19px}.trauma-arrest-panel summary small{font-size:11px}.trauma-arrest-content{padding:14px}.trauma-arrest-icon{width:36px;height:40px}.trauma-arrest-actions{grid-template-columns:1fr}.trauma-arrest-actions>section{padding:13px}.trauma-arrest-content h3{font-size:15px}.trauma-arrest-focus strong{font-size:16px}.trauma-arrest-content p{font-size:12px}.trauma-arrest-prep,.trauma-arrest-transport{padding:14px}.trauma-arrest-heading .source{font-size:10px}.trauma-arrest-exclusions{font-size:12px}}
+/* Adult shock energy paths and indication-specific cardioversion sedation. */
+.shock-guide h2 small{font-size:11px;margin-left:auto;font-weight:600;letter-spacing:0;color:#526d8e}
+.shock-guide-content{padding:20px}
+.shock-protocol-choices{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.shock-protocol-choices button{text-align:left;border:2px solid #ccdbea;border-radius:8px;background:#f4f8fd;padding:14px;min-height:116px}
+.shock-protocol-choices b{display:block;font-size:18px;color:#174d89;margin-bottom:7px}
+.shock-protocol-choices span{display:block;font-size:13px;font-weight:700;line-height:1.5}
+.shock-protocol-choices small{display:block;font-size:11px;margin-top:6px;color:#52647b;line-height:1.4}
+.shock-protocol-choices [aria-pressed=true]{background:#e5f0ff;border-color:#174d89;box-shadow:inset 0 0 0 1px #174d89}
+.shock-plan{margin-top:22px;border-top:1px solid #dce6f1;padding-top:20px}
+.shock-plan-heading{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:16px}
+.shock-plan-heading h3{font-size:17px;color:#174d89;line-height:1.4}
+.shock-mode{font-size:10px;letter-spacing:.6px;font-weight:800;border-radius:5px;padding:7px 10px;background:#e7f3ee;color:#176d61}
+.shock-mode.unsynchronized{background:#fff0e1;color:#96500b}
+.shock-rhythm-choices{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px}
+.shock-rhythm-choices button{padding:10px;border:1px solid #c3d4e6;border-radius:6px;font-size:11px;background:#fff;color:#174d89;font-weight:700;min-height:42px}
+.shock-rhythm-choices [aria-pressed=true]{background:#174d89;color:#fff;border-color:#174d89}
+.shock-energy-sequence{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+.shock-energy-step{border:1px solid #bfd3ea;border-top:4px solid #174d89;background:#edf5ff;border-radius:7px;padding:14px 10px;text-align:center;min-width:0}
+.shock-energy-step>span{display:block;font-size:10px;line-height:1.5;color:#315674;font-weight:700;margin-bottom:8px}
+.shock-energy-step strong{font:800 34px Manrope,system-ui,sans-serif;line-height:1.3;color:#174d89;white-space:nowrap}
+.shock-energy-step small{font-size:14px;margin-left:5px}
+.shock-start-energy{max-width:230px;margin-bottom:18px}
+.shock-start-energy .shock-energy-step{background:#174d89;border-color:#174d89}
+.shock-start-energy .shock-energy-step strong,.shock-start-energy .shock-energy-step>span{color:#fff}
+.shock-escalation-label{display:block;margin-bottom:10px;font-size:12px;color:#174d89}
+.shock-dose-note,.shock-sync-note{font-size:12px;line-height:1.6;color:#465970;margin-top:14px}
+.shock-dose-source{margin-top:14px}
+.shock-dose-source .source{font-size:10px}
+.shock-select-hint{padding:20px 0;font-size:13px;line-height:1.5;color:#52647b}
+.shock-sedation{margin-top:22px;border:1px solid #d3c6e4;border-left:5px solid #77529b;border-radius:8px;padding:17px;background:#f8f3ff}
+.shock-sedation-heading{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:16px}
+.shock-sedation h3{font-size:16px;color:#69488a}
+.shock-sedation-heading .source{font-size:10px}
+.shock-sedation-dose{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px}
+.shock-sedation-dose b{display:block;font-size:13px;color:#69488a}
+.shock-sedation-dose strong{display:block;font:800 34px Manrope,system-ui,sans-serif;color:#69488a;margin-top:5px}
+.shock-sedation-dose strong small{font-size:17px}
+.shock-sedation-routes{display:flex;gap:6px;flex-wrap:wrap}
+.shock-sedation-routes span{background:#77529b;border-radius:5px;padding:7px 9px;color:#fff;font-size:12px;font-weight:800}
+.shock-sedation p{font-size:12px;line-height:1.6;margin-top:12px;color:#604b76}
+.shock-sedation-link{display:flex;align-items:center;gap:12px;width:100%;text-align:left;padding:16px;border:2px solid #77529b;border-radius:7px;background:#77529b;color:#fff;margin-top:18px;min-height:70px}
+.shock-sedation-link>svg:last-child{margin-left:auto}
+.shock-sedation-link b{display:block;font-size:15px;line-height:1.4}
+.shock-sedation-link small{display:block;font-size:11px;line-height:1.4;color:#ede1ff;margin-top:5px}
+.sedation-path{scroll-margin-top:18px}
+@media(max-width:640px){.shock-guide-content{padding:15px}.shock-guide h2{flex-wrap:wrap;gap:9px}.shock-guide h2 small{flex-basis:100%;margin-left:0}.shock-protocol-choices{grid-template-columns:1fr;gap:8px}.shock-protocol-choices button{min-height:0;padding:12px 14px}.shock-protocol-choices b{font-size:17px;margin-bottom:4px}.shock-protocol-choices span{font-size:12px}.shock-protocol-choices small{font-size:10px}.shock-energy-sequence{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.shock-energy-step{padding:13px 7px}.shock-energy-step strong{font-size:30px}.shock-energy-step small{font-size:12px}.shock-plan-heading h3{font-size:16px}.shock-sedation{padding:14px}.shock-sedation-link{padding:14px;gap:9px}.shock-sedation-link b{font-size:14px}.shock-dose-note,.shock-sync-note{font-size:11px}}
+
+.shock-device{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px;border:1px solid #bfd3ea;background:#edf5ff;border-radius:7px;padding:13px 15px;margin-bottom:16px;color:#174d89;font-size:13px}
+.shock-device strong{font-size:18px}
+.shock-ceiling-note{padding:12px;border-left:4px solid #96500b;background:#fff3e5;font-size:12px;line-height:1.6;margin-top:14px;color:#794207}
+.shock-dose-source{display:flex;flex-wrap:wrap;gap:8px}
+.zenix-energy-cap{padding:10px 0 14px;color:#96500b;font-size:13px}
+.shock-device-choices{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;margin-bottom:14px}
+.shock-device-choices button{border:2px solid #bccce0;border-radius:7px;background:#fff;padding:12px;color:#174d89;text-align:left;min-height:65px}
+.shock-device-choices b,.shock-device-choices span{display:block;line-height:1.5}
+.shock-device-choices b{font-size:14px}.shock-device-choices span{font-size:11px}
+.shock-device-choices [aria-pressed=true]{border-color:#174d89;background:#e5f0ff;box-shadow:inset 0 0 0 1px #174d89}
+/* Sedation: dose and draw volume first, with route and limits in plain sight. */
+.sedation-calculator-title{font-size:17px;color:#173f6b;margin-bottom:14px}
+.sedation-quick .field{font-size:13px}.sedation-quick input,.sedation-quick select{font-size:16px;min-height:45px}
+.sedation-purpose{display:flex;flex-wrap:wrap;gap:9px;margin-bottom:15px}
+.sedation-purpose button{font-size:14px;font-weight:800;padding:12px 16px;background:#fff;color:#594477;border:2px solid #d0c5df;border-radius:7px;min-height:46px}
+.sedation-purpose [aria-pressed=true]{background:#67449a;border-color:#67449a;color:#fff}
+.sedation-monitor{padding:13px 16px;border-radius:7px;background:#fff2df;color:#7e470c;font-size:13px;font-weight:700;line-height:1.6;margin-bottom:16px}
+.sedation-drugs .drug-card.teal{--accent:#096e63;--tint:#e6f5f1}
+.sedation-drugs .drug-card.blue{--accent:#67449a;--tint:#f0eafa}
+.sedation-drugs .drug-name b{font-size:24px;color:var(--accent)}
+.sedation-drugs .drug-name small{font-size:12px;color:var(--accent)}
+.sedation-path{padding:22px 0;margin-top:20px}
+.sedation-path-heading{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:14px}
+.sedation-path-heading h3{font-size:21px;margin:0;color:var(--accent);line-height:1.4}
+.sedation-age{padding:6px 9px;border-radius:5px;background:var(--tint);color:var(--accent);font-size:11px;font-weight:800;white-space:nowrap}
+.sedation-dose-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:14px}
+.sedation-dose-card{background:#fff;border:2px solid var(--accent);border-top-width:6px;border-radius:9px;padding:18px;min-width:0}
+.sedation-dose-top{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.sedation-dose-top h4{font-size:18px;line-height:1.4;color:var(--accent)}
+.sedation-routes{display:flex;gap:6px;flex-wrap:wrap}.sedation-routes span{font-size:15px;font-weight:800;background:#1e578c;color:#fff;border-radius:5px;padding:7px 10px;line-height:1.2}
+.sedation-routes [data-route=IM]{background:#9a4b0b}.sedation-routes [data-route=IN]{background:#67449a}
+.sedation-dose-rule{display:flex;align-items:center;justify-content:space-between;gap:9px;flex-wrap:wrap;margin:14px 0;color:#475770;font-size:15px;font-weight:700;line-height:1.5}
+.sedation-dose-rule>b{font-size:12px;background:#fff0f1;color:#9d2331;padding:6px 9px;border:1px solid #e8bac0;border-radius:5px}
+.sedation-dose-card>.field{margin:12px 0 16px}
+.sedation-dose-output{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:15px}
+.sedation-dose-output>div{background:var(--tint);padding:16px 12px;border-radius:7px;min-width:0}
+.sedation-dose-output .sedation-draw{background:#edf3fa;border:1px solid #b8cce3}
+.sedation-dose-output>div>span{display:block;font-size:12px;font-weight:800;letter-spacing:1px;color:var(--accent);margin-bottom:10px}
+.sedation-dose-output strong{font:800 44px Manrope,system-ui,sans-serif;line-height:1.3;color:var(--accent);overflow-wrap:anywhere;font-variant-numeric:tabular-nums}
+.sedation-dose-output strong small{font-size:21px}
+.sedation-draw strong,.sedation-dose-output .sedation-draw>span{color:#174d89}
+.sedation-draw p{font-size:13px;color:#315674;margin-top:7px;font-weight:700;line-height:1.5}
+.sedation-dose-output .calculation-empty{padding:16px;background:#fff3e5;border-left:4px solid #96500b;border-radius:5px;font-size:15px;font-weight:700;line-height:1.6}
+.sedation-dose-basis,.sedation-dose-remaining{grid-column:1/-1;font-size:13px;line-height:1.5;font-weight:700;color:#526277}
+.sedation-dose-remaining{color:#9d2331}
+.sedation-instructions{padding:13px 2px 0;font-size:14px;font-weight:700;line-height:1.6;color:#35485f}
+.sedation-instructions p+p{margin-top:6px}
+.sedation-protocol-details{margin-top:14px;border-top:1px solid #dce3ec;padding-top:12px}
+.sedation-protocol-details>summary{color:#5c6d82;font-size:12px;font-weight:700;cursor:pointer}
+.sedation-protocol-details .source{display:inline-flex;margin-top:7px}
+@media(max-width:640px){.shock-device-choices b{font-size:12px}.shock-device-choices button{padding:10px}.sedation-purpose{display:grid;grid-template-columns:1fr 1fr;gap:8px}.sedation-purpose button{padding:11px 9px;font-size:12px}.sedation-drugs .drug-name b{font-size:22px}.sedation-path-heading h3{font-size:19px}.sedation-dose-grid{grid-template-columns:1fr}.sedation-dose-card{padding:15px 12px}.sedation-dose-output{gap:8px}.sedation-dose-output>div{padding:14px 9px}.sedation-dose-output strong{font-size:36px}.sedation-dose-output strong small{font-size:18px}.sedation-dose-rule{font-size:14px}.sedation-instructions{font-size:13px}.sedation-dose-top h4{font-size:17px}.sedation-monitor{font-size:12px;padding:12px}.sedation-quick .stock-summary{flex-wrap:wrap;gap:6px}}
+
+.sedation-dose-output strong>span{white-space:nowrap}
+@media(max-width:640px){.sedation-dose-output.long-values{grid-template-columns:1fr}.sedation-dose-output.long-values strong{font-size:28px}}
+.ketamine-height-guide{border:2px solid #096e63;border-radius:9px;overflow:hidden}
+.ketamine-height-heading{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px;background:#096e63;padding:14px 16px;color:#fff}
+.ketamine-height-heading b{font-size:19px;line-height:1.4}.ketamine-height-heading>span{font-size:13px;font-weight:800}
+.ketamine-height-table{width:100%;border-collapse:collapse;table-layout:fixed}
+.ketamine-height-table caption{padding:12px 15px;text-align:left;background:#e6f5f1;color:#096e63;font-size:13px;font-weight:800}
+.ketamine-height-table thead th{padding:12px 15px;text-align:left;font-size:11px;font-weight:800;color:#41665e;border-bottom:1px solid #c0ddd3}
+.ketamine-height-table thead small{display:block;font-size:10px;margin-top:4px}
+.ketamine-height-table th:nth-child(1){width:34%}.ketamine-height-table th:nth-child(2){width:28%}.ketamine-height-table th:nth-child(3){width:38%}
+.ketamine-height-table tbody tr:nth-child(even){background:#f1f9f6}
+.ketamine-height-table tbody th,.ketamine-height-table td{padding:15px;border-bottom:1px solid #c0ddd3;text-align:left;vertical-align:middle}
+.ketamine-height-table tbody th{font-size:22px;color:#274e43;line-height:1.4}
+.ketamine-height-table tbody th span{display:block}.ketamine-height-table tbody th span+span{font-size:16px}
+.ketamine-height-table td b{font:800 29px Manrope,system-ui,sans-serif;color:#096e63;white-space:nowrap}
+.ketamine-height-table td b small{font-size:14px;margin-left:5px}
+.ketamine-height-table .ketamine-height-volume{background:#e6f5f1}.ketamine-height-volume b{font-size:36px!important}
+.ketamine-split{display:block;font-size:9px;font-weight:800;color:#85430a;margin-top:7px;line-height:1.5}
+.ketamine-height-split{padding:14px 15px;background:#fff2df;color:#85430a;font-size:13px;line-height:1.6}
+.ketamine-height-gap{padding:12px 15px 0;color:#526277;font-size:11px;line-height:1.6}
+.ketamine-height-source{padding:12px 15px}.ketamine-height-source .source{display:inline-flex;font-size:11px}
+.ketamine-height-age{padding:16px;border-left:4px solid #b3343f;background:#fff0f1;color:#982834;font-size:15px;font-weight:700;line-height:1.6}
+.ketamine-height-age .source{display:inline-flex;margin-top:10px}
+@media(max-width:640px){.ketamine-height-heading{padding:13px 10px}.ketamine-height-heading b{font-size:17px}.ketamine-height-heading>span{font-size:12px}.ketamine-height-table caption{padding:11px 10px;font-size:12px}.ketamine-height-table thead th{padding:10px 7px;font-size:10px}.ketamine-height-table tbody th,.ketamine-height-table td{padding:13px 7px}.ketamine-height-table tbody th{font-size:17px}.ketamine-height-table tbody th span+span{font-size:13px}.ketamine-height-table td b{font-size:23px}.ketamine-height-table td b small{font-size:12px;margin-left:3px}.ketamine-height-volume b{font-size:28px!important}.ketamine-split{font-size:8px}.ketamine-height-split{padding:13px 10px;font-size:12px}}
+
+.ketamine-height-table tbody th>small{display:block;font-size:12px;line-height:1.5;color:#526e65}
+.sedation-quick .reference-fields{grid-template-columns:repeat(2,minmax(0,1fr))}
+@media(max-width:640px){.sedation-quick .reference-fields{grid-template-columns:1fr}}
+
+.stock-summary.stock-default{background:#eee8fb;border:1px solid #cbb9eb;color:#44236c}.stock-summary.stock-default b{font-size:18px}.stock-summary.stock-default span{color:#583b79}

@@ -6,9 +6,9 @@ try{
  page.on('pageerror',e=>errors.push(e.message));
  await page.clock.install({time:new Date('2026-10-10T21:00:00-04:00')});
  await page.goto('http://127.0.0.1:4173/#trauma');
- const expected=['Control bleeding','Check and control airway','Assess chest, ventilation, oxygenation','Treat life-threatening chest injuries with decompression, chest seals','Strip clothes','Full body sweep including armpits and back','Check blood thinners and antiplatelets','Assess head / neck injury and pupils','Turn on the heat and remove wet clothing','Remove constricting jewelry'];
+ const expected=['Turn main O2 AND cabin power on. Turn up the heat.','Control bleeding','Check and control airway','Assess chest, ventilation, oxygenation','Treat life-threatening chest injuries with decompression, chest seals','Strip clothes','Full body sweep including armpits and back','Check blood thinners and antiplatelets','Assess head / neck injury and pupils','Turn on the heat and remove wet clothing','Remove constricting jewelry'];
  assert.deepEqual(await page.locator('.check-copy>span').allTextContents(),expected);
- assert.equal(await page.locator('.check-row').count(),10);
+ assert.equal(await page.locator('.check-row').count(),11);
  assert.equal(await page.locator('.ketamine-panel').getAttribute('open'),null);
  await page.locator('.ketamine-panel>summary').click();
  assert.equal(await page.locator('.protocol-links a[href$="#page=142"]').count(),1);
@@ -35,7 +35,7 @@ try{
  await page.getByRole('button',{name:'Clear trauma alert timestamp'}).click();assert.equal(await alert.isDisabled(),false);
  await alert.click();
  await page.locator('[data-check="trauma-3-body-sweep"]').check();
- assert.equal(await page.locator('.checklist-progress b').innerText(),'1 of 10 complete');
+ assert.equal(await page.locator('.checklist-progress b').innerText(),'1 of 11 complete');
  await page.locator('#shock-hr').fill('120');await page.locator('#shock-sbp').fill('100');
  assert.equal(await page.locator('.shock-result strong').innerText(),'1.20');
  await page.locator('.nav-item[data-page="sick"]').click();assert.equal(await page.locator('.shock-result strong').innerText(),'1.20');
@@ -93,7 +93,7 @@ try{
  await page.locator('.burns-panel:not(.ketamine-panel)>summary').click();assert.equal(await page.locator('#burn-weight').inputValue(),'');
  // Old positional trauma checks must not check newly worded tasks.
  await page.evaluate(()=>sessionStorage.setItem('wfd-encounter-v1',JSON.stringify({checks:{'trauma-0-0':true,'trauma-3-0':true},fields:{'post-service':true}})));
- await page.reload();assert.equal(await page.locator('.checklist-progress b').innerText(),'0 of 10 complete');
+ await page.reload();assert.equal(await page.locator('.checklist-progress b').innerText(),'0 of 11 complete');
  assert.equal(await page.evaluate(()=>Object.hasOwn(JSON.parse(sessionStorage.getItem('wfd-encounter-v1')).fields,'post-service')),false);
  assert.deepEqual(errors,[]);
  console.log('Trauma / burns checks passed: MARCH, single timestamps / correction / reset, source links, shared shock index, rule of 9s, Parkland units / invalid inputs, expansion persistence, hospital reminders, legacy state, and mobile layouts.');
