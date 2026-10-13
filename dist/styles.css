@@ -287,6 +287,22 @@
 .birth-arrow{color:var(--priority);font-size:22px;font-weight:700;text-align:center}
 .birth-action{color:#243c55;font-weight:500}
 .birth-direction-source{margin-top:8px}
+.birth-direction.urgent{background:#fff0f1}
+.birth-direction.urgent .birth-action{font-size:18px;font-weight:800;color:#9c2633}
+.birth-fold>summary>svg{width:26px;height:26px;flex-shrink:0}
+.newborn-oxygen{margin:16px 20px;border:2px solid #176d61;border-radius:8px;overflow:hidden;background:#f1faf7}
+.oxygen-guide-title{padding:12px 14px;background:#e2f3ed;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:7px;color:#145a50;font-size:15px}
+.oxygen-guide-title>span{font-size:13px;font-weight:700}
+.oxygen-target-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:1px;background:#c9e2d9}
+.oxygen-target-grid>div{padding:13px 8px;background:#f1faf7;text-align:center}
+.oxygen-target-grid span{display:block;font-size:14px;font-weight:700;color:#43685e}
+.oxygen-target-grid strong{display:block;font-size:22px;font-weight:800;color:#145a50;margin-top:6px;font-variant-numeric:tabular-nums;white-space:nowrap}
+.oxygen-guide-rule{padding:13px 14px;color:#254c43;font-size:14px;line-height:1.55}
+.oxygen-guide-rule>b,.oxygen-guide-rule>span{display:block}.oxygen-guide-rule>span{margin-top:4px}.oxygen-guide-rule .source{margin-top:10px}
+.nicu-list{background:#fff}
+.nicu-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px 16px;padding:18px 20px;border-bottom:1px solid #e3e9ef;font-size:16px;line-height:1.5}
+.nicu-row:last-child{border-bottom:0}.nicu-row b{color:#235da2}.nicu-row strong{color:#235da2;font-size:14px;background:#edf5ff;padding:4px 8px;border-radius:5px;align-self:start}.nicu-row span{grid-column:1/-1;color:#3c536b;font-size:14px}.nicu-row:hover{background:#f5f9ff}
+@media(max-width:640px){.newborn-oxygen{margin:14px 16px}.oxygen-target-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.oxygen-target-grid>div:last-child{grid-column:1/-1}.oxygen-target-grid>div:last-child strong{font-size:28px}.nicu-row{padding:16px;gap:8px 10px}.nicu-row b{font-size:16px}.nicu-row strong{font-size:12px;white-space:nowrap}}
 .birth-viability{margin:16px 20px;border:2px solid #b76716;border-radius:8px;overflow:hidden;background:#fffaf1}
 .viability-title{padding:12px 14px;background:#fff0d7;font-size:15px;font-weight:800;color:#784314}
 .viability-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1px;background:#e7dbc8}

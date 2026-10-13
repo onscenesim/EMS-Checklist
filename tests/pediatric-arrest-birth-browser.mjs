@@ -42,13 +42,28 @@ try {
  assert.equal(await page.locator('.birth-page h3,.birth-page .check-copy small,.birth-page p').count(),0);
  assert.equal(await page.locator('.birth-flow input,.birth-fold input').count(),0);
  assert.equal(await page.locator('.birth-viability').count(),2);
- for(const guide of await page.locator('.birth-viability').all()){assert.match(await guide.textContent(),/<22 weeks/);assert.match(await guide.textContent(),/22–24 6\/7 weeks/);assert.match(await guide.textContent(),/≥25 weeks/);assert.match(await guide.textContent(),/Withholding \/ stopping resuscitation: medical control decision/);}
+ for(const guide of await page.locator('.birth-viability').all()){assert.match(await guide.textContent(),/<22 weeks/);assert.match(await guide.textContent(),/22–24 6\/7 weeks/);assert.match(await guide.textContent(),/≥25 weeks/);assert.match(await guide.textContent(),/Withholding \/ stopping: medical control decision/);}
  assert.equal(await page.locator('.birth-power [data-check="birth-prepare-power"]').count(),1);
+ assert.equal(await page.getByRole('heading',{name:'Mother & transport',exact:true}).count(),0);
+ assert.equal(await page.getByText('Notify L&D',{exact:true}).count(),0);
+ assert.equal(await page.locator('#birth-complications').getAttribute('data-priority'),'red');
+ assert.equal(await page.locator('#birth-complications>summary svg').count(),1);
+ assert.deepEqual(await page.locator('.newborn-oxygen').first().locator('.oxygen-target-grid strong').allTextContents(),['65–70%','70–75%','75–80%','80–85%','85–95%']);
+ assert.match(await page.locator('.birth-checklist').last().textContent(),/85–95% at ≥10 min/);
+ assert.match(await page.locator('.birth-viability').first().textContent(),/UCMC reports care from 21 weeks/);
+ await page.locator('#birth-complications>summary').click();
+ assert.match(await page.locator('#birth-complications').innerText(),/MASSAGE UTERINE FUNDUS/);
+ assert.match(await page.locator('#birth-complications').innerText(),/NOT GENTLE/);
+ assert.match(await page.locator('#birth-complications').innerText(),/2 IVs \+ crystalloid \+ TXA/);
+ await page.locator('#birth-complications>summary').click();
  assert.match(await page.locator('.birth-power').innerText(),/Main O2 \+ Cabin power \+ Heat ON/);
  await page.locator('[data-check="birth-post-oxygen"]').check();
  await page.locator('[data-check="birth-prepare-gestation"]').check();
  await page.locator('.neonatal-code>summary').click();assert.match(page.url(),/#birth$/);assert.equal(await page.locator('.neonatal-code').getAttribute('open'),'');
- assert.match(await page.locator('.birth-source-alert').innerText(),/confirm with medical control/);
+ assert.match(await page.locator('.birth-source-alert').innerText(),/medical control/);
+ assert.match(await page.locator('#birth-newborn').innerText(),/START CHEST COMPRESSIONS/);
+ assert.match(await page.locator('#birth-newborn').innerText(),/Consider ETT \/ laryngeal mask BEFORE compressions/);
+ assert.match(await page.locator('#birth-newborn').innerText(),/100% O₂; after ROSC/);
  await page.reload();assert.equal(await page.locator('.neonatal-code').getAttribute('open'),'');
  assert.equal(await page.locator('[data-check="birth-prepare-gestation"]').isChecked(),true);assert.equal(await page.locator('[data-check="birth-post-oxygen"]').isChecked(),true);
  await page.locator('#birth-eclampsia>summary').click();
@@ -68,10 +83,14 @@ try {
    await page.locator('.neonatal-code>summary').click();
   }
  }
+ await page.locator('#birth-nicus>summary').click();
+ assert.deepEqual(await page.locator('.nicu-row strong').allTextContents(),['LEVEL III','LEVEL III','LEVEL IV']);
+ assert.match(await page.locator('.nicu-list').innerText(),/UCMC[\s\S]*Good Samaritan[\s\S]*Cincinnati Children’s/);
+ await page.reload();assert.equal(await page.locator('#birth-nicus').getAttribute('open'),'');
  await page.locator('#birth-eclampsia>summary').click();await page.locator('#birth-eclampsia [data-reference-open="magnesium"]').click();await page.locator('[data-ref-open="drug-magnesium"]').waitFor();
  await page.goto('http://127.0.0.1:4173/#birth');await page.locator('.neonatal-code>summary').click();
  await page.locator('[data-action="new"]').click();await page.locator('[data-action="confirm-new"]').click();
- await page.goto('http://127.0.0.1:4173/#birth');assert.equal(await page.locator('.neonatal-code').getAttribute('open'),null);assert.equal(await page.locator('#birth-eclampsia').getAttribute('open'),null);assert.equal(await page.locator('[data-check="birth-prepare-gestation"]').isChecked(),false);assert.equal(await page.locator('[data-check="birth-post-oxygen"]').isChecked(),false);
+ await page.goto('http://127.0.0.1:4173/#birth');assert.equal(await page.locator('.neonatal-code').getAttribute('open'),null);assert.equal(await page.locator('#birth-eclampsia').getAttribute('open'),null);assert.equal(await page.locator('#birth-nicus').getAttribute('open'),null);assert.equal(await page.locator('[data-check="birth-prepare-gestation"]').isChecked(),false);assert.equal(await page.locator('[data-check="birth-post-oxygen"]').isChecked(),false);
  await page.goto('http://127.0.0.1:4173/#pediatric-arrest');assert.equal(await page.locator('.neonatal-code').getAttribute('open'),null);assert.equal(await page.locator('#peds-arrest-weight').inputValue(),'');assert.equal(await page.locator('.arrest-drugs .dose-unavailable').count(),4);assert.match(await page.locator('.pulse-status').innerText(),/Ready/);
  assert.deepEqual(errors,[]);console.log('New tab checks passed: navigation, actual / estimated kg / lb weight, printed chart discrepancy, caps, invalid input, energy devices, independent neonatal expansion, persistence / reset, shared timers, deep protocol links, magnesium guide, and 320 / 390 px layouts.');
 }finally{await browser.close();}
