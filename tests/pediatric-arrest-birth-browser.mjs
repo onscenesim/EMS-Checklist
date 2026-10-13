@@ -1,5 +1,23 @@
 import {chromium} from '/Users/WorkSchool/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/playwright/index.mjs';
 import assert from 'node:assert/strict';
+async function assertNewbornEpi(page){
+ const card=page.locator('.neonatal-code .neonatal-epi');
+ assert.equal(await card.count(),1);
+ assert.match(await card.locator('.neonatal-epi-trigger').innerText(),/HR <60 after 30 sec CPR \+ effective BVM/);
+ assert.match(await card.locator('.neonatal-epi-route').innerText(),/Epinephrine · IV \/ IO[\s\S]*0.1 mg\/mL · 1 mg \/ 10 mL syringe/);
+ assert.match(await card.locator('.neonatal-epi-draw').innerText(),/Draw from code epi into a 1 mL syringe with 0.01 mL markings/);
+ for(const [group,volume,mass] of [['term',.4,.04],['preterm',.2,.02]]){
+  const dose=card.locator(`[data-neonatal-dose="${group}"]`);
+  assert.equal((await dose.locator('strong').innerText()).replace(/\s+/g,' ').trim(),`${volume} mL`);
+  assert.equal(await dose.locator(':scope>span').innerText(),`${mass} mg`);
+  assert.ok(Math.abs(volume*.1-mass)<1e-12,'IV/IO mass matches stock concentration and volume');
+ }
+ assert.match(await card.locator('.neonatal-epi-repeat').innerText(),/Repeat every 3–5 min while HR <60/);
+ assert.match(await card.locator('.neonatal-epi-repeat').innerText(),/No IV \/ IO → request medical-control ETT order/);
+ assert.equal(await card.locator('input,button').count(),0);
+ assert.equal(await card.locator('a[href$="#page=151"]').count(),1);
+ assert.equal(await card.locator('a[href$="#page=236"]').count(),1);
+}
 const browser=await chromium.launch({headless:true,executablePath:'/Applications/Google Chrome.app/Contents/MacOS/Google Chrome'});
 try {
  const page=await browser.newPage({viewport:{width:1440,height:1000}}),errors=[];page.on('pageerror',e=>errors.push(e.message));
@@ -28,7 +46,9 @@ try {
  for(const value of ['0','-1','151']){await page.locator('#peds-arrest-weight').fill(value);assert.equal(await page.locator('.arrest-drugs .dose-unavailable').count(),4);assert.deepEqual(await page.locator('.leader-energy strong').allTextContents(),['—J','—J','—J']);}
  await page.locator('#peds-arrest-weight').fill('');await page.locator('[data-age="3"]').click();await page.locator('[data-shock-device="zenix"]').click();
  await page.locator('[data-leader-scroll="peds-code"]').click();assert.match(page.url(),/#pediatric-arrest$/);
- await page.locator('.neonatal-code>summary').click();assert.match(await page.locator('.neonatal-content').innerText(),/No neonatal epinephrine dose is calculated/);
+ await page.locator('.neonatal-code>summary').click();await assertNewbornEpi(page);
+ assert.doesNotMatch(await page.locator('.neonatal-content').innerText(),/AHA|service-approved standard|requires clarification/);
+ assert.match(await page.locator('.neonatal-content').innerText(),/120 compressions\/min/);
  await page.locator('[data-action="pulse-cycle"]').click();await page.locator('[data-action="epi-dose"]').click();
  assert.equal(await page.locator('.epi-heading a').getAttribute('href'),'https://www.academyofmedicine.org/aws/AOMC/asset_manager/get_file/937559?ver=5#page=152');
  await page.reload();assert.equal(await page.locator('.neonatal-code').getAttribute('open'),'');
@@ -60,7 +80,9 @@ try {
  await page.locator('[data-check="birth-post-oxygen"]').check();
  await page.locator('[data-check="birth-prepare-gestation"]').check();
  await page.locator('.neonatal-code>summary').click();assert.match(page.url(),/#birth$/);assert.equal(await page.locator('.neonatal-code').getAttribute('open'),'');
- assert.match(await page.locator('.birth-source-alert').innerText(),/medical control/);
+ assert.equal(await page.locator('.birth-source-alert').count(),0);await assertNewbornEpi(page);
+ assert.match(await page.locator('#birth-newborn').innerText(),/begin with ROOM AIR \(P600\)/);
+ assert.doesNotMatch(await page.locator('#birth-newborn').innerText(),/Confirm service guidance|Preterm initial O₂/);
  assert.match(await page.locator('#birth-newborn').innerText(),/START CHEST COMPRESSIONS/);
  assert.match(await page.locator('#birth-newborn').innerText(),/Consider ETT \/ laryngeal mask BEFORE compressions/);
  assert.match(await page.locator('#birth-newborn').innerText(),/100% O₂; after ROSC/);

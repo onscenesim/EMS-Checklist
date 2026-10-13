@@ -1,4 +1,4 @@
-const aha='https://cpr.heart.org/en/resuscitation-science/cpr-and-ecc-guidelines/neonatal-resuscitation';
+import {neonatalEpinephrine} from './neonatal-epinephrine.js';
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const item=(id,text)=>({id,text});
 const direction=(condition,action,protocol,urgent=false)=>({condition,action,protocol,urgent});
@@ -27,16 +27,15 @@ const delivery=[
 ];
 const newborn=[
  direction('First','Dry, warm, position airway; HR + right-hand SpO₂'),
- direction('Apnea / gasping or HR <100','BVM 60/min; ≥35 weeks: begin with ROOM AIR (2025 AHA)'),
- direction('Preterm initial O₂ · 2025 AHA','32–34 6/7 weeks: 21–30%; <32 weeks: 30–100%. Titrate to SpO₂.'),
+ direction('Apnea / gasping or HR <100','BVM 60/min; begin with ROOM AIR (P600)'),
  direction('No chest rise / no HR rise','Correct seal, position, obstruction'),
  direction('BVM still ineffective','Consider ETT / laryngeal mask BEFORE compressions'),
  direction('HR <60 after 30 sec BVM moving chest','START CHEST COMPRESSIONS: 3 compressions : 1 breath; two-thumb technique',undefined,true),
  direction('During chest compressions','100% O₂; after ROSC, titrate to SpO₂ targets'),
- direction('Persistent HR <60','IV / IO, medical control for epi; repeat q3–5 min'),
+ {epinephrine:true},
  direction('HR ≥60','Stop compressions; continue BVM if needed'),
  direction('ETT','Term 3.0–3.5 mm; preterm 2.5–3.0 mm; confirm CO₂ / depth'),
- direction('Delivery blood loss / shock','NS 20 mL/kg; confirm volume with medical control')
+ direction('Delivery blood loss / shock','NS 20 mL/kg IV; use actual newborn weight')
 ];
 const complications=[
  direction('Heavy bleeding AFTER birth','MASSAGE UTERINE FUNDUS—firm, vigorous pressure. NOT GENTLE.',['O801 · HEMORRHAGE',216],true),
@@ -65,7 +64,7 @@ function localNicus(state){return `<details id="birth-nicus" class="birth-fold" 
 
 export function imminentBirth(state,source,icon,renderRow){
  const checks=(key,list)=>list.map((entry,i)=>renderRow({id:'birth'},entry,key,i)).join('');
- const directions=list=>list.map(entry=>`<div class="birth-direction ${entry.urgent?'urgent':''}"><div class="birth-direction-line"><b class="birth-condition">${esc(entry.condition)}</b><span class="birth-arrow" aria-hidden="true">→</span><span class="birth-action">${esc(entry.action)}</span></div>${entry.protocol?`<div class="birth-direction-source">${source(...entry.protocol)}</div>`:''}</div>`).join('');
+ const directions=list=>list.map(entry=>entry.epinephrine?neonatalEpinephrine(source):`<div class="birth-direction ${entry.urgent?'urgent':''}"><div class="birth-direction-line"><b class="birth-condition">${esc(entry.condition)}</b><span class="birth-arrow" aria-hidden="true">→</span><span class="birth-action">${esc(entry.action)}</span></div>${entry.protocol?`<div class="birth-direction-source">${source(...entry.protocol)}</div>`:''}</div>`).join('');
  const checklist=(number,title,color,key,list,extra='')=>`<section class="check-section priority-section birth-checklist" data-priority="${color}"><h2><span>${number}</span>${title}</h2>${checks(key,list)}${extra}</section>`;
  const flow=(title,color,list)=>`<section class="check-section priority-section birth-flow" data-priority="${color}"><h2>${title}</h2>${directions(list)}</section>`;
  const fold=(id,title,color,list,prefix='',extra='',refs='')=>`<details id="${id}" class="birth-fold ${id==='birth-newborn'?'neonatal-code':''}" data-priority="${color}" data-code-open="${id==='birth-newborn'?'birth-neonatal':id}" ${state.fields[(id==='birth-newborn'?'birth-neonatal':id)+'-open']?'open':''}><summary>${id==='birth-complications'?icon('caution'):''}<b>${title}</b><span class="expand-symbol" aria-hidden="true">+</span></summary><div class="birth-fold-body ${id==='birth-newborn'?'neonatal-content':''}">${prefix}${directions(list)}${extra}${refs?`<div class="birth-source-links">${refs}</div>`:''}</div></details>`;
@@ -76,7 +75,7 @@ export function imminentBirth(state,source,icon,renderRow){
  ${flow('Delivery','teal',delivery)}
  ${fold('birth-complications','Delivery complications','red',complications,'','',source('O801',215))}
  ${checklist('02','Post-delivery','teal','post',post,oxygenGuide())}
- ${fold('birth-newborn','Neonatal code','purple',newborn,viability(source),oxygenGuide()+'<div class="birth-source-alert">P600 differs from 2025 AHA on preterm O₂ / timing; epi dose / volume also conflict. Confirm service guidance with medical control.</div>',source('P600',151)+`<a class="source" href="${aha}" target="_blank" rel="noopener">2025 AHA ↗</a>`)}
+ ${fold('birth-newborn','Neonatal code','purple',newborn,viability(source),oxygenGuide(),source('P600',151))}
  ${fold('birth-eclampsia','Eclampsia / severe BP','purple',eclampsia,'','',source('O802',218)+source('P610 · UNDER 16',164)+`<button class="button small" data-page="medications" data-reference-open="magnesium">Magnesium guide</button>`)}
  ${localNicus(state)}
  </div>`;
