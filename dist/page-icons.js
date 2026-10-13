@@ -1,5 +1,6 @@
 // Page symbols share the existing 24 px, currentColor outline style.
 export const pageIcons={
+ hospital:'<path d="M4 22V5h16v17M1 22h22M9 22v-5h6v5M9 9h6m-3-3v6M7 14h2m6 0h2"/>',
  caution:'<path d="M10.3 3.5a2 2 0 0 1 3.4 0l8 14a2 2 0 0 1-1.7 3H4a2 2 0 0 1-1.7-3Z"/><path d="M12 8v5m0 3v.1"/>',
  skull:'<path d="M7 17H5a2 2 0 0 1-2-2v-3a9 9 0 0 1 18 0v3a2 2 0 0 1-2 2h-2v4H7Z"/><circle cx="8" cy="11" r="1.6" fill="currentColor"/><circle cx="16" cy="11" r="1.6" fill="currentColor"/><path d="m12 14-1 2h2Z" fill="currentColor"/><path d="M10 18v3m4-3v3"/>',
  laryngoscope:'<rect x="3" y="2" width="5" height="11" rx="1"/><path d="M3 5h5M3 8h5M3 11h5M4 13v2c3 5 9 7 17 5v-3c-6 1-10-1-13-4Z"/><path d="M8 15c3 3 7 4 13 3"/>',

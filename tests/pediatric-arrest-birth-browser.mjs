@@ -26,6 +26,9 @@ try {
  await page.getByRole('heading',{name:'Pediatric cardiac arrest',exact:true}).waitFor();
  assert.equal(await page.locator('.neonatal-code').getAttribute('open'),null);
  assert.equal(await page.locator('.arrest-drugs .critical-card').count(),4);
+ assert.equal(await page.locator('#peds-weight').getAttribute('open'),null);
+ await page.locator('[data-leader-scroll="peds-weight"]').click();
+ assert.equal(await page.locator('#peds-weight').getAttribute('open'),'');
  await page.locator('[data-age="3"]').click();
  assert.match(await page.locator('[data-arrest-drug="Epinephrine · cardiac arrest"] .critical-value').innerText(),/0.15 mg\s*1.5 mL/);
  assert.match(await page.locator('[data-arrest-drug="Amiodarone · cardiac arrest"] .critical-value').innerText(),/75 mg\s*1.55 mL/);
@@ -47,8 +50,8 @@ try {
  await page.locator('#peds-arrest-weight').fill('');await page.locator('[data-age="3"]').click();await page.locator('[data-shock-device="zenix"]').click();
  await page.locator('[data-leader-scroll="peds-code"]').click();assert.match(page.url(),/#pediatric-arrest$/);
  await page.locator('.neonatal-code>summary').click();await assertNewbornEpi(page);
- assert.doesNotMatch(await page.locator('.neonatal-content').innerText(),/AHA|service-approved standard|requires clarification/);
- assert.match(await page.locator('.neonatal-content').innerText(),/120 compressions\/min/);
+ assert.doesNotMatch(await page.locator('.neonatal-content').innerText(),/service-approved standard|requires clarification/);
+ assert.match(await page.locator('.neonatal-content').innerText(),/3 compressions : 1 breath/);
  await page.locator('[data-action="pulse-cycle"]').click();await page.locator('[data-action="epi-dose"]').click();
  assert.equal(await page.locator('.epi-heading a').getAttribute('href'),'https://www.academyofmedicine.org/aws/AOMC/asset_manager/get_file/937559?ver=5#page=152');
  await page.reload();assert.equal(await page.locator('.neonatal-code').getAttribute('open'),'');
