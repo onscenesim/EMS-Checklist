@@ -38,17 +38,23 @@ try {
  await page.locator('.leader-related [data-page="birth"]').click();
  await page.getByRole('heading',{name:'Imminent birth',exact:true}).waitFor();
  assert.equal(await page.locator('.neonatal-code').getAttribute('open'),null);
- assert.equal(await page.locator('.birth-page .check-row:visible').count(),14);
+ assert.equal(await page.locator('.birth-page .check-row:visible').count(),9);
  assert.equal(await page.locator('.birth-page h3,.birth-page .check-copy small,.birth-page p').count(),0);
+ assert.equal(await page.locator('.birth-flow input,.birth-fold input').count(),0);
+ assert.equal(await page.locator('.birth-viability').count(),2);
+ for(const guide of await page.locator('.birth-viability').all()){assert.match(await guide.textContent(),/<22 weeks/);assert.match(await guide.textContent(),/22–24 6\/7 weeks/);assert.match(await guide.textContent(),/≥25 weeks/);assert.match(await guide.textContent(),/Withholding \/ stopping resuscitation: medical control decision/);}
+ assert.equal(await page.locator('.birth-power [data-check="birth-prepare-power"]').count(),1);
+ assert.match(await page.locator('.birth-power').innerText(),/Main O2 \+ Cabin power \+ Heat ON/);
+ await page.locator('[data-check="birth-post-oxygen"]').check();
  await page.locator('[data-check="birth-prepare-gestation"]').check();
  await page.locator('.neonatal-code>summary').click();assert.match(page.url(),/#birth$/);assert.equal(await page.locator('.neonatal-code').getAttribute('open'),'');
  assert.match(await page.locator('.birth-source-alert').innerText(),/confirm with medical control/);
  await page.reload();assert.equal(await page.locator('.neonatal-code').getAttribute('open'),'');
- assert.equal(await page.locator('[data-check="birth-prepare-gestation"]').isChecked(),true);
+ assert.equal(await page.locator('[data-check="birth-prepare-gestation"]').isChecked(),true);assert.equal(await page.locator('[data-check="birth-post-oxygen"]').isChecked(),true);
  await page.locator('#birth-eclampsia>summary').click();
  assert.equal(await page.locator('#birth-eclampsia a[href$="#page=218"]').count(),1);
  assert.match(await page.locator('#birth-eclampsia').innerText(),/4–6 g IV in 100 mL NS over 20–25 min/);
- assert.match(await page.locator('#birth-eclampsia').innerText(),/draw 8–12 mL/);
+ assert.match(await page.locator('#birth-eclampsia').innerText(),/draw 8–12 mL/i);
  await page.locator('#birth-eclampsia>summary').click();
  await page.locator('.neonatal-code>summary').click();await page.screenshot({path:'/Users/Shared/EMS Checklist/tmp/imminent-birth-desktop.png',fullPage:true});
  for(const width of [390,320]){
@@ -65,7 +71,7 @@ try {
  await page.locator('#birth-eclampsia>summary').click();await page.locator('#birth-eclampsia [data-reference-open="magnesium"]').click();await page.locator('[data-ref-open="drug-magnesium"]').waitFor();
  await page.goto('http://127.0.0.1:4173/#birth');await page.locator('.neonatal-code>summary').click();
  await page.locator('[data-action="new"]').click();await page.locator('[data-action="confirm-new"]').click();
- await page.goto('http://127.0.0.1:4173/#birth');assert.equal(await page.locator('.neonatal-code').getAttribute('open'),null);assert.equal(await page.locator('#birth-eclampsia').getAttribute('open'),null);assert.equal(await page.locator('[data-check="birth-prepare-gestation"]').isChecked(),false);
+ await page.goto('http://127.0.0.1:4173/#birth');assert.equal(await page.locator('.neonatal-code').getAttribute('open'),null);assert.equal(await page.locator('#birth-eclampsia').getAttribute('open'),null);assert.equal(await page.locator('[data-check="birth-prepare-gestation"]').isChecked(),false);assert.equal(await page.locator('[data-check="birth-post-oxygen"]').isChecked(),false);
  await page.goto('http://127.0.0.1:4173/#pediatric-arrest');assert.equal(await page.locator('.neonatal-code').getAttribute('open'),null);assert.equal(await page.locator('#peds-arrest-weight').inputValue(),'');assert.equal(await page.locator('.arrest-drugs .dose-unavailable').count(),4);assert.match(await page.locator('.pulse-status').innerText(),/Ready/);
  assert.deepEqual(errors,[]);console.log('New tab checks passed: navigation, actual / estimated kg / lb weight, printed chart discrepancy, caps, invalid input, energy devices, independent neonatal expansion, persistence / reset, shared timers, deep protocol links, magnesium guide, and 320 / 390 px layouts.');
 }finally{await browser.close();}
