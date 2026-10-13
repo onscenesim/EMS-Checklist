@@ -6,7 +6,7 @@ try{
  page.on('pageerror',error=>errors.push(error.message));
  await page.clock.install({time:new Date('2026-10-10T23:30:00-04:00')});
  await page.goto('http://127.0.0.1:4173/#home');
- assert.equal(await page.locator('.module-card').count(),7);
+ assert.equal(await page.locator('.module-card').count(),9);
  await page.locator('.module-card[data-page="arrest"]').click();
  assert.equal(await page.locator('h1').innerText(),'Cardiac arrest');
  assert.equal(await page.getByText('Take the LUCAS in',{exact:true}).count(),1);

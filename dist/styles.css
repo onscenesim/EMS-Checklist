@@ -202,6 +202,63 @@
 .pediatric-first .energy-grid span{font-size:10px;min-height:30px;line-height:1.5}
 .pediatric-first .energy-grid b{font-size:24px}
 .pediatric-critical{margin-bottom:28px}
+.leader-page{max-width:1180px;margin:auto}
+.leader-page .page-heading p{font-size:14px;color:#4c6077;margin-top:10px;line-height:1.5}
+.leader-shortcuts,.leader-related{display:flex;flex-wrap:wrap;gap:10px;margin:0 0 22px}
+.leader-shortcuts button{background:#fff;border:1px solid #c8d6e3;border-radius:7px;padding:12px 15px;font-size:14px;font-weight:700;color:#235da2;min-height:44px}
+.leader-block{border:1px solid #d8e0e8;border-left:5px solid var(--priority);border-radius:9px;background:#fff;margin-bottom:22px;overflow:hidden;scroll-margin-top:16px}
+.leader-heading{background:var(--priority-tint);padding:17px 20px;border-bottom:1px solid #e0e5eb;display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap}
+.leader-heading h2{font-size:19px;line-height:1.4;color:var(--priority);display:flex;align-items:center;gap:12px}
+.leader-heading h2>span{font-size:12px;border:1px solid currentColor;padding:5px;border-radius:5px;flex-shrink:0}
+.leader-content{padding:20px}
+.leader-sources{display:flex;align-items:center;flex-wrap:wrap;gap:9px}
+.leader-page .source{font-size:12px;min-height:40px;display:inline-flex;align-items:center;padding:8px 10px;white-space:normal;line-height:1.5}
+.leader-lines{list-style:none;margin:0;padding:0}
+.leader-lines li{padding:13px 0;border-bottom:1px solid #e8edf2}
+.leader-lines li:first-child{padding-top:0}.leader-lines li:last-child{border:0;padding-bottom:0}
+.leader-lines b{display:block;font-size:17px;line-height:1.5;color:#192f48}
+.leader-lines li>span{display:block;font-size:15px;line-height:1.6;margin-top:5px;color:#415770}
+.leader-weight-fields{display:grid;grid-template-columns:minmax(0,1fr) 110px;gap:12px;max-width:500px;margin-bottom:18px}
+.leader-page .field{font-size:14px;color:#324b63;gap:8px}
+.leader-page input,.leader-page select{min-height:48px;font-size:18px;color:#183a56}
+.leader-page .age-grid button{min-height:70px;padding:12px 8px}.leader-page .age-grid b{font-size:14px}.leader-page .age-grid span{font-size:12px;line-height:1.5}
+.leader-weight-status{background:#ebf8f3;border:1px solid #c8e1d7;padding:14px;border-radius:6px;margin-top:16px;font-size:16px;color:#165e51;line-height:1.5}
+.leader-help{font-size:14px;line-height:1.6;color:#435b72;margin-top:14px}
+.leader-airway,.leader-energy,.leader-metrics{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:18px 0}
+.leader-airway{grid-template-columns:repeat(2,minmax(0,1fr))}
+.leader-number{border:1px solid #cfe0dc;border-radius:7px;padding:17px;background:#f1faf7;min-width:0}
+.leader-number>span{display:block;font-size:12px;line-height:1.5;font-weight:700;color:#365c57}
+.leader-number strong{display:block;font-size:29px;line-height:1.35;font-variant-numeric:tabular-nums;color:#155a4f;margin-top:9px;overflow-wrap:anywhere}
+.leader-number strong small{font-size:14px;margin-left:6px}.leader-number p{font-size:13px;color:#46665f;margin-top:8px;line-height:1.5}
+.leader-energy .leader-number{background:#fff6e9;border-color:#e5d4b7}.leader-energy .leader-number strong,.leader-energy .leader-number>span{color:#854316}
+.leader-page .shock-device-choices{margin-top:20px}
+.leader-rhythm-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin-top:18px}
+.leader-rhythm-grid article{border:1px solid #dce3ec;border-left:4px solid var(--priority);border-radius:7px;background:var(--priority-tint);padding:18px;min-width:0}
+.leader-rhythm-grid h3{font-size:19px;color:var(--priority);margin-bottom:15px}
+.leader-rhythm-grid .leader-lines b{font-size:16px}.leader-rhythm-grid .leader-lines span{font-size:14px}
+.leader-rhythm-grid .source{margin-top:14px}
+.leader-caution{background:#fff5e8;border:1px solid #e4ceb0;border-left:4px solid #9b4b11;padding:15px;font-size:14px;line-height:1.65;color:#713c1a;border-radius:6px;margin-top:18px}
+.leader-timers{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin-bottom:22px;scroll-margin-top:16px}
+.leader-timers .pulse-panel,.leader-timers .epi-panel{margin:0}.leader-timers .timer-sounds{grid-column:1/-1}
+.leader-timers .pulse-body,.leader-timers .epi-body{flex-wrap:wrap}
+.leader-page .critical-card>p{font-size:14px;padding:13px 17px 0;color:#415770;line-height:1.6}
+.leader-page .critical-dose>div>b{font-size:14px}.leader-page .critical-dose small{font-size:12px;color:#4e6378}
+.leader-page .critical-value>b{font-size:27px!important}.leader-page .critical-value>span{font-size:19px;color:#244768}
+.leader-page .critical-value .dose-unavailable{font-size:14px!important}
+.neonatal-code{border:1px solid #d6c7e8;border-left:5px solid #75469a;border-radius:9px;background:#fff;overflow:hidden;margin-bottom:22px}
+.neonatal-code>summary{display:flex;align-items:center;gap:15px;padding:20px;min-height:84px;background:#f6efff;color:#673c89;list-style:none}
+.neonatal-code>summary::-webkit-details-marker{display:none}
+.neonatal-code summary b{display:block;font-size:22px;font-family:Manrope,system-ui,sans-serif;line-height:1.4}
+.neonatal-code summary small{display:block;font-size:14px;margin-top:6px;color:#5e4d70;line-height:1.5}
+.neonatal-code .expand-symbol{margin-left:auto;font-size:29px}.neonatal-code[open]>summary{border-bottom:1px solid #d6c7e8}.neonatal-code[open] .expand-symbol{transform:rotate(45deg)}
+.neonatal-content{padding:20px}.neonatal-context{font-size:16px;line-height:1.6;color:#3c4b63;margin-bottom:12px}
+.neonatal-content>.leader-sources{margin-bottom:18px}.neonatal-content .leader-block:last-child{margin-bottom:0}
+.neonatal-threshold{display:flex;flex-wrap:wrap;align-items:center;gap:12px;background:var(--priority-tint);border-radius:6px;padding:15px;margin-bottom:18px;color:var(--priority)}
+.neonatal-threshold strong{font-size:30px}.neonatal-threshold b{font-size:19px}
+.birth-drugs{margin-top:18px}.birth-drug-body{padding:17px;font-size:15px;color:#314d65;line-height:1.6}.birth-drug-body>strong{font-size:22px;line-height:1.5;color:var(--priority)}.birth-drug-body p{margin-top:12px;font-size:15px;line-height:1.6}.birth-drug-body p strong{font-size:18px}
+[id^="peds-"],[id^="birth-"]{scroll-margin-top:16px}
+@media(max-width:1100px){.leader-timers{grid-template-columns:1fr}.leader-timers .timer-sounds{grid-column:auto}}
+@media(max-width:640px){.leader-heading{padding:16px}.leader-heading h2{font-size:18px}.leader-content,.neonatal-content{padding:16px}.leader-rhythm-grid{grid-template-columns:1fr}.leader-metrics{grid-template-columns:1fr}.leader-energy{gap:7px}.leader-energy .leader-number{padding:12px 8px}.leader-energy .leader-number>span{font-size:11px;min-height:33px}.leader-energy .leader-number strong{font-size:24px}.leader-energy .leader-number strong small{font-size:12px;margin-left:3px}.leader-airway{gap:10px}.leader-airway .leader-number{padding:14px 11px}.leader-airway strong{font-size:25px}.leader-page .critical-dose{flex-wrap:wrap}.leader-page .critical-value{margin-left:auto}.leader-page .page-heading h1{font-size:28px}.leader-page .page-heading p{font-size:14px}.leader-shortcuts button{font-size:13px;padding:12px}.neonatal-code>summary{padding:18px 15px}.neonatal-code summary small{font-size:13px}.leader-page .source{font-size:12px}.leader-rhythm-grid article{padding:16px}.leader-lines b{font-size:17px}.leader-lines li>span{font-size:15px}.neonatal-threshold{padding:13px}.neonatal-threshold strong{font-size:27px}}
 .pediatric-critical>.section-top h2{font-size:18px;letter-spacing:1px}
 .critical-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
 .critical-card{border:1px solid var(--line);border-left:5px solid var(--priority);background:#fff;border-radius:9px;overflow:hidden;min-width:0}
