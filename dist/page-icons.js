@@ -3,7 +3,7 @@ export const pageIcons={
  hospital:'<path d="M4 22V5h16v17M1 22h22M9 22v-5h6v5M9 9h6m-3-3v6M7 14h2m6 0h2"/>',
  caution:'<path d="M10.3 3.5a2 2 0 0 1 3.4 0l8 14a2 2 0 0 1-1.7 3H4a2 2 0 0 1-1.7-3Z"/><path d="M12 8v5m0 3v.1"/>',
  skull:'<path d="M7 17H5a2 2 0 0 1-2-2v-3a9 9 0 0 1 18 0v3a2 2 0 0 1-2 2h-2v4H7Z"/><circle cx="8" cy="11" r="1.6" fill="currentColor"/><circle cx="16" cy="11" r="1.6" fill="currentColor"/><path d="m12 14-1 2h2Z" fill="currentColor"/><path d="M10 18v3m4-3v3"/>',
- laryngoscope:'<g stroke-width="1.5"><path d="M4 8h5v12.5a1.5 1.5 0 0 1-1.5 1.5h-2A1.5 1.5 0 0 1 4 20.5Z"/><path d="M4 12h5m-5 3h5m-5 3h5"/><path d="M6.5 8V4.5H9c5 0 7 6 12 5.5 1.5-.2 1.8 1.8.4 2.2C15.8 13.8 12.8 8 8 8Z"/><path d="M10 5.8c3.5 1 5.5 4.9 10 5.2"/></g>',
+ laryngoscope:'<g transform="translate(1 .25) scale(.046)" stroke-width="23"><path d="M96 62Q149 36 173 26Q228-4 319 19L409 46L397 92L343 77Q268 28 202 36Q148 44 110 71Z" fill="currentColor" fill-opacity=".14"/><path d="M151 42Q197 24 259 28" stroke-width="18"/><path d="M342 85 396 99 379 164 329 150Z"/><path d="m336 115 53 14"/><path d="m335 153-6 24m44-14-5 24"/><path d="M322 178Q349 176 376 193L311 479Q283 495 251 474Z" fill="currentColor" fill-opacity=".1"/><path d="m320 195 52 15" stroke-width="16"/></g>',
  handgun:'<g stroke-width="1.5"><path d="M3 5h18v5H11l-1.5 3-2 8H2.5l2.7-10L3 10Z"/><path d="M10 10h5v2.5a2.5 2.5 0 0 1-2.5 2.5H9m3-5v2.5M4 7.5h3M5 4v1m13-1v1"/><path d="m4.3 15 3.3.8m-4 2 3.3.8"/></g>',
  finish:'<path d="M4 22V2m0 1h16v12H4"/><path d="M4 3h4v4H4Zm8 0h4v4h-4ZM8 7h4v4H8Zm8 0h4v4h-4ZM4 11h4v4H4Zm8 0h4v4h-4Z" fill="currentColor" stroke="none"/>',
  mystery:'<rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 9a3 3 0 1 1 5.2 2c-1.2 1-2.2 1-2.2 3m0 3v.1"/>',
