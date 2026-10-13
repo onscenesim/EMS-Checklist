@@ -18,6 +18,7 @@ Open http://127.0.0.1:4173. Run `npm test` for reference-data checks.
 - `dist/styles.css`: responsive application styling
 - `dist/app.js`: navigation, encounter state, checklists, AMS controls, timers, pediatric UI, and medication-tool routing
 - `dist/data.js`: editable checklist definitions and pediatric reference values
+- `dist/page-icons.js`: custom outline page symbols for checklists and quick references
 - `dist/medication-data.js`: indication-specific drug doses, routes, limits, preparation, cautions, and protocol pages
 - `dist/calculations.js`: unit-aware dose / volume, weight, infusion, drip, and dilution arithmetic
 - `dist/medication-ui.js`: expandable drug / protocol cards, concentration confirmation, and calculators

@@ -1,6 +1,6 @@
 export const protocol='https://www.academyofmedicine.org/aws/AOMC/asset_manager/get_file/937559?ver=5';
 export const modules=[
-  {id:'sick',title:'Sick patient',short:'Sick patient',icon:'pulse',color:'red',tag:'CRASHING PATIENT',source:'SB212 · SB205 · SB204 · C300 · C301 · C307',page:71,
+  {id:'sick',title:'Sick patient',short:'Sick patient',icon:'caution',color:'red',tag:'CRASHING PATIENT',source:'SB212 · SB205 · SB204 · C300 · C301 · C307',page:71,
     subtitle:'Still has a pulse. Get ahead of the crash.',
     refs:[['Crashing patient · SB212',71],['Shock / push-dose epi · SB205',53]],
     arrestRefs:[['Arrest · SB204',50],['VF / VT · C300',75],['PEA / asystole · C301',76],['Post-ROSC · C307',83]],
@@ -24,7 +24,7 @@ export const modules=[
       ]]
 
     ]},
-  {id:'arrest',title:'Cardiac arrest',short:'Cardiac arrest',icon:'heart',color:'red',tag:'EXPECTED ARREST',source:'SB204 · C300 · C301 · C307 · T715',page:50,
+  {id:'arrest',title:'Cardiac arrest',short:'Cardiac arrest',icon:'skull',color:'red',tag:'EXPECTED ARREST',source:'SB204 · C300 · C301 · C307 · T715',page:50,
     subtitle:'Arrive ready for a code. Prepare for a pulse to come back.',
     refs:[['Arrest · SB204',50],['VF / VT · C300',75],['PEA / asystole · C301',76],['Post-ROSC · C307',83]],
     sections:[
@@ -76,7 +76,7 @@ export const modules=[
         'Reassess pain, sedation, and BP; hand off medications / times'
       ]]
     ]},
-  {id:'intubation',title:'Intubation',short:'Intubation',icon:'airway',color:'blue',tag:'AIRWAY',source:'T705 · T706 · A102 · T715',page:193,
+  {id:'intubation',title:'Intubation',short:'Intubation',icon:'laryngoscope',color:'blue',tag:'AIRWAY',source:'T705 · T706 · A102 · T715',page:193,
     refs:[['Intubation · T706',193],['Airway · T705',189],['Assisted intubation · A102',17],['After intubation · T715',209]],
     sections:[
       ['Prepare',[{id:'main-o2',text:'Turn main O2 AND cabin power on',note:'Confirm the main oxygen supply and cabin power are on before airway setup.'},
@@ -99,7 +99,7 @@ export const modules=[
   {id:'ams',title:'Altered mental status',short:'Altered mental status',icon:'brain',color:'teal',tag:'ASSESSMENT',source:'SB201 · M414',page:43,
     refs:[['AMS · SB201',43],['Stroke · M414',117]],
     sections:[['Immediate neuro checks',[{id:'bgl',text:'Check BGL'},{id:'stroke',text:'Stroke assessment'},{id:'pupils',text:'Check pupils'}]]]},
-  {id:'trauma',title:'Trauma',short:'Trauma',icon:'shield',color:'orange',tag:'ASSESSMENT',source:'SB206 · S500 · S501 · S506',page:56,
+  {id:'trauma',title:'Trauma',short:'Trauma',icon:'handgun',color:'orange',tag:'ASSESSMENT',source:'SB206 · S500 · S501 · S506',page:56,
     refs:[['Trauma assessment · SB206',56],['Hemorrhagic shock · S500',135],['Head / spine · S501',137],['Pain control · S505',142]],
     sections:[
       ['M · Bleeding',[{id:'main-o2',text:'Turn main O2 AND cabin power on. Turn up the heat.',note:'Before the call or en route: get oxygen, cabin power, and heat ready early.'},{id:'bleeding',text:'Control bleeding'}]],
