@@ -1,5 +1,6 @@
 // Simplified 24 px pictograms. Keep defining silhouettes clear at sidebar size.
 export const pageIcons={
+ radio:'<rect x="5" y="8" width="11" height="14" rx="2"/><path d="M7 8V2m5 6V5h2v3M8 12h5m-5 3h5m-5 3h2M19 8a4 4 0 0 1 0 6m2-9a8 8 0 0 1 0 12"/>',
  hospital:'<path d="M4 22V5h16v17M1 22h22M9 22v-5h6v5M9 9h6m-3-3v6M7 14h2m6 0h2"/>',
  caution:'<path d="M10.3 3.5a2 2 0 0 1 3.4 0l8 14a2 2 0 0 1-1.7 3H4a2 2 0 0 1-1.7-3Z"/><path d="M12 8v5m0 3v.1"/>',
  skull:'<path d="M7 17H5a2 2 0 0 1-2-2v-3a9 9 0 0 1 18 0v3a2 2 0 0 1-2 2h-2v4H7Z"/><circle cx="8" cy="11" r="1.6" fill="currentColor"/><circle cx="16" cy="11" r="1.6" fill="currentColor"/><path d="m12 14-1 2h2Z" fill="currentColor"/><path d="M10 18v3m4-3v3"/>',
