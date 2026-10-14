@@ -1,3 +1,4 @@
+import {ventilationReminder} from './ventilation-reminder.js';
 // One renderer and one encounter field keep Trauma and Cardiac arrest in sync.
 export function traumaArrestPanel(fields,icon,source){return `<details class="trauma-arrest-panel" ${fields['trauma-arrest-open']?'open':''}><summary><span class="trauma-arrest-icon">${icon('heart')}</span><span><b>Trauma arrest</b></span><span class="trauma-arrest-expand" aria-hidden="true">+</span></summary><div class="trauma-arrest-content">
   <div class="trauma-arrest-heading">${source('TRAUMATIC ARREST · S509',148)}</div>
@@ -6,7 +7,7 @@ export function traumaArrestPanel(fields,icon,source){return `<details class="tr
   <div class="trauma-arrest-actions">
     <section data-trauma-priority="bleeding"><span>01</span><div><h3>Stop external bleeding</h3>${source('HEMORRHAGE · T710',199)}</div></section>
     <section data-trauma-priority="chest"><span>02</span><div><h3>Decompress both sides · ALS</h3><p>Blunt trauma / penetrating torso injury → bilateral needle decompression per T701. Persistent arrest → consider repeat decompression.</p></div></section>
-    <section data-trauma-priority="oxygen"><span>03</span><div><h3>Oxygenate + ventilate</h3>${source('AIRWAY · T705',189)}</div></section>
+    <section data-trauma-priority="oxygen"><span>03</span><div><h3>Oxygenate + ventilate</h3>${ventilationReminder()}${source('AIRWAY · T705',189)}</div></section>
     <section data-trauma-priority="volume"><span>04</span><div><h3>Restore circulating volume</h3><p>IV / IO · adult NS 1 L; pediatric NS 20 mL/kg · open flow / IO pressure bag.</p></div></section>
   </div>
   <section class="trauma-arrest-transport"><h3>Rhythm, destination & medical control</h3><div class="trauma-arrest-rhythms"><p><b>VF / pulseless VT:</b> shock per C300 / P601, fluids, consider repeat decompression, nearest trauma center.</p><p><b>PEA &gt;40 bpm:</b> fluids, consider repeat decompression, nearest trauma center.</p><p><b>Asystole / PEA &lt;40 bpm:</b> contact Medical Control about termination.</p></div><p><b>Expedite:</b> EMS-witnessed penetrating arrest → nearest trauma center; ROSC → immediate transport. Under 18: pediatric trauma center may be used.</p><p><b>Pregnancy exception:</b> known pregnancy &gt;24 weeks or fundus at / above the umbilicus → nearest ED for possible resuscitative delivery.</p><p><b>Trauma does not explain arrest:</b> medical-arrest pathway (SB204).</p></section>

@@ -187,3 +187,7 @@ Validation: `node tests/stopwatch-browser.mjs` checks touch and keyboard control
 ## Early alert calls
 
 Sick patient has a prominent CALLED RELEVANT ALERT button below the oxygen / cabin power action, with an early hospital-call reminder. One tap records a local date/time with seconds; the button disables to preserve the first timestamp, and Clear time permits correction. The timestamp persists across navigation / reload within the encounter and clears with New encounter, independently of the trauma alert and TXA timestamps. The trauma-alert card always shows the user-supplied route reminder: cell reception typically drops halfway through the drive to UCMC ER, so call early.
+
+## Ventilation reminders
+
+Non-interactive warnings appear in Sick patient / Airway supplies ready, Cardiac arrest / Run the code, Intubation / Reassess, and the shared Trauma arrest / Oxygenate + ventilate card. They emphasize TOO HARD / TOO FAST, slowing down and counting breaths, reduced blood flow, and gastric inflation / vomiting / aspiration. Run the code additionally emphasizes reduced coronary perfusion and chance of ROSC. These reminders add no checks or completion state. Sources: [AHA 2025 adult BLS ventilation recommendations](https://cpr.heart.org/en/resuscitation-science/cpr-and-ecc-guidelines/adult-basic-life-support) and [hyperventilation-induced hypotension during CPR](https://pubmed.ncbi.nlm.nih.gov/15066941/).

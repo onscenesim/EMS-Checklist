@@ -1,3 +1,4 @@
+import {ventilationReminder} from './ventilation-reminder.js';
 import {stopwatchPage,bindStopwatch} from './stopwatch.js';
 import {imminentBirth} from './birth-ui.js';
 import {pageIcons} from './page-icons.js';
@@ -84,6 +85,7 @@ function checklistSection(m,section,si){
     <h2><span>${String(si+1).padStart(2,'0')}</span>${section[0]}</h2>
     ${m.id==='sick'&&si===0?`<aside class="callout amber pacing-note" aria-label="Pacing reminder"><b>Pacing: increase current (mA) until capture.</b>Confirm ECG capture and mechanical capture with a matching pulse-ox waveform and pulse.<div>${source('PACING · C302',77)}</div></aside>`:''}
     ${code?arrestDirections():''}
+    ${code||(m.id==='sick'&&section[0]==='Airway supplies ready')||(m.id==='intubation'&&section[0]==='Reassess')?ventilationReminder(code):''}
     ${section[1].map((item,ii)=>item.id==='main-o2'?'':checklistRow(m,item,si,ii)).join('')}
     ${code?arrestCodeTools():''}
   </section>`;
