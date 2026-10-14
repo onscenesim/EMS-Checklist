@@ -183,3 +183,7 @@ Validation: 35 calculation / data tests; pediatric-arrest / birth browser checks
 The Stopwatch tab and overview shortcut open a full-viewport touch surface on phone, tablet, or desktop. Tap to start, stop, or resume; the separate Reset control is enabled only when stopped. The display shows minutes, seconds, and tenths (adding hours for long durations). Back returns to the overview. Stopwatch state is independent of the event / arrest timers, persists across navigation and refresh in the same tab, and clears with New encounter. Timestamp-based elapsed time includes time spent away from the tab. No clinical thresholds or alarms are added.
 
 Validation: `node tests/stopwatch-browser.mjs` checks touch and keyboard controls, persistence, reset, independence from the event timer, hour display, and 320 / 390 px phones plus portrait and landscape tablets.
+
+## Early alert calls
+
+Sick patient has a prominent CALLED RELEVANT ALERT button below the oxygen / cabin power action, with an early hospital-call reminder. One tap records a local date/time with seconds; the button disables to preserve the first timestamp, and Clear time permits correction. The timestamp persists across navigation / reload within the encounter and clears with New encounter, independently of the trauma alert and TXA timestamps. The trauma-alert card always shows the user-supplied route reminder: cell reception typically drops halfway through the drive to UCMC ER, so call early.
