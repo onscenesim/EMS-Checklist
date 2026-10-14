@@ -736,3 +736,16 @@ main.stopwatch-screen{position:fixed;inset:0;z-index:30;width:100%;height:100vh;
 .is-running .stopwatch-hint{color:#f0d3cd}
 .stopwatch-announcement{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
 @media(max-height:500px) and (orientation:landscape){.stopwatch-toolbar{padding-top:max(4px,env(safe-area-inset-top));padding-bottom:4px}.stopwatch-toolbar button{min-height:44px}.stopwatch-pad{padding-top:8px;padding-bottom:max(12px,env(safe-area-inset-bottom))}.stopwatch-time,.stopwatch-time.has-hours{font-size:clamp(48px,23dvh,110px);margin:4px 0}.stopwatch-action{font-size:25px}.stopwatch-state{font-size:13px}.stopwatch-hint{margin-top:4px;font-size:12px}}
+
+/* Keep the stopwatch above the checklists and review status below the content. */
+.stopwatch-launch{--accent:#fff;width:100%;margin:0 0 28px;min-height:64px;padding:18px 22px;background:#12563f;border-color:#12563f;color:#fff}
+.stopwatch-launch:hover{background:#174b3b}
+.stopwatch-launch span b{font-size:21px}
+.stopwatch-launch>svg{width:28px;height:28px}
+.dashboard+.review-banner{margin:28px 0 0}
+@media(max-width:640px){
+  .stopwatch-launch{min-height:76px;padding:20px;margin-bottom:26px;gap:16px;border-radius:10px}
+  .stopwatch-launch span b{font-size:24px}
+  .stopwatch-launch>svg{width:30px;height:30px}
+  .dashboard+.review-banner{margin-top:28px}
+}
