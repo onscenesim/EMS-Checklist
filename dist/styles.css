@@ -714,3 +714,25 @@ summary>svg{width:23px;height:23px;vertical-align:middle;flex-shrink:0;margin-ri
  .peds-brief .neonatal-code>summary{padding:17px 16px}
  .peds-brief .leader-shortcuts{gap:7px}.peds-brief .leader-shortcuts button{font-size:13px;padding:10px}
 }
+
+/* Full-viewport stopwatch: one large touch surface, separate navigation/reset. */
+.stopwatch-launch{margin:14px 0;background:#e5f3ee;border:1px solid #b1d7c8;color:#12563f}
+main.stopwatch-screen{position:fixed;inset:0;z-index:30;width:100%;height:100vh;height:100dvh;max-width:none;margin:0;padding:0;display:flex;flex-direction:column;background:#123f35;color:#fff;overflow:hidden}
+.stopwatch-toolbar{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-shrink:0;padding:max(10px,env(safe-area-inset-top)) max(12px,env(safe-area-inset-right)) 10px max(12px,env(safe-area-inset-left));background:#111c2c}
+.stopwatch-toolbar h1{font-size:18px;letter-spacing:0}
+.stopwatch-toolbar button{display:flex;align-items:center;justify-content:center;gap:6px;min-height:48px;padding:10px 12px;border-radius:8px;background:#26364b;color:white;font-size:15px;font-weight:700;touch-action:manipulation}
+.stopwatch-toolbar button:disabled{opacity:.4;cursor:default}
+.stopwatch-toolbar svg{width:18px;height:18px}
+.stopwatch-pad{flex:1;min-height:0;width:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px max(12px,env(safe-area-inset-right)) max(24px,env(safe-area-inset-bottom)) max(12px,env(safe-area-inset-left));background:#123f35;color:white;border-radius:0;touch-action:manipulation;user-select:none;-webkit-user-select:none}
+.stopwatch-pad:active{filter:brightness(1.15)}
+.stopwatch-pad:focus-visible{outline:4px solid white;outline-offset:-8px}
+.stopwatch-state{text-transform:uppercase;letter-spacing:.18em;font-size:clamp(14px,2.5vw,24px);font-weight:700;color:#a9e7cc}
+.stopwatch-time{display:block;max-width:100%;font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-size:clamp(48px,19vw,210px);font-weight:800;font-variant-numeric:tabular-nums;line-height:1.3;letter-spacing:-.07em;padding-right:.07em;margin:20px 0 28px;white-space:nowrap}
+.stopwatch-time.has-hours{font-size:clamp(36px,14vw,160px)}
+.stopwatch-action{font-size:clamp(26px,5vw,48px);font-weight:800;line-height:1.3}
+.stopwatch-hint{font-size:clamp(13px,2.5vw,18px);margin-top:12px;color:#c1d9d0}
+.stopwatch-screen.is-running,.is-running .stopwatch-pad{background:#732f28}
+.is-running .stopwatch-state{color:#ffd3bb}
+.is-running .stopwatch-hint{color:#f0d3cd}
+.stopwatch-announcement{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+@media(max-height:500px) and (orientation:landscape){.stopwatch-toolbar{padding-top:max(4px,env(safe-area-inset-top));padding-bottom:4px}.stopwatch-toolbar button{min-height:44px}.stopwatch-pad{padding-top:8px;padding-bottom:max(12px,env(safe-area-inset-bottom))}.stopwatch-time,.stopwatch-time.has-hours{font-size:clamp(48px,23dvh,110px);margin:4px 0}.stopwatch-action{font-size:25px}.stopwatch-state{font-size:13px}.stopwatch-hint{margin-top:4px;font-size:12px}}
