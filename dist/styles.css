@@ -529,8 +529,9 @@ tr.unavailable .na{color:#7c8794}
 .trauma-arrest-content h3{font-size:16px;line-height:1.4;color:#853722;margin-bottom:7px}
 .trauma-arrest-content p{font-size:13px;color:#465970;line-height:1.6}
 .trauma-arrest-prep{padding:16px;background:#fff5e4;border-left:5px solid #aa6700;border-radius:6px;margin-bottom:16px}
-.trauma-arrest-focus{padding:16px;background:#fff0ee;border-radius:6px;margin-bottom:18px;color:#853722}
+.trauma-arrest-focus{padding:16px;background:#fff0ee;border-left:5px solid #b3343f;border-radius:6px;margin-bottom:18px;color:#853722}
 .trauma-arrest-focus strong{font-size:17px;line-height:1.4;display:block;margin-bottom:7px}
+.trauma-arrest-focus p+p{margin-top:7px}
 .trauma-arrest-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-bottom:18px}
 .trauma-arrest-actions>section{display:flex;gap:12px;padding:15px;border:1px solid #e0d4cd;border-radius:7px;background:#fffaf7;min-width:0}
 .trauma-arrest-actions>section>span{font-size:14px;font-weight:800;color:#a33b28;flex-shrink:0}
