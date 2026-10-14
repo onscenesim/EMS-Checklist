@@ -191,3 +191,9 @@ Sick patient has a prominent CALLED RELEVANT ALERT button below the oxygen / cab
 ## Ventilation reminders
 
 Non-interactive warnings appear in Sick patient / Airway supplies ready, Cardiac arrest / Run the code, Intubation / Reassess, and the shared Trauma arrest / Oxygenate + ventilate card. They emphasize TOO HARD / TOO FAST, slowing down and counting breaths, reduced blood flow, and gastric inflation / vomiting / aspiration. Run the code additionally emphasizes reduced coronary perfusion and chance of ROSC. These reminders add no checks or completion state. Sources: [AHA 2025 adult BLS ventilation recommendations](https://cpr.heart.org/en/resuscitation-science/cpr-and-ecc-guidelines/adult-basic-life-support) and [hyperventilation-induced hypotension during CPR](https://pubmed.ncbi.nlm.nih.gov/15066941/).
+
+## Consistent subject icons
+
+Checklist navigation, overview cards, page headings, section headings, accordions, AMS causes, pediatric airway sizing, and supply categories now share subject symbols. Airway / ventilation uses the new laryngoscope; adult, pediatric, neonatal, and traumatic arrest use the skull; trauma uses the established handgun; medication / sedation uses the syringe; electrical therapy uses the bolt; and equipment power uses the power symbol. ROSC / restored circulation retains the heart. Shared aliases and section mappings in `dist/page-icons.js` keep older airway / pediatric-arrest names consistent.
+
+Validation: 35 existing tests passed; browser checks covered 15 routes at 1440, 390, and 320 px, compared the rendered subject symbols, verified checklist persistence, and found no page errors or horizontal overflow.

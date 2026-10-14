@@ -1,11 +1,11 @@
 // Inventory reference: Medic Check Form.pdf supplied 2026-10-10, pp. 1–4.
 // Quantities describe stock at each location; they are not requested restock quantities.
 const categories=[
-  ['airway','Airway & suction','airway'],['oxygen','Oxygen & ventilation','pulse'],
+  ['airway','Airway & suction','laryngoscope'],['oxygen','Oxygen & ventilation','laryngoscope'],
   ['monitor','Monitoring & assessment','pulse'],['iv','IV & IO','syringe'],
-  ['meds','Medications & fluids','syringe'],['trauma','Trauma & dressings','shield'],
+  ['meds','Medications & fluids','syringe'],['trauma','Trauma & dressings','handgun'],
   ['ppe','PPE & infection control','shield'],['movement','Moving & immobilizing','child'],
-  ['power','Equipment & batteries','bolt'],['vehicle','Vehicle & safety','grid'],
+  ['power','Equipment & batteries','power'],['vehicle','Vehicle & safety','grid'],
   ['reference','Bags & reference supplies','book']
 ].map(([id,name,icon])=>({id,name,icon}));
 const entries=[];

@@ -753,3 +753,7 @@ main.stopwatch-screen{position:fixed;inset:0;z-index:30;width:100%;height:100vh;
 
 .sick-alert-events{margin:0 0 22px}.alert-early-reminder{margin-top:12px;padding:12px;border-left:4px solid #aa6700;border-radius:5px;background:#fff5e4;color:#704800;font-size:14px;line-height:1.5}.alert-early-reminder b{font-weight:800}.sick-alert-events .trauma-event-time:empty{display:none}
 .ventilation-reminder{padding:16px;margin:12px 0;background:#fff0f1;border-left:5px solid #b3343f;border-radius:6px;color:#982834;line-height:1.5}.ventilation-reminder>strong{display:block;font-size:17px;font-weight:800}.ventilation-reminder em{font-style:normal;text-decoration:underline;text-underline-offset:3px}.ventilation-reminder>b{display:block;margin-top:8px;font-size:16px}.ventilation-reminder p{margin-top:8px;font-size:13px;line-height:1.5;color:#63404a}.ventilation-reminder .ventilation-rosc{color:#982834}@media(max-width:640px){.ventilation-reminder{padding:13px}.ventilation-reminder>strong{font-size:16px}}
+
+/* Subject icons share the heading color and retain room for long mobile titles. */
+.priority-section > h2{display:flex;align-items:center;gap:10px}
+.priority-section > h2 > svg{width:22px;height:22px;flex-shrink:0}

@@ -12,3 +12,15 @@ export const pageIcons={
  'child-smile':'<path d="M5 9V8a7 5.5 0 0 1 14 0v1c4-1 4 6 0 5v1a7 6.5 0 0 1-14 0v-1c-4 1-4-6 0-5Z"/><path d="M10 3c-1 2 1 3.5 3 2"/><circle cx="9" cy="11.5" r=".85" fill="currentColor" stroke="none"/><circle cx="15" cy="11.5" r=".85" fill="currentColor" stroke="none"/><path d="M9 16c1.5 1.5 4.5 1.5 6 0"/>',
  birth:'<circle cx="12" cy="6.5" r="4.5"/><path d="m7.8 8-3.6 4.2a3 3 0 0 0 .1 4l5.5 5.2a3.2 3.2 0 0 0 4.4 0l5.5-5.2a3 3 0 0 0 .1-4L16.2 8M5 11l12 8M19 11l-7 5M8 13l5-2"/><path d="M10 6.5h.01m4 0h.01" stroke-width="2.1"/>',
 };
+
+// Use the same subject symbol in navigation, headings, accordions and supplies.
+export const iconAliases={airway:'laryngoscope','child-arrest':'skull',trauma:'handgun',arrest:'skull'};
+export const checklistSectionIcons={
+ sick:['caution','laryngoscope','arrow'],
+ arrest:['skull','skull','heart','heart'],
+ cardio:['bolt','bolt','pulse'],
+ sedation:['syringe','syringe','pulse','laryngoscope'],
+ intubation:['laryngoscope','laryngoscope','laryngoscope','syringe'],
+ ams:['brain'],
+ trauma:['handgun','laryngoscope','laryngoscope','pulse','power']
+};
