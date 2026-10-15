@@ -1,3 +1,4 @@
+import {hospitalMap} from './hospital-map.js';
 const survey='https://www.academyofmedicine.org/aws/AOMC/asset_manager/get_file/916898?ver=1';
 const strokeSources={
  fairfield:'https://www.mercy.com/locations/hospitals/cincinnati/mercy-health-fairfield-hospital',
@@ -35,7 +36,7 @@ ${row('Cardiac Arrest Center certification','<span class="hospital-unverified">N
 </dl><p class="hospital-card-source">${link(h.strokeSource,'Stroke source')}</p></section>`;}
 export function hospitalReference(source,icon){return `<div class="page-heading"><div><span class="eyebrow">QUICK REFERENCE</span><h1 class="hospital-heading">${icon('hospital')} Hospital capabilities</h1></div></div>
 <nav class="hospital-tabs" aria-label="Hospital reference sections">${[['capabilities','Capabilities'],['codes','Door & EMS room codes'],['phones','Stat Lines']].map(([id,label])=>`<button class="button ${tab===id?'hospital-active':''}" data-hospital-tab="${id}" aria-pressed="${tab===id}">${label}</button>`).join('')}</nav>
-${tab==='capabilities'?`<section class="panel hospital-guidance destination-guide"><div class="destination-heading"><h2>Stroke: who goes where</h2>${source('M414',117)}</div>
+${tab==='capabilities'?`${hospitalMap()}<section class="panel hospital-guidance destination-guide"><div class="destination-heading"><h2>Stroke: who goes where</h2>${source('M414',117)}</div>
 <div class="destination-row"><b>LVO screen negative<br><span>or last known well ≥24 hours</span></b><p><strong>Closest certified stroke center.</strong> Bethesda North is appropriate if closest.</p></div>
 <div class="destination-row"><b>LVO screen positive<br><span>e.g. C-STAT · last known well &lt;24 hours</span></b><div><p><strong>Mercy Jewish in under 30 minutes? Go to Jewish</strong>—your usual closest Comprehensive center. UC is another option; use whichever CSC is closest from the scene.</p><p><strong>Traffic or out of district?</strong> If no Comprehensive center is under 30 minutes, go to <strong>Bethesda North</strong> if it’s the nearest TSC and within 30 minutes.</p><p class="destination-condition">Good Samaritan is also a Comprehensive option. Don’t miss the thrombolytic window; if the timing criteria aren’t met, use the closest certified stroke center.</p><p>${source('C-STAT & destination flow',117)}</p></div></div>
 <div class="destination-row"><b>Suspected stroke under age 16</b><p><strong>Consider preferential transport to Cincinnati Children’s.</strong> Main / Burnet has the listed pediatric stroke service. ${source('M414 pediatric note',118)}</p></div>
