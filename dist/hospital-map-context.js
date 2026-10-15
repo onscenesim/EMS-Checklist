@@ -1,13 +1,13 @@
 export const approaches={
  fairfield:{legs:['I-75 NORTH','I-275 WEST'],local:'Winton Road → Mack Road',segments:['75n','275w']},
- bethesda:{legs:['I-75 SOUTH','SR-126 EAST','I-71 NORTH'],local:'Pfeiffer Road → Montgomery Road',segments:['75to126','126e','71n']},
+ bethesda:{legs:['I-75 SOUTH','SR-126 EAST','I-71 NORTH'],local:'Galbraith Road connection to SR-126; Pfeiffer Road → Montgomery Road',segments:['75to126','126e','71n']},
  ucmc:{legs:['I-75 SOUTH'],local:'Local streets to the UCMC campus',segments:['75to126','75south']},
- westchester:{legs:['I-75 NORTH'],local:'Tylersville Road → University Drive',segments:['75n','75upper']},
+ westchester:{legs:['I-75 NORTH'],local:'Tylersville Road → Cox Road → Discovery Drive',segments:['75n','75upper']},
  samaritan:{legs:['I-75 SOUTH'],local:'Hopple Street / Martin Luther King Drive → Dixmyth Avenue',segments:['75to126','75south']},
  christ:{legs:['I-75 SOUTH'],local:'Local streets to the Mt. Auburn campus',segments:['75to126','75south','75christ']},
- jewish:{legs:['I-75 SOUTH','SR-126 EAST'],local:'Kenwood Road → East Galbraith Road',segments:['75to126','126jewish']},
+ jewish:{legs:['I-75 SOUTH','SR-126 EAST'],local:'Galbraith Road connection to SR-126; Kenwood Road → East Galbraith Road',segments:['75to126','126jewish']},
  'childrens-main':{legs:['I-75 SOUTH'],local:'Hopple Street / Martin Luther King Drive → Burnet Avenue',segments:['75to126','75south']},
- 'childrens-liberty':{legs:['I-75 NORTH'],local:'Liberty Way → Yankee Road',segments:['75n','75upper','75liberty']}
+ 'childrens-liberty':{legs:['I-75 NORTH','SR-129 WEST'],local:'Cincinnati-Dayton Road → Yankee Road',segments:['75n','75upper','75liberty']}
 };
 export const departments=[
  {name:'Springdale',ll:[39.289733, -84.48422],address:'12147 Lawnview Avenue',source:'https://www.hamiltoncountyfirechiefs.com/uploads/2/9/3/3/29330831/springdale_fd-_hiring_flyer.pdf'},

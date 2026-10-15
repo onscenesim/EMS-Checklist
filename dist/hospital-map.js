@@ -1,4 +1,4 @@
-import {highwayGeometry} from './highway-geometry.js';
+import {hospitalRoutes} from './highway-geometry.js';
 import {corridorStations,routeBackup} from './backup-stations.js';
 import {approaches,departments} from './hospital-map-context.js';
 // Campus coordinates: OpenStreetMap / Mapcarta, checked 2026-10-15.
@@ -19,7 +19,7 @@ export function hospitalMap(){return `<section class="panel hospital-map-panel" 
 <div class="hospital-map-heading"><div><h2 id="hospital-map-title">Local hospital map</h2><p>Woodlawn & Lincoln Heights · the 9 hospitals in this reference</p></div><div class="map-actions"><button class="button small" type="button" data-fd-toggle aria-pressed="${showFD}">${showFD?'Hide':'Show'} nearby FDs</button><button class="button small" type="button" data-map-reset>Show all</button></div></div>
 <div class="selected-hospital-context" aria-live="polite" hidden></div><div class="hospital-map-wrap"><div id="hospital-map" role="region" aria-label="Hospital locations and highways around Woodlawn and Lincoln Heights"></div><div class="map-compass" aria-label="North up, east right, south down, west left"><b>N</b><span>W <i>↑</i> E</span><b>S</b></div><p class="map-load-message" role="status" hidden>Street map unavailable. Check your connection; hospital locations remain listed below.</p></div>
 <section class="backup-options" aria-live="polite" hidden></section><div class="hospital-map-key">${hospitalPlaces.map((h,i)=>`<button type="button" data-map-hospital="${h.id}" aria-pressed="false"><span class="map-number ${h.pediatric?'map-pediatric':''}">${i+1}</span><span>${h.label}</span></button>`).join('')}</div>
-<p class="hospital-map-note">Tap a hospital for directions and highlighted backup stations along its highway option. Diamonds mark Woodlawn and Lincoln Heights. Campus locations, not ambulance entrances; routes vary by scene and traffic.</p>
+<p class="hospital-map-note">Tap a hospital for directions and highlighted backup stations along its highway option. Blue diamond: Woodlawn. Red diamond: Lincoln Heights. Red joins blue where the trips merge. Representative trips include ramps and local connections to campus, not ambulance entrances; routes vary by scene and traffic.</p>
 <details class="hospital-map-sources"><summary>Map sources</summary><p>Light gray basemap: © Esri, HERE, Garmin, OpenStreetMap contributors. Highway overlays: OpenStreetMap via OSRM (October 15, 2026). Campus points: OpenStreetMap / linked sources. FD locations: official addresses, geocoded with Esri. Campus locations checked October 15, 2026. ${hospitalPlaces.map(h=>`<a href="${h.source}" target="_blank" rel="noopener">${h.label}</a>`).join(' · ')}</p></details></section>`;}
 let map=null,observer=null,showFD=false,selectedHospital='';
 const origins={Woodlawn:[39.25200,-84.47022],'Lincoln Heights':[39.23895,-84.45550]};
@@ -48,10 +48,11 @@ export function mountHospitalMap(){
    marker.setZIndexOffset(active?800:0);
    dot.setStyle({color:active?'#1673e6':'#334c60'});leader.setStyle({color:active?'#1673e6':'#334c60',weight:active?2:1});
   }
-  for(const segment of approaches[selectedHospital]?.segments||[]){
-   const coordinates=highwayGeometry[segment];if(!coordinates?.length)continue;
-   L.polyline(coordinates,{color:'#fff',weight:9,opacity:.95,interactive:false}).addTo(highwayLayer);
-   L.polyline(coordinates,{color:'#1673e6',weight:5,opacity:1,interactive:false,className:'selected-highway',lineCap:'round',lineJoin:'round'}).addTo(highwayLayer);
+  const route=hospitalRoutes[selectedHospital];if(!route)return;
+  // Draw both casings first, then red approach and continuous blue/shared route.
+  for(const coordinates of [route.wl,route.lh])L.polyline(coordinates,{color:'#fff',weight:9,opacity:.95,interactive:false}).addTo(highwayLayer);
+  for(const [coordinates,color,origin] of [[route.lh,'#d9363e','lh'],[route.wl,'#1673e6','wl']]){
+   L.polyline(coordinates,{color,weight:5,opacity:1,interactive:false,className:'selected-highway route-'+origin,lineCap:'round',lineJoin:'round'}).addTo(highwayLayer);
   }
  };
  const overview=()=>{instance.closePopup();selectedHospital='';updateHighways();document.querySelector('.selected-hospital-context').hidden=true;document.querySelector('.backup-options').hidden=true;instance.fitBounds(bounds,{padding:[34,35]});document.querySelectorAll('[data-map-hospital]').forEach(b=>b.setAttribute('aria-pressed','false'));};
@@ -67,9 +68,9 @@ export function mountHospitalMap(){
   const focus=()=>{
    instance.closePopup();selectedHospital=h.id;showFD=true;
    document.querySelectorAll('[data-map-hospital]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.mapHospital===h.id)));
-   const context=document.querySelector('.selected-hospital-context');context.hidden=false;context.innerHTML=`<strong>${escape(h.label)}</strong><div>${directionLines}</div><p>${approach.legs.join(' → ')}</p><small>${escape(approach.local)}</small><span class="highway-selection-key"><i></i>Blue = selected hospital & highway approach</span>`;
+   const context=document.querySelector('.selected-hospital-context');context.hidden=false;context.innerHTML=`<strong>${escape(h.label)}</strong><div>${directionLines}</div><p>${approach.legs.join(' → ')}</p><small>${escape(approach.local)}</small><span class="highway-selection-key"><i></i>Woodlawn + shared route</span><span class="highway-selection-key lh-route-key"><i></i>Lincoln Heights · joins blue</span>`;
    updateHighways();updateFDs();
-   const options=resolveBackup(h.id);instance.fitBounds(L.latLngBounds([...Object.values(origins),h.ll,...options.map(d=>d.ll)]),{padding:[80,60],maxZoom:12.5});
+   const options=resolveBackup(h.id);instance.fitBounds(L.latLngBounds([...Object.values(origins),h.ll,...options.map(d=>d.ll),...hospitalRoutes[h.id].wl,...hospitalRoutes[h.id].lh]),{padding:[80,60],maxZoom:12.5});
   };
   marker.on('click',focus);document.querySelector(`[data-map-hospital="${h.id}"]`).onclick=focus;
   markers.push({h,marker,leader,dot});
@@ -77,7 +78,7 @@ export function mountHospitalMap(){
  const positionPins=()=>{for(const {h,marker,leader} of markers){const offset=instance.getZoom()<12.5?(h.offset||[0,0]):[0,0];const p=instance.latLngToLayerPoint(h.ll).add(offset);const location=instance.layerPointToLatLng(p);marker.setLatLng(location);leader.setLatLngs([h.ll,location]);}};
  instance.on('zoomend',positionPins);positionPins();
  for(const [name,ll,direction] of [['Woodlawn',[39.25200,-84.47022],'left'],['Lincoln Heights',[39.23895,-84.45550],'right']]){
-  const community=L.marker(ll,{icon:L.divIcon({className:'community-map-pin',html:'◆',iconSize:[14,14],iconAnchor:[7,7]}),interactive:false}).addTo(map).bindTooltip(name,{permanent:true,direction,offset:direction==='left'?[-10,-6]:[10,8],className:'community-map-label'});
+  const community=L.marker(ll,{icon:L.divIcon({className:'community-map-pin '+(name==='Woodlawn'?'origin-wl':'origin-lh'),html:'◆',iconSize:[14,14],iconAnchor:[7,7]}),interactive:false}).addTo(map).bindTooltip(name,{permanent:true,direction,offset:direction==='left'?[-10,-6]:[10,8],className:'community-map-label'});
   const positionLabel=()=>{const tooltip=community.getTooltip(),x=instance.latLngToContainerPoint(ll).x;tooltip.options.direction=x<instance.getSize().x/2?'right':'left';tooltip.options.offset=L.point(tooltip.options.direction==='left'?-10:10,name==='Woodlawn'?-6:8);tooltip.update();};
   instance.on('moveend zoomend',positionLabel);positionLabel();
  }
