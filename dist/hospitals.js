@@ -1,0 +1,24 @@
+const survey='https://www.academyofmedicine.org/aws/AOMC/asset_manager/get_file/916898?ver=1';
+export const hospitals=[
+ {id:'fairfield',name:'Mercy Fairfield ER',trauma:null},
+ {id:'bethesda',name:'Bethesda North ER',trauma:'III'},
+ {id:'ucmc',name:'UCMC ER',trauma:'I'},
+ {id:'westchester',name:'UC West Chester ER',trauma:'III'},
+ {id:'samaritan',name:'Good Samaritan ER',trauma:null},
+ {id:'christ',name:'Christ Hospital ER',trauma:null},
+ {id:'jewish',name:'Mercy Jewish ER',trauma:null}
+];
+const key='wfd-hospital-directory-v1';
+const defaults={fairfield:{door:'1234#'},ucmc:{door:'N/A (they let you in)',room:'#0911*'}};
+let directory={};let storageFailed=false;
+try{const value=JSON.parse(localStorage.getItem(key)||'{}');if(value&&typeof value==='object'&&!Array.isArray(value))directory=value;}catch{storageFailed=true;}
+let tab='capabilities';
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const value=(id,field)=>directory[id]?.[field]??defaults[id]?.[field]??'';
+function field(h,id,label,type='text'){return `<label class="hospital-field">${label}<input type="${type}" data-hospital="${h.id}" data-hospital-field="${id}" aria-label="${esc(h.name+' '+label)}" value="${esc(value(h.id,id))}" placeholder="Not added yet" autocomplete="off"></label>`;}
+export function hospitalReference(source,icon){return `<div class="page-heading"><div><span class="eyebrow">QUICK REFERENCE</span><h1 class="hospital-heading">${icon('hospital')} Hospital capabilities</h1><p>Seven local emergency departments · Adult destination reference</p></div></div>
+<nav class="hospital-tabs" aria-label="Hospital reference sections">${[['capabilities','Capabilities'],['codes','Door & EMS room codes'],['phones','Phone numbers']].map(([id,label])=>`<button class="button ${tab===id?'hospital-active':''}" data-hospital-tab="${id}" aria-pressed="${tab===id}">${label}</button>`).join('')}</nav>
+${tab==='capabilities'?`<section class="panel hospital-guidance"><h2>ROSC destination guidance</h2><p><b>Presumed cardiac arrest or post-ROSC STEMI:</b> choose a hospital with 24-hour cath availability. If unresponsive and not following commands, confirm therapeutic hypothermia / targeted temperature management (TTM) capability. Follow trauma triage when applicable.</p><p>ROSC eligibility below means the hospital meets the listed cath criterion; it does not confirm TTM, current availability, or acceptance for every patient.</p><div class="protocol-links">${source('Post-ROSC · C307',83)}${source('C307 destination criteria',84)}${source('Trauma destination · SB206',55)}</div></section>
+<div class="hospital-grid">${hospitals.map(h=>`<section class="panel hospital-card"><h2>${h.name}</h2><dl><div><dt>Adult trauma center</dt><dd>${h.trauma?'Level '+h.trauma:'No level listed'}</dd></div><div><dt>Cath lab</dt><dd>24/7 · On site</dd></div><div><dt>Adult ROSC eligibility</dt><dd>Meets cath criterion<span>Confirm TTM if unresponsive</span></dd></div></dl></section>`).join('')}</div><p class="hospital-source">Source: <a href="${survey}" target="_blank" rel="noopener">AOM 2025 ED Capabilities Survey</a> · Reviewed October 14, 2026. “No level listed” means the survey does not list a trauma designation. Capability listings are not live availability. Pediatric post-arrest destinations require pediatric-specific guidance.</p>`:
+`<section class="panel hospital-guidance"><h2>${tab==='codes'?'Door & EMS room codes':'Hospital phone numbers'}</h2><p>${tab==='codes'?'Add or update access codes as you collect them.':'Add verified ER and EMS / medical-control numbers as you collect them.'} Changes save automatically in this browser and remain after a new encounter. They do not sync to other devices.</p><p id="hospital-save-status" role="status">${storageFailed?'Browser storage unavailable. Changes may not persist.':'Ready to edit'}</p></section><div class="hospital-grid">${hospitals.map(h=>`<section class="panel hospital-card"><h2>${h.name}</h2>${tab==='codes'?field(h,'door','Door code')+field(h,'room','EMS room code'):field(h,'erPhone','ER phone number','tel')+field(h,'emsPhone','EMS / medical-control number','tel')}</section>`).join('')}</div>`}`;}
+export function bindHospitals(render){document.addEventListener('click',e=>{const button=e.target.closest('[data-hospital-tab]');if(button){tab=button.dataset.hospitalTab;render();}});document.addEventListener('input',e=>{const el=e.target;if(!el.dataset.hospitalField)return;const id=el.dataset.hospital;directory[id]={...directory[id],[el.dataset.hospitalField]:el.value};let message;try{localStorage.setItem(key,JSON.stringify(directory));message='Saved in this browser';}catch{message='Unable to save in this browser. Keep a separate copy before leaving.';}const status=document.getElementById('hospital-save-status');if(status)status.textContent=message;});}
