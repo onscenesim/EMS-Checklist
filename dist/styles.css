@@ -757,3 +757,15 @@ main.stopwatch-screen{position:fixed;inset:0;z-index:30;width:100%;height:100vh;
 /* Subject icons share the heading color and retain room for long mobile titles. */
 .priority-section > h2{display:flex;align-items:center;gap:10px}
 .priority-section > h2 > svg{width:22px;height:22px;flex-shrink:0}
+
+/* Stroke alert shares event controls with a yellow brain-button treatment. */
+.stroke-alert-events{margin:0 0 22px}
+.stroke-alert-events .trauma-event{border-color:#e1c254}
+.stroke-alert-events .trauma-event-button{background:#f5cc45;color:#3c310b;box-shadow:0 3px 8px #aa86151a}
+.stroke-alert-events .trauma-event-button:hover{background:#eabc2f}
+.stroke-alert-events .trauma-event-button:disabled{background:#e2bd45;color:#3c310b}
+.stroke-alert-events .trauma-event-button small{color:#574613}
+.stroke-alert-events .alert-early-reminder{background:#fff7d5;border-color:#b58b13;color:#57400b}
+.stroke-alert-events .trauma-event-time{color:#574613}
+.stroke-alert-events .trauma-event-time:empty{display:none}
+.stroke-alert-events .trauma-event-time button{background:#fff8dc;border-color:#e1cd82;color:#574613}

@@ -197,3 +197,9 @@ Non-interactive warnings appear in Sick patient / Airway supplies ready, Cardiac
 Checklist navigation, overview cards, page headings, section headings, accordions, AMS causes, pediatric airway sizing, and supply categories now share subject symbols. Airway / ventilation uses the new laryngoscope; adult, pediatric, neonatal, and traumatic arrest use the skull; trauma uses the established handgun; medication / sedation uses the syringe; electrical therapy uses the bolt; and equipment power uses the power symbol. ROSC / restored circulation retains the heart. Shared aliases and section mappings in `dist/page-icons.js` keep older airway / pediatric-arrest names consistent.
 
 Validation: 35 existing tests passed; browser checks covered 15 routes at 1440, 390, and 320 px, compared the rendered subject symbols, verified checklist persistence, and found no page errors or horizontal overflow.
+
+## AMS stroke alert
+
+AMS now has a prominent yellow CALLED STROKE ALERT button with the brain symbol and the reminder “Check a glucose first!” inside its card. It records an independent local date/time with seconds, preserves the first timestamp, offers Clear time for corrections, persists through navigation / refresh, and resets with New encounter. The glucose reminder stays visible after recording.
+
+Validation: all 35 existing tests passed, plus browser checks for the brain icon, exact reminder, keyboard activation, timestamp preservation, independent sick / trauma alert times, clear / re-record, encounter reset, and 1440 / 390 / 320 px layouts.
