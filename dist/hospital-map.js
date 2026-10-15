@@ -1,3 +1,4 @@
+import {highwayGeometry} from './highway-geometry.js';
 import {corridorStations,routeBackup} from './backup-stations.js';
 import {approaches,departments} from './hospital-map-context.js';
 // Campus coordinates: OpenStreetMap / Mapcarta, checked 2026-10-15.
@@ -19,7 +20,7 @@ export function hospitalMap(){return `<section class="panel hospital-map-panel" 
 <div class="selected-hospital-context" aria-live="polite" hidden></div><div class="hospital-map-wrap"><div id="hospital-map" role="region" aria-label="Hospital locations and highways around Woodlawn and Lincoln Heights"></div><div class="map-compass" aria-label="North up, east right, south down, west left"><b>N</b><span>W <i>↑</i> E</span><b>S</b></div><p class="map-load-message" role="status" hidden>Street map unavailable. Check your connection; hospital locations remain listed below.</p></div>
 <section class="backup-options" aria-live="polite" hidden></section><div class="hospital-map-key">${hospitalPlaces.map((h,i)=>`<button type="button" data-map-hospital="${h.id}" aria-pressed="false"><span class="map-number ${h.pediatric?'map-pediatric':''}">${i+1}</span><span>${h.label}</span></button>`).join('')}</div>
 <p class="hospital-map-note">Tap a hospital for directions and highlighted backup stations along its highway option. Diamonds mark Woodlawn and Lincoln Heights. Campus locations, not ambulance entrances; routes vary by scene and traffic.</p>
-<details class="hospital-map-sources"><summary>Map sources</summary><p>Light gray basemap: © Esri, HERE, Garmin, OpenStreetMap contributors. Campus points: OpenStreetMap / linked sources. FD locations: official addresses, geocoded with Esri. Campus locations checked October 15, 2026. ${hospitalPlaces.map(h=>`<a href="${h.source}" target="_blank" rel="noopener">${h.label}</a>`).join(' · ')}</p></details></section>`;}
+<details class="hospital-map-sources"><summary>Map sources</summary><p>Light gray basemap: © Esri, HERE, Garmin, OpenStreetMap contributors. Highway overlays: OpenStreetMap via OSRM (October 15, 2026). Campus points: OpenStreetMap / linked sources. FD locations: official addresses, geocoded with Esri. Campus locations checked October 15, 2026. ${hospitalPlaces.map(h=>`<a href="${h.source}" target="_blank" rel="noopener">${h.label}</a>`).join(' · ')}</p></details></section>`;}
 let map=null,observer=null,showFD=false,selectedHospital='';
 const origins={Woodlawn:[39.25200,-84.47022],'Lincoln Heights':[39.23895,-84.45550]};
 export function directionFrom(origin,destination){const angle=(Math.atan2((destination[1]-origin[1])*Math.cos((destination[0]+origin[0])*Math.PI/360),destination[0]-origin[0])*180/Math.PI+360)%360;return ['NORTH','NORTHEAST','EAST','SOUTHEAST','SOUTH','SOUTHWEST','WEST','NORTHWEST'][Math.round(angle/45)%8];}
@@ -37,9 +38,24 @@ export function mountHospitalMap(){
  let loaded=0;tiles.on('tileload',()=>{loaded++;document.querySelector('.map-load-message')?.setAttribute('hidden','');});tiles.on('tileerror',()=>{if(!loaded){const message=document.querySelector('.map-load-message');if(message)message.hidden=false;}});
  L.control.scale({imperial:true,metric:false,position:'bottomleft'}).addTo(map);
  const bounds=L.latLngBounds(hospitalPlaces.map(h=>h.ll)).pad(0.13);
- const overview=()=>{instance.closePopup();selectedHospital='';document.querySelector('.selected-hospital-context').hidden=true;document.querySelector('.backup-options').hidden=true;instance.fitBounds(bounds,{padding:[34,35]});document.querySelectorAll('[data-map-hospital]').forEach(b=>b.setAttribute('aria-pressed','false'));};
- overview();
  const markers=[];
+ const highwayLayer=L.layerGroup().addTo(instance);
+ const updateHighways=()=>{
+  highwayLayer.clearLayers();
+  for(const {h,marker,dot,leader} of markers){
+   const active=h.id===selectedHospital;
+   marker.getElement()?.classList.toggle('hospital-selected',active);
+   marker.setZIndexOffset(active?800:0);
+   dot.setStyle({color:active?'#1673e6':'#334c60'});leader.setStyle({color:active?'#1673e6':'#334c60',weight:active?2:1});
+  }
+  for(const segment of approaches[selectedHospital]?.segments||[]){
+   const coordinates=highwayGeometry[segment];if(!coordinates?.length)continue;
+   L.polyline(coordinates,{color:'#fff',weight:9,opacity:.95,interactive:false}).addTo(highwayLayer);
+   L.polyline(coordinates,{color:'#1673e6',weight:5,opacity:1,interactive:false,className:'selected-highway',lineCap:'round',lineJoin:'round'}).addTo(highwayLayer);
+  }
+ };
+ const overview=()=>{instance.closePopup();selectedHospital='';updateHighways();document.querySelector('.selected-hospital-context').hidden=true;document.querySelector('.backup-options').hidden=true;instance.fitBounds(bounds,{padding:[34,35]});document.querySelectorAll('[data-map-hospital]').forEach(b=>b.setAttribute('aria-pressed','false'));};
+ overview();
  hospitalPlaces.forEach((h,i)=>{
   const color='#334c60';
   const dot=L.circleMarker(h.ll,{radius:3,color,fillOpacity:1,weight:1,interactive:false}).addTo(map);
@@ -51,8 +67,8 @@ export function mountHospitalMap(){
   const focus=()=>{
    instance.closePopup();selectedHospital=h.id;showFD=true;
    document.querySelectorAll('[data-map-hospital]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.mapHospital===h.id)));
-   const context=document.querySelector('.selected-hospital-context');context.hidden=false;context.innerHTML=`<strong>${escape(h.label)}</strong><div>${directionLines}</div><p>${approach.legs.join(' → ')}</p><small>${escape(approach.local)}</small>`;
-   updateFDs();
+   const context=document.querySelector('.selected-hospital-context');context.hidden=false;context.innerHTML=`<strong>${escape(h.label)}</strong><div>${directionLines}</div><p>${approach.legs.join(' → ')}</p><small>${escape(approach.local)}</small><span class="highway-selection-key"><i></i>Blue = selected hospital & highway approach</span>`;
+   updateHighways();updateFDs();
    const options=resolveBackup(h.id);instance.fitBounds(L.latLngBounds([...Object.values(origins),h.ll,...options.map(d=>d.ll)]),{padding:[80,60],maxZoom:12.5});
   };
   marker.on('click',focus);document.querySelector(`[data-map-hospital="${h.id}"]`).onclick=focus;

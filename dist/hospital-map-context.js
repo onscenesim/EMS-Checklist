@@ -4,10 +4,10 @@ export const approaches={
  ucmc:{legs:['I-75 SOUTH'],local:'Local streets to the UCMC campus',segments:['75to126','75south']},
  westchester:{legs:['I-75 NORTH'],local:'Tylersville Road → University Drive',segments:['75n','75upper']},
  samaritan:{legs:['I-75 SOUTH'],local:'Hopple Street / Martin Luther King Drive → Dixmyth Avenue',segments:['75to126','75south']},
- christ:{legs:['I-75 SOUTH'],local:'Local streets to the Mt. Auburn campus',segments:['75to126','75south']},
+ christ:{legs:['I-75 SOUTH'],local:'Local streets to the Mt. Auburn campus',segments:['75to126','75south','75christ']},
  jewish:{legs:['I-75 SOUTH','SR-126 EAST'],local:'Kenwood Road → East Galbraith Road',segments:['75to126','126jewish']},
  'childrens-main':{legs:['I-75 SOUTH'],local:'Hopple Street / Martin Luther King Drive → Burnet Avenue',segments:['75to126','75south']},
- 'childrens-liberty':{legs:['I-75 NORTH'],local:'Liberty Way → Yankee Road',segments:['75n','75upper']}
+ 'childrens-liberty':{legs:['I-75 NORTH'],local:'Liberty Way → Yankee Road',segments:['75n','75upper','75liberty']}
 };
 export const departments=[
  {name:'Springdale',ll:[39.289733, -84.48422],address:'12147 Lawnview Avenue',source:'https://www.hamiltoncountyfirechiefs.com/uploads/2/9/3/3/29330831/springdale_fd-_hiring_flyer.pdf'},
