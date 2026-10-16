@@ -12,7 +12,17 @@ try{
  };
  await page.goto('http://127.0.0.1:4173/#district-map');await page.waitForSelector('.local-list-empty');
  assert.equal(await page.locator('.local-place-pin').count(),0);
+ assert.equal(await page.getByRole('heading',{name:'Choose a district'}).count(),1);
+ assert.equal(await page.locator('[data-local-area="woodlawn"]').evaluate(el=>getComputedStyle(el).backgroundColor),'rgb(20, 95, 187)');
+ assert.equal(await page.locator('[data-local-area="lincoln"]').evaluate(el=>getComputedStyle(el).backgroundColor),'rgb(188, 38, 56)');
  await page.locator('[data-local-area="woodlawn"]').click();
+ assert.equal(await page.locator('[data-local-area="woodlawn"]').getAttribute('aria-pressed'),'true');
+ for(const border of await page.locator('.is-active-district').all()){
+  assert.equal(await border.getAttribute('stroke'),'#1673e6');
+  assert.equal(await border.getAttribute('stroke-width'),'5');
+  assert.equal(await border.getAttribute('stroke-dasharray'),'10 7');
+ }
+ assert.ok(await page.locator('.is-active-district').count()>0);
  assert.equal(await page.locator('[data-local-destination="transport"]').count(),1);
  assert.equal(await page.locator('.local-place-pin[title="Woodlawn Transport Division"]').count(),1);
  assert.equal(await page.locator('.local-place-pin').count()+1,destinations.filter(d=>d.area==='woodlawn').length);
@@ -31,6 +41,9 @@ try{
  assert.equal(await page.locator('.local-active-route.normal').count(),1);
  await page.locator('[data-local-destination="goodwill"]').click();await page.locator('[data-local-entrance]').selectOption('outlet');assert.match(await page.locator('.local-selected-heading').innerText(),/10633 Glendale Road/);
  await page.locator('[data-local-area="lincoln"]').click();assert.equal(await page.locator('[data-local-destination="kroger-store"]').count(),0);
+ assert.equal(await page.locator('[data-local-area="woodlawn"]').getAttribute('aria-pressed'),'false');
+ assert.equal(await page.locator('[data-local-area="lincoln"]').getAttribute('aria-pressed'),'true');
+ assert.equal(await page.locator('[data-local-area="lincoln"] .local-area-state').innerText(),'Selected');
  assert.equal(await page.locator('.local-court-cluster').count(),0);await assertSeparatePins();
  assert.deepEqual(await listIds(),destinations.filter(d=>d.area==='lincoln').map(d=>d.id));
  assert.equal(await page.locator('.local-place-pin').count(),destinations.filter(d=>d.area==='lincoln').length);
