@@ -6,18 +6,19 @@ export const modules=[
     sections:[
       ['Prepare',[
         {id:'main-o2',text:'Turn main O2 AND cabin power on'},
+        {id:'bp-cycling',text:'Set BP to cycle every 3 minutes (Q3)'},
         {id:'roles',text:'Assign roles before things get worse',note:'Leader · airway · access / medications · scene control'},
         {id:'pads-early',text:'Put pads on early',note:'Pacing / cardioversion ready.',tool:['cardio','Defib / cardioversion']},
         {id:'lucas-staged',text:'Place the LUCAS backboard under the patient while they still have a pulse'},
         {id:'push-dose-ready',text:'Prepare and clearly label push-dose epinephrine',protocol:['PUSH-DOSE EPI · SB205',53],tool:['medications','Push-dose epi guide','push-epi']}
       ]],
       ['Airway supplies ready',[
+        {id:'respiratory-distress',text:'Assess and treat respiratory distress as indicated',protocol:['SYMPTOM BASED RESPIRATORY DISTRESS · SB202',47]},
         {id:'suction-ready',text:'Suction on and within reach'},
         {id:'airway-staged',text:'Stage BVM, backup airway, ETT, bougie, and laryngoscope',note:'Have waveform capnography and the tube holder ready.',tool:['intubation','Intubation checklist']}
       ]],
       ['Before you move',[
-        {id:'bp-cycling',text:'Set BP to cycle every 2 minutes'},
-        {id:'backup-access',text:'Prepare a second IV / IO if needed'},
+        {id:'backup-access',text:'Prepare a second IV / IO if needed',protocol:['IO / LIDOCAINE · T711',201]},
         {id:'movement-plan',text:'Ensure airway is 100% secure and ETCO₂ is being watched'},
         {id:'hospital-activation',text:'Activate the hospital early'}
       ]]
@@ -66,7 +67,7 @@ export const modules=[
   {id:'sedation',title:'Sedation',short:'Sedation',icon:'syringe',color:'purple',tag:'PROCEDURE',source:'C303 · C306 · M408 · T715',page:79,
     refs:[['Wide complex · C303',79],['Narrow complex · C306',82],['Restraint · M408',100],['Pediatric restraint · P616',173],['After intubation · T715',209]],
     sections:[
-      ['Preparation',['Confirm indication and sedation pathway','Check allergies, prior medications, and contraindications','Baseline mental status, BP, and breathing','Prepare suction, ventilation, and backup airway']],
+      ['Preparation',['Confirm indication and sedation pathway','Check allergies, prior medications, and contraindications','Baseline mental status, BP, and breathing',{id:'bp-cycling',text:'Set BP to cycle every 5 minutes (Q5)'},{id:'3',text:'Prepare suction, ventilation, and backup airway'}]],
       ['Medication safety',['Confirm agent, concentration, route, dose, and maximum','Obtain medical-control orders as required','Cross-check medication / route with team member']],
       ['Monitoring & handoff',['Monitor ECG, SpO₂, and waveform capnography as indicated','Recheck ventilation, BP, and consciousness','Record medication, time, response, and repeat-dose orders']],
       ['Post-intubation sedation',[
@@ -100,10 +101,10 @@ export const modules=[
   {id:'trauma',title:'Trauma',short:'Trauma',icon:'handgun',color:'orange',tag:'ASSESSMENT',source:'SB206 · S500 · S501 · S506',page:56,
     refs:[['Trauma assessment · SB206',56],['Hemorrhagic shock · S500',135],['Head / spine · S501',137],['Pain control · S505',142]],
     sections:[
-      ['M · Bleeding',[{id:'main-o2',text:'Turn main O2 AND cabin power on. Turn up the heat.'},{id:'bleeding',text:'Control bleeding'}]],
+      ['M · Bleeding',[{id:'main-o2',text:'Turn main O2 AND cabin power on. Turn up the heat.'},{id:'bleeding',text:'Control bleeding'},{id:'bp-cycling',text:'Set BP to cycle every 3 minutes (Q3)'}]],
       ['A · Airway',[{id:'airway',text:'Check and control airway'}]],
       ['R · Respirations',[{id:'chest-assessment',text:'Assess chest, ventilation, oxygenation'},{id:'chest-treatment',text:'Treat life-threatening chest injuries with decompression, chest seals'}]],
-      ['C · Circulation',[{id:'strip-clothes',text:'Strip clothes'},{id:'body-sweep',text:'Full body sweep including armpits and back'},{id:'blood-thinners',text:'Check blood thinners and antiplatelets'},{id:'head-neck',text:'Assess head / neck injury and pupils'}]],
+      ['C · Circulation',[{id:'vascular-access',text:'Establish IV / IO access as indicated',protocol:['IO / LIDOCAINE · T711',201]},{id:'strip-clothes',text:'Strip clothes'},{id:'body-sweep',text:'Full body sweep including armpits and back'},{id:'blood-thinners',text:'Check blood thinners and antiplatelets'},{id:'head-neck',text:'Assess head / neck injury and pupils'}]],
       ['H · Heat',[{id:'warmth',text:'Turn on the heat and remove wet clothing'},{id:'jewelry',text:'Remove constricting jewelry'}]]
     ]}
 
