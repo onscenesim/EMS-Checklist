@@ -295,6 +295,7 @@ Extra linen||sheet towel`);
 stock('iv','Crew-added supply',`Drip set — 10 gtt/mL||10 drop set 10 drop sets 10 gtt tubing`);
 stock('power','Crew-added supply',`Radio battery||portable radio battery spare radio battery replacement radio battery walkie talkie battery`);
 stock('reference',"Children's Hospital",`Pediatric bag restock||pedi pediatric bag broken seal reseal replacement kit`);
+stock('reference','Crew-added replacement kit',`Magnesium sulfate kit||mag sulfate kit mag kit magnesium kit MgSO4 kit`);
 // Consolidate equivalent source names; preserve every storage location and old saved ID.
 const equivalentNames={
  'Adult BVM':'BVM','12-lead stickers':'Electrodes',
