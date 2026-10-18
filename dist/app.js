@@ -87,7 +87,7 @@ function checklistSection(m,section,si){
   const code=m.id==='arrest'&&si===1;
   return `<section class="check-section priority-section${m.id==='trauma'?' march-section':''}" data-priority="${checklistColors[m.id]?.[si]||sectionColors[si%sectionColors.length]}" ${m.id==='trauma'?`data-march="${['m','a','r','c','h'][si]}"`:''}>
     <h2><span>${String(si+1).padStart(2,'0')}</span>${icon(checklistSectionIcons[m.id]?.[si]||m.icon)}${section[0]}</h2>
-    ${m.id==='sick'&&si===0?`<aside class="callout amber pacing-note" aria-label="Pacing reminder"><b>Pacing: increase current (mA) until capture.</b>Confirm ECG capture and mechanical capture with a matching pulse-ox waveform and pulse.<div>${source('PACING · C302',77)}</div></aside>`:''}
+    ${m.id==='sick'&&si===0?`<aside class="callout amber pacing-note" aria-label="Pacing reminder"><b>Pacing: increase current (mA) until capture.</b>Confirm ECG capture and mechanical capture with a matching pulse-ox waveform and pulse. Also confirm a T wave after each pacer beat. <strong>No T wave = no capture.</strong><div>${source('PACING · C302',77)}</div></aside>`:''}
     ${code?arrestDirections():''}
     ${code||(m.id==='sick'&&section[0]==='Airway supplies ready')||(m.id==='intubation'&&section[0]==='Reassess')?ventilationReminder(code):''}
     ${section[1].map((item,ii)=>item.id==='main-o2'?'':checklistRow(m,item,si,ii)).join('')}
