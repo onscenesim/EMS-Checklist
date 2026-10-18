@@ -1,22 +1,34 @@
 import {chromium} from '/Users/WorkSchool/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/playwright/index.mjs';
 import assert from 'node:assert/strict';
-import {supplies,findSupplies,supplyCategories} from '../dist/supply-data.js';
+import {supplies,findSupplies,supplyCategories,frequentlyUsed,codeSupplies,retiredSupplyIds} from '../dist/supply-data.js';
 assert.equal(new Set(supplies.map(s=>s.id)).size,supplies.length);
 for(const item of supplies)assert.ok(findSupplies(item.name).some(s=>s.id===item.id),`Search misses ${item.name}`);
 assert.equal(supplyCategories.length,10);
-assert.ok(findSupplies('18g').some(s=>s.name==='18 G catheter'));
+assert.ok(findSupplies('18g').some(s=>s.name==='18 G IV catheter'));
 assert.ok(findSupplies('naloxone').some(s=>s.name==='Narcan — 1 mg'));
 assert.ok(findSupplies('4x4').some(s=>s.name==='4 × 4 gauze'));
+assert.equal(new Set(supplies.map(s=>s.name)).size,supplies.length,'Duplicate catalog names');
+assert.equal(findSupplies('IO stabilizer').length,0);
+for(const group of [frequentlyUsed,codeSupplies])assert.equal(new Set(group.map(s=>s.item.id)).size,group.length);
+for(const name of ['Nebulizer mask','DuoNeb','Albuterol','Zofran — IV, 4 mg','Pediatric bag restock'])assert.ok(frequentlyUsed.some(s=>s.item.name===name),name);
+for(const family of ['ET tube —','IO needle —'])for(const item of supplies.filter(s=>s.name.startsWith(family)))assert.ok(codeSupplies.some(s=>s.item===item),item.name);
+for(const item of supplies.filter(s=>/^\d+ G IV catheter$/.test(s.name)))assert.ok(codeSupplies.some(s=>s.item===item),item.name);
+for(const name of ['Pressure infuser','LUCAS backboard','LUCAS battery','LUCAS suction cup','Capnography — inline','Capnography — nasal','Defibrillation pads — adult','Calcium chloride','Sodium bicarbonate','Epinephrine — code (1:10,000)'])assert.ok(codeSupplies.some(s=>s.item.name===name),name);
+assert.ok(!codeSupplies.some(s=>/pads — pediatric/.test(s.item.name)));
+assert.equal(findSupplies('BVM').filter(s=>!s.name.includes('Pediatric')).length,1);
+assert.equal(findSupplies('electrodes','monitor').length,1);
+assert.equal(findSupplies('Zofran IV').length,1);
+assert.equal(findSupplies('Zofran ODT').length,1);
 const gauze=supplies.find(s=>s.name==='4 × 4 gauze');
 assert.deepEqual(gauze.locations.map(s=>s.stock),['5','20']);
 assert.equal(findSupplies('medication blah blah').length,0);
 for(const name of ['IV bag — red','IV bag — blue','Cot','Stairchair','Portable suction','Fuel card','Monitor','IO drill','Report tablet','BP cuff — adult','Trauma shears'])assert.ok(!supplies.some(s=>s.name===name),name+' must not be a restock item');
 assert.ok(supplies.some(s=>s.name==='LUCAS'));
-for(const query of ['IV caths','IV catheter','angiocath','cannulas','iv cath','cathether'])assert.ok(findSupplies(query).some(s=>s.name==='18 G catheter'),query);
-for(const query of ['18 gauge IV cath','18g cannula','18ga catheter'])assert.deepEqual(findSupplies(query).map(s=>s.name),['18 G catheter']);
+for(const query of ['IV caths','IV catheter','angiocath','cannulas','iv cath','cathether'])assert.ok(findSupplies(query).some(s=>s.name==='18 G IV catheter'),query);
+for(const query of ['18 gauge IV cath','18g cannula','18ga catheter'])assert.deepEqual(findSupplies(query).map(s=>s.name),['18 G IV catheter']);
 assert.ok(findSupplies('guaze').some(s=>s.name==='4 × 4 gauze'));
 assert.ok(findSupplies('NS flushes').some(s=>s.name==='10 mL saline flush'));
-assert.ok(findSupplies('yankeur').some(s=>s.name==='Yankauer suction set'));
+assert.ok(findSupplies('yankeur').some(s=>s.name==='Suction set — Yankauer'));
 assert.equal(findSupplies('6.6', 'airway').length,0);
 const browser=await chromium.launch({headless:true,executablePath:'/Applications/Google Chrome.app/Contents/MacOS/Google Chrome'});
 try{
@@ -25,7 +37,27 @@ try{
  await page.goto('http://127.0.0.1:4173');
  await page.locator('.post-call-launch').click();
  assert.equal(await page.title(),'Post-call checklist · Woodlawn FD');
- assert.equal(await page.locator('.supply-group:not(.frequently-used)').count(),10);
+ assert.equal(await page.locator('.supply-group:not(.frequently-used):not(.code-supplies)').count(),10);
+ const code=page.locator('[data-supply-category="code"]');
+ assert.equal(await code.locator('summary b').innerText(),'Code');
+ assert.equal(await code.locator('summary svg').count(),1);
+ assert.equal(await code.evaluate(el=>el.previousElementSibling.dataset.supplyCategory),'frequently-used');
+ await code.locator('summary').click();
+ assert.equal(await code.locator('.supply-item').count(),codeSupplies.length);
+ const electrodes=supplies.find(s=>s.name==='Electrodes'),electrodeSelector=`[data-supply-action="toggle"][data-supply-id="${electrodes.id}"]`;
+ await code.locator(electrodeSelector).click();
+ assert.equal(await page.locator('.restock-item').count(),1);
+ assert.equal(await page.locator(electrodeSelector+'[aria-pressed="true"]').count(),3);
+ await page.locator(`[data-supply-action="increase"][data-supply-id="${electrodes.id}"]`).click();
+ await page.reload();
+ assert.equal(await page.locator('.restock-quantity span').innerText(),'2');
+ await page.locator('[data-supply-category="frequently-used"]').locator(electrodeSelector).click();
+ assert.equal(await page.locator('.restock-item').count(),0);
+ const pediatric=supplies.find(s=>s.name==='Pediatric bag restock');
+ await page.locator(`[data-supply-category="frequently-used"] [data-supply-id="${pediatric.id}"]`).click();
+ assert.match(await page.locator('.restock-item').innerText(),/Children's Hospital/);
+ assert.equal(await page.locator(`[data-supply-category="reference"] [data-supply-id="${pediatric.id}"]`).getAttribute('aria-pressed'),'true');
+ await page.locator('[data-supply-action="remove"]').click();
  assert.equal(await page.locator('#post-csn').getAttribute('type'),'checkbox');
  await page.locator('#post-csn').check();
  for(const id of ['post-nurse','post-patient','post-retrieve','post-hospital','post-quarters'])await page.locator('#'+id).check();
@@ -53,7 +85,7 @@ try{
  assert.equal(await page.locator('.supply-item').count(),0);
  assert.equal(await page.locator('.restock-item').count(),2);
  await page.getByRole('button',{name:'Show all supplies'}).click();
- assert.equal(await page.locator('.supply-group:not(.frequently-used)').count(),10);
+ assert.equal(await page.locator('.supply-group:not(.frequently-used):not(.code-supplies)').count(),10);
  const lucas=supplies.find(s=>s.name==='LUCAS');
  assert.equal(await page.locator('#post-service').count(),0);
  assert.equal(await page.getByRole('button',{name:'Retrieve Equipment',exact:true}).count(),0);
@@ -98,6 +130,20 @@ try{
  assert.equal(await migration.locator('#post-csn').isChecked(),false);
  assert.equal(await migration.locator('#post-nurse').isChecked(),true);
  assert.equal(await migration.evaluate(()=>Object.hasOwn(JSON.parse(sessionStorage.getItem('wfd-encounter-v1')).fields,'post-csn')),false);
+ // Existing quantities move to canonical IDs; retired stabilizers disappear.
+ const savedMigration=await context.newPage();await savedMigration.goto('http://127.0.0.1:4173/#post-call');
+ await savedMigration.evaluate(()=>localStorage.setItem('wfd-restock-v1',JSON.stringify({'monitor-electrodes':2,'monitor-12-lead-stickers':3,'oxygen-adult-bvm':1,'iv-io-stabilizer':2,'meds-zofran-4-mg':1})));
+ await savedMigration.reload();
+ assert.equal(await savedMigration.locator('.restock-item').count(),3);
+ const migrated=await savedMigration.evaluate(()=>JSON.parse(localStorage.getItem('wfd-restock-v1')));
+ assert.equal(migrated['monitor-electrodes'],5);assert.equal(migrated['oxygen-bvm'],1);assert.equal(migrated['meds-zofran-4-mg'],1);
+ assert.equal(migrated['iv-io-stabilizer'],undefined);assert.equal(migrated['monitor-12-lead-stickers'],undefined);
+ await savedMigration.locator('[data-supply-category="code"] summary').click();
+ for(const width of [1440,390,320]){
+  await savedMigration.setViewportSize({width,height:900});
+  assert.equal(await savedMigration.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);
+  await savedMigration.locator('[data-supply-category="code"]').screenshot({path:`/Users/Shared/EMS Checklist/tmp/code-supplies-${width}.png`});
+ }
  assert.deepEqual(errors,[]);
  console.log(`Post-call checks passed: ${supplies.length} individually searchable items, aliases, source quantities, closeout, selection, quantities, copy, persistence, encounter reset, mobile layouts.`);
 }finally{await browser.close();}

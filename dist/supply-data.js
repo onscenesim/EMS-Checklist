@@ -190,7 +190,6 @@ D4 blade||`);
 stock('monitor','Drug bag · airway (green)',`In-line ETCO2||inline capnography`);
 stock('iv','Drug bag · intravenous (blue)',`Pressure infuser||
 IO drill||intraosseous EZ IO
-IO stabilizer||
 IO needle — 15 mm, red||15mm
 IO needle — 25 mm, blue||25mm
 IO needle — 45 mm, yellow||45mm`);
@@ -224,7 +223,8 @@ Suction catheter — 12 Fr||12FR
 Suction catheter — 14 Fr||14FR
 Suction catheter — 16 Fr||16FR
 Suction catheter — 18 Fr||18FR`.replace(/^ /gm,''));
-stock('monitor','Interior compartment 1',`O2 inline / NC / Capoline|2 each|ETCO2 capnography capnoline`);
+stock('monitor','Interior compartment 1',`In-line ETCO2|2|inline capnography
+Nasal ETCO2|2|nasal capnography capnoline`);
 stock('oxygen','Interior compartment 1',`Adult non-rebreather mask|2|NRB
 Adult nasal cannula|2|NC
 Pediatric non-rebreather mask|2|pedi NRB
@@ -294,38 +294,90 @@ Cot straps|3|
 Extra linen||sheet towel`);
 stock('iv','Crew-added supply',`Drip set — 10 gtt/mL||10 drop set 10 drop sets 10 gtt tubing`);
 stock('power','Crew-added supply',`Radio battery||portable radio battery spare radio battery replacement radio battery walkie talkie battery`);
+stock('reference',"Children's Hospital",`Pediatric bag restock||pedi pediatric bag broken seal reseal replacement kit`);
+// Consolidate equivalent source names; preserve every storage location and old saved ID.
+const equivalentNames={
+ 'Adult BVM':'BVM','12-lead stickers':'Electrodes',
+ '14 G decompression needle':'Needle decompression',
+ '4-inch roll bandage':'4-inch Kling','2-inch roll bandage':'2-inch Kling',
+ 'CAT tourniquet':'Tourniquet'
+};
+const supplyId=(category,name)=>category+'-'+name.toLowerCase().normalize('NFKD').replace(/[^a-z0-9]+/g,'-').replace(/-$/,'');
+export const retiredSupplyIds={};
+for(const entry of entries){const canonical=equivalentNames[entry.name];if(canonical){
+ const oldId=supplyId(entry.category,entry.name);entry.aliases+=' '+entry.name;entry.name=canonical;
+ retiredSupplyIds[oldId]=supplyId(entry.category,canonical);
+}if(['Tourniquet','Tape','2 × 2 gauze'].includes(entry.name)&&entry.category==='iv'){
+ retiredSupplyIds[supplyId('iv',entry.name)]=supplyId('trauma',entry.name);entry.category='trauma';
+}}
 // Keep the complete source inventory, then expose only items appropriate for restock.
 const catalog=new Map();
-for(const entry of entries){const key=entry.category+'|'+entry.name;let item=catalog.get(key);if(!item){item={id:entry.category+'-'+entry.name.toLowerCase().normalize('NFKD').replace(/[^a-z0-9]+/g,'-').replace(/-$/,''),name:entry.name,category:entry.category,aliases:entry.aliases,locations:[]};catalog.set(key,item);}else{item.aliases+=' '+entry.aliases;}item.locations.push({name:entry.location,stock:entry.stock});}
+for(const entry of entries){const key=entry.category+'|'+entry.name;let item=catalog.get(key);if(!item){item={id:supplyId(entry.category,entry.name),name:entry.name,category:entry.category,aliases:entry.aliases,locations:[]};catalog.set(key,item);}else{item.aliases+=' '+entry.aliases;}item.locations.push({name:entry.location,stock:entry.stock});}
 const inventory=[...catalog.values()];
 const durableNames=new Set([
  'ERG','NIOSH book','Pediatric bag','IV bag — blue','IV bag — red','First-in bag','Drug bag','Trauma bag','Quick reference charts','Hospital phone list','Protocol binder','Seal log book',
  'Oxygen key','Wall-mount oxygen regulator',
  'Stairchair','Vacuum splint kit','Vacuum leg splint','Vacuum arm splint','Vacuum ankle splint','Vacuum splint pump','Backboard','Pediatric board','Reeves roll-up board','KED','Hare traction splint','Backboard straps','Hard restraints','Pedi-Mate','Cot','Cot straps',
- 'Portable suction','Spare cot battery','LUCAS head strap','LUCAS backboard','Tactical helmet','Turnout gear','Spare LUCAS battery','UE scope charger',
+ 'Portable suction','Spare cot battery','LUCAS head strap','Tactical helmet','Turnout gear','UE scope charger',
  'Monitor','BP cuff — small','BP cuff — medium','BP cuff — large','BP cuff — adult','3-lead cable','12-lead cable','Pulse oximeter','Test block','Stethoscope','Thermometer','Penlight','Glucometer',
- 'Magill forceps — small','Magill forceps — large','Blade handle','Miller blade — size 3','Miller blade — size 4','Mac blade — size 3','Mac blade — size 4','UE scope','LifeVac','IO drill','Pressure infuser','Trauma shears','Ring cutter'
+ 'Magill forceps — small','Magill forceps — large','Blade handle','UE scope','LifeVac','IO drill','Trauma shears','Ring cutter'
 ]);
 export const supplies=inventory.filter(item=>item.category!=='vehicle'&&!durableNames.has(item.name));
-// Quick picks reference the same inventory IDs and restock quantities as the full catalog.
-export const frequentlyUsed=[
- ['18 G catheter','18 G IV catheter'],['20 G catheter','20 G IV catheter'],['22 G catheter','22 G IV catheter'],
- ['IV start kit','IV start kit'],['10 mL saline flush','10 mL saline flush'],['Lockset','J loop · lockset'],
- ['Drip set — 10 gtt/mL','10-drop set'],['Saline — 1,000 mL','0.9% normal saline · 1 liter bag'],
- ['Nasal ETCO2','ETCO2 nasal cannula'],['Electrodes','Electrodes'],['Monitor paper','EKG paper'],
- ['Monitor battery','New battery · monitor'],['Alcohol preps','Alcohol preps'],['Band-Aids','Band-Aids'],['Lancets','Glucometer lancets'],
- ['Gloves — medium','Medium gloves'],['18 G filter needle — 1.5 inches','Filter needle · 18 G'],
- ['3 mL syringe','3 mL syringe'],['1 mL syringe','1 mL syringe'],['Radio battery','Radio battery'],['Pediatric pulse ox sticker','Pediatric SpO₂ probe']
-].map(([name,label])=>{const item=supplies.find(s=>s.name===name);if(item)item.aliases+=' '+label;return {item,label};});
-export const supplyCategories=categories.filter(c=>supplies.some(item=>item.category===c.id)).map(c=>({...c,name:c.id==='power'?'Batteries & LUCAS':c.id==='reference'?'Replacement kits':c.name}));
+// Display names are shared by shortcuts, catalog results, and the restock list.
+// IDs retain the original source names so existing restock lists survive renaming.
+const displayNames={
+ 'BVM':'BVM — adult','Adult defibrillator pads':'Defibrillation pads — adult',
+ 'Pediatric defibrillator pads':'Defibrillation pads — pediatric',
+ 'Zofran — 4 mg':'Zofran — IV, 4 mg','Oral Zofran':'Zofran — oral',
+ 'Epinephrine — 1:10,000':'Epinephrine — code (1:10,000)',
+ 'Epinephrine — 1 mg, 1:1,000':'Epinephrine — 1 mg (1:1,000)',
+ '18 G filter needle — 1.5 inches':'Filter needle — 18 G, 1.5 inches',
+ 'In-line ETCO2':'Capnography — inline','Nasal ETCO2':'Capnography — nasal',
+ 'D3 blade':'Video laryngoscope blade — D3','D4 blade':'Video laryngoscope blade — D4',
+ 'Spare LUCAS battery':'LUCAS battery',
+ 'Yankauer suction set':'Suction set — Yankauer','Needle decompression':'Needle decompression kit',
+ 'Saline — 1,000 mL':'Normal saline — 1 liter','Saline — 100 mL':'Normal saline — 100 mL',
+ 'Lockset':'IV extension — J loop / lockset','Monitor paper':'ECG / EKG paper',
+ 'KY jelly':'Airway lubricant'
+};
+for(const item of supplies){const label=displayNames[item.name]||(/^\d+ G catheter$/.test(item.name)?item.name.replace(' G catheter',' G IV catheter'):item.name);if(label!==item.name){item.aliases+=' '+item.name;item.name=label;}}
+supplies.find(s=>s.name==='Pediatric bag restock').note="Seal broken: restock at Children's Hospital.";
+// Quick picks reference the same inventory IDs and quantities as the full catalog.
+const quickPicks=names=>names.map(name=>{
+ const item=supplies.find(s=>s.name===(displayNames[name]||name)||s.id===supplyId('iv',name));
+ if(!item)throw new Error('Missing supply shortcut: '+name);
+ return {item,label:item.name};
+});
+export const frequentlyUsed=quickPicks([
+ '18 G catheter','20 G catheter','22 G catheter','IV start kit','10 mL saline flush','Lockset',
+ 'Drip set — 10 gtt/mL','Saline — 1,000 mL','Nasal ETCO2','Electrodes','Monitor paper',
+ 'Monitor battery','Alcohol preps','Band-Aids','Lancets','Gloves — medium',
+ '18 G filter needle — 1.5 inches','3 mL syringe','1 mL syringe','Radio battery','Pediatric pulse ox sticker',
+ 'Nebulizer mask','DuoNeb','Albuterol','Zofran — 4 mg','Pediatric bag restock'
+]);
+export const codeSupplies=quickPicks([
+ 'i-gel — size 3','i-gel — size 4','i-gel — size 5','BVM',
+ ...supplies.filter(s=>s.name.startsWith('ET tube —')).map(s=>s.name),
+ 'Tube holder','Bougie','Oral airways — 50–110 mm','Nasal airways — 20–36 Fr','KY jelly',
+ 'Yankauer suction set',...supplies.filter(s=>s.name.startsWith('Suction catheter —')).map(s=>s.name),'Suction canister',
+ 'D3 blade','D4 blade','Mac blade — size 3','Mac blade — size 4','Miller blade — size 3','Miller blade — size 4',
+ ...supplies.filter(s=>s.name.startsWith('IO needle —')).map(s=>s.name),'Pressure infuser',
+ 'Saline — 1,000 mL',...supplies.filter(s=>/^\d+ G IV catheter$/.test(s.name)).map(s=>s.name),
+ 'IV start kit','18 G filter needle — 1.5 inches','Saline — 100 mL','10 mL saline flush','Lockset','Drip set — 10 gtt/mL','Drip set — 15 gtt/mL',
+ '1 mL syringe','3 mL syringe','10 mL syringe','20 mL syringe',
+ 'Epinephrine — 1:10,000','Calcium chloride','Sodium bicarbonate','Narcan — 1 mg','Amiodarone — 150 mg',
+ 'Needle decompression','Adult defibrillator pads','In-line ETCO2','Nasal ETCO2','Electrodes',
+ 'LUCAS suction cup','LUCAS backboard','Spare LUCAS battery','Monitor battery'
+]);
+export const supplyCategories=categories.filter(c=>supplies.some(item=>item.category===c.id)).map(c=>({...c,name:c.id==='power'?'Equipment, batteries & LUCAS':c.id==='reference'?'Replacement kits':c.name}));
 export const inventoryLocations=[...new Set(supplies.flatMap(item=>item.locations.map(l=>l.name)))];
 // Common crew terminology, singular/plural forms, and abbreviations.
 const extraAliases=[
- [/^\d+ G catheter$/, 'IV cath caths IV catheter catheters intravenous cannula cannulas cannulation angiocath angiocaths angiocatheter IV needle IV needles venflon'],
+ [/^\d+ G IV catheter$/, 'IV cath caths IV catheter catheters intravenous cannula cannulas cannulation angiocath angiocaths angiocatheter IV needle IV needles venflon'],
  [/^IO needle/, 'intraosseous EZ-IO EZIO IO needles'],
  [/syringe/i, 'syringes cc ml'],
  [/Pediatric pulse ox sticker/i, 'pediatric SPO2 probe pedi SPO2 probe pediatric pulse ox probe pediatric oximeter sensor pediatric oxygen saturation sensor'],
- [/Nasal ETCO2/i, 'ETCO2 nasal cannula ETCO2 nasal cannulas capnography cannula capno NC'],
+ [/Capnography — nasal/i, 'ETCO2 nasal cannula ETCO2 nasal cannulas capnography cannula capno NC'],
  [/Monitor paper/i, 'EKG paper ECG paper rhythm paper printer paper'],
  [/Monitor battery/i, 'new battery new batteries replacement battery Zoll battery monitor batteries'],
  [/Lancets/i, 'glucometer lancet glucometer lancets fingerstick lancet'],
@@ -356,14 +408,19 @@ const extraAliases=[
  [/nasal cannula/i, 'nasal cannulas nasal prongs oxygen tubing NC'],
  [/BVM/i, 'ambu bag ambubag bag valve mask resuscitator'],
  [/oxygen bottle/i, 'oxygen tank O2 tank O2 bottle oxygen cylinder'],
- [/Saline —/i, 'saline bag saline bags IV fluid IV fluids NS normal saline sodium chloride'],
+ [/Normal saline —/i, 'saline bag saline bags IV fluid IV fluids NS normal saline sodium chloride'],
  [/Nitroglycerin/i, 'nitroglycerine nitrostat NTG'],
  [/Epinephrine/i, 'adrenaline epinepherine'],
  [/acetaminophen/i, 'paracetamol APAP tylenol'],
- [/Zofran/i, 'ondansetron zofran ODT'],
+ [/Zofran/i, 'ondansetron'],
+ [/Zofran — oral/i, 'ODT oral dissolving tablet'],
+ [/Zofran — IV/i, 'intravenous injection injectable'],
+ [/Capnography — inline/i, 'inline in-line ETCO2 capno'],
+ [/Video laryngoscope blade/i, 'UE scope video laryngoscopy'],
+ [/Filter needle/i, 'filter needles'],
  [/LUCAS/, 'lucas device CPR machine chest compression device']
 ];
-for(const item of supplies){for(const [pattern,aliases] of extraAliases){if(pattern.test(item.name))item.aliases+=' '+aliases;}if(/^\d+ G catheter$/.test(item.name)){const gauge=item.name.match(/^\d+/)[0];item.aliases+=` ${gauge} gauge ${gauge} ga ${gauge} g ${gauge}g`;}}
+for(const item of supplies){for(const [pattern,aliases] of extraAliases){if(pattern.test(item.name))item.aliases+=' '+aliases;}if(/^\d+ G IV catheter$/.test(item.name)){const gauge=item.name.match(/^\d+/)[0];item.aliases+=` ${gauge} gauge ${gauge} ga ${gauge} g ${gauge}g`;}}
 const normalize=s=>s.toLowerCase().normalize('NFKD').replace(/(\d)\s*(?:gauge|ga|g)\b/g,'$1 g').replace(/[^a-z0-9%.]+/g,' ').trim();
 const commonWords={caths:'catheter',cath:'catheter',catheters:'catheter',cannulas:'cannula',cannulae:'cannula',needles:'needle',syringes:'syringe',flushes:'flush',pads:'pad',bandages:'bandage',dressings:'dressing',bags:'bag',tubes:'tube',gloves:'glove',wipes:'wipe',swabs:'swab',gtts:'gtt',gauge:'g',ga:'g'};
 const terms=s=>normalize(s).split(/\s+/).filter(Boolean).map(t=>commonWords[t]||t);

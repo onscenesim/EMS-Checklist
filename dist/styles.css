@@ -385,10 +385,10 @@ tr.unavailable .na{color:#7c8794}
 @media(max-width:1100px){.pediatric-first{grid-template-columns:1fr}.airway-sizing{grid-template-columns:1fr 1fr;gap:16px;margin-top:10px}}
 @media(max-width:640px){.pediatric-first{gap:16px}.pediatric-first h2{font-size:16px}.pediatric-first .energy-grid b{font-size:21px}.critical-grid{grid-template-columns:1fr}.critical-card h3{font-size:17px}.critical-dose{padding:14px;gap:10px}.critical-links{padding:12px 14px}.critical-dose>div>b{font-size:12px}.critical-value>b{font-size:20px!important}.critical-dose small{font-size:10px}.airway-sizing b{font-size:26px}.airway-sizing span{font-size:10px}.full-medication-reference>summary{padding:18px 16px}.full-medication-reference summary b{font-size:17px}.full-medication-reference .section-top{align-items:stretch}.sedation-path h3{font-size:15px}}
 
-.frequently-used .supply-items{grid-template-columns:repeat(2,minmax(0,1fr))}
-.frequently-used .supply-item{min-height:66px;padding:14px;border:1px solid #e8ecf0;border-top:0;border-left:0}
-.frequently-used .supply-item-copy>b{font-size:14px}
-@media(max-width:640px){.frequently-used .supply-items{grid-template-columns:1fr}.frequently-used .supply-item{min-height:62px}.frequently-used .supply-item-copy>b{font-size:14px}}
+:is(.frequently-used,.code-supplies) .supply-items{grid-template-columns:repeat(2,minmax(0,1fr))}
+:is(.frequently-used,.code-supplies) .supply-item{min-height:66px;padding:14px;border:1px solid #e8ecf0;border-top:0;border-left:0}
+:is(.frequently-used,.code-supplies) .supply-item-copy>b{font-size:14px}
+@media(max-width:640px){:is(.frequently-used,.code-supplies) .supply-items{grid-template-columns:1fr}:is(.frequently-used,.code-supplies) .supply-item{min-height:62px}:is(.frequently-used,.code-supplies) .supply-item-copy>b{font-size:14px}}
 
 .baseline-status{border:0;padding:0;margin:0;min-width:0}
 .baseline-status legend{font-size:12px;color:#42576b;margin-bottom:9px;padding:0;font-weight:700}
