@@ -10,12 +10,13 @@ export const modules=[
         {id:'roles',text:'Assign roles before things get worse',note:'Leader · airway · access / medications · scene control'},
         {id:'pads-early',text:'Put pads on early',note:'Pacing / cardioversion ready.',tool:['cardio','Defib / cardioversion']},
         {id:'lucas-staged',text:'Place the LUCAS backboard under the patient while they still have a pulse'},
+        {id:'saline-ready',text:'Spike a bag of saline; prepare the pressure infuser if using it'},
         {id:'push-dose-ready',text:'Prepare and clearly label push-dose epinephrine',protocol:['PUSH-DOSE EPI · SB205',53],tool:['medications','Push-dose epi guide','push-epi']}
       ]],
       ['Airway supplies ready',[
-        {id:'respiratory-distress',text:'Assess and treat respiratory distress as indicated',protocol:['SYMPTOM BASED RESPIRATORY DISTRESS · SB202',47]},
+        {id:'respiratory-distress',text:'Prepare respiratory drugs',protocol:['SYMPTOM BASED RESPIRATORY DISTRESS · SB202',47]},
         {id:'suction-ready',text:'Suction on and within reach'},
-        {id:'airway-staged',text:'Stage BVM, backup airway, ETT, bougie, and laryngoscope',note:'Have waveform capnography and the tube holder ready.',tool:['intubation','Intubation checklist']}
+        {id:'airway-staged',text:'Stage BVM, backup airway, ETT, bougie, and laryngoscope; open lube pack',note:'Have waveform capnography and the tube holder ready.',tool:['intubation','Intubation checklist']}
       ]],
       ['Before you move',[
         {id:'backup-access',text:'Prepare a second IV / IO if needed',protocol:['IO / LIDOCAINE · T711',201]},
