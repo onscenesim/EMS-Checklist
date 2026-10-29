@@ -6,10 +6,24 @@ export function createNetwork(data){
  const adjacent=data.nodes.map(()=>[]);
  data.edges.forEach((e,id)=>{if(e.one!==-1)adjacent[e.a].push({edge:id,to:e.b,reverse:false});if(e.one!==1)adjacent[e.b].push({edge:id,to:e.a,reverse:true});});
  const path=c=>c.reverse?[...data.edges[c.edge].ll].reverse():data.edges[c.edge].ll;
- const choices=(node,blocked=false)=>adjacent[node].filter(c=>!blocked||!data.edges[c.edge].rail).map(c=>({...c,heading:bearing(path(c)[0],path(c)[1]),name:data.edges[c.edge].name}));
+ const choices=(node,blocked=false)=>adjacent[node].filter(c=>!blocked||!data.edges[c.edge].rail).map(c=>({...c,heading:bearing(path(c)[0],path(c)[1]),name:data.edges[c.edge].name,sign:data.edges[c.edge].sign||'',ref:data.edges[c.edge].ref||''})).filter((c,i,a)=>a.findIndex(x=>x.to===c.to&&x.name===c.name)===i);
  function reachable(start,blocked=false){const seen=new Set([start]),q=[start];for(const n of q)for(const c of choices(n,blocked))if(!seen.has(c.to)){seen.add(c.to);q.push(c.to);}return seen;}
- // Walk through intermediate geometry / single-exit junctions. Stop at the next choice or target.
- function travel(node,choice,target,blocked=false){let c=choices(node,blocked).find(x=>x.edge===choice.edge&&x.to===choice.to);if(!c)return null;const segments=[],visited=new Set();for(let i=0;i<500;i++){if(visited.has(c.edge))break;visited.add(c.edge);const e=data.edges[c.edge],ll=path(c);segments.push({...c,from:node,ll,meters:e.meters,endHeading:bearing(ll.at(-2),ll.at(-1))});const previous=node;node=c.to;if(node===target)break;const next=choices(node,blocked).filter(x=>x.to!==previous);if(next.length!==1)break;c=next[0];}return {node,segments};}
+ // Each press advances a bounded distance. Hospital drives stop frequently, even without a junction.
+ function travel(node,choice,target,blocked=false){
+  let c=choices(node,blocked).find(x=>x.edge===choice.edge&&x.to===choice.to);if(!c)return null;
+  const segments=[],visited=new Set();let traveled=0;
+  const first=data.edges[c.edge],limit=first.nearHospital?70:/motorway|trunk/.test(first.kind)?850:240;
+  for(let i=0;i<500;i++){
+   if(visited.has(c.edge))break;const e=data.edges[c.edge],ll=path(c);
+   if(segments.length&&traveled+e.meters>limit)break;
+   visited.add(c.edge);segments.push({...c,from:node,ll,meters:e.meters,endHeading:bearing(ll.at(-2),ll.at(-1))});traveled+=e.meters;
+   const previous=node;node=c.to;if(node===target||traveled>=limit)break;
+   const next=choices(node,blocked).filter(x=>x.to!==previous);if(next.length!==1)break;
+   // Keep entrances, exits and changes of road as separate decisions.
+   const upcoming=data.edges[next[0].edge];if(upcoming.name!==e.name||upcoming.kind!==e.kind||upcoming.nearHospital&&!e.nearHospital)break;c=next[0];
+  }
+  return {node,segments,meters:traveled};
+ }
  return {...data,choices,path,reachable,travel};
 }
 export function rollRailClosure(area,rng=Math.random){return area==='lincoln'&&rng()<.2;}
@@ -25,7 +39,7 @@ export function newTrip(network,{mode='landmark',area='all',destination='random'
  const target=mode==='hospital'?(hospital==='random'?pick(hospitals):hospitals.find(t=>t.id===hospital)):call;
  const origin=mode==='hospital'?call:station;
  if(!target||!network.reachable(origin.node,blocked).has(target.node)||!network.reachable(target.node,blocked).has(origin.node))throw Error('This trip is unavailable. Choose another location.');
- return {mode,origin,target,call,blocked,node:origin.node,heading:0,leg:'outbound',status:'driving',history:[],meters:0,started:Date.now(),legStarted:Date.now()};
+ return {mode,origin,target,call,blocked,node:origin.node,heading:origin.heading??0,networkRevision:network.revision,leg:'outbound',status:'driving',history:[],meters:0,started:Date.now(),legStarted:Date.now()};
 }
 export function drive(network,trip,choice){
  if(trip.status!=='driving')return false;
@@ -36,3 +50,27 @@ export function drive(network,trip,choice){
  return true;
 }
 export function returnTrip(trip){if(trip.status!=='arrived'||trip.leg==='return')return false;const old=trip.origin;trip.origin=trip.target;trip.target=old;trip.leg='return';trip.status='driving';trip.legStarted=Date.now();return true;}
+
+export function practiceChoices(network,trip){
+ const options=network.choices(trip.node,trip.blocked);
+ return trip.origin.stationExit&&trip.history.length===0&&trip.leg==='outbound'?options.filter(c=>c.name==='Springfield Pike'):options;
+}
+export function uTurnChoice(network,trip){
+ const options=practiceChoices(network,trip),last=trip.history.at(-1);
+ return (last?options.find(c=>c.to===last.from):null)||options.filter(c=>Math.abs(angle(trip.heading,c.heading))>150).sort((a,b)=>Math.abs(angle(trip.heading,b.heading))-Math.abs(angle(trip.heading,a.heading)))[0]||null;
+}
+const streetKey=s=>String(s||'').toLowerCase().replace(/\b(road|rd)\b/g,'rd').replace(/\b(drive|dr)\b/g,'dr').replace(/\b(court|ct)\b/g,'ct').replace(/\b(avenue|ave)\b/g,'ave').replace(/\b(street|st)\b/g,'st').replace(/[^a-z0-9]/g,'');
+export function destinationIsNear(network,trip){
+ if(!trip)return false;if(trip.node===trip.target.node)return true;
+ const current=trip.history.at(-1)?.road;if(!current||streetKey(current)!==streetKey(trip.target.street)||distance(network.nodes[trip.node],network.nodes[trip.target.node])>400)return false;
+ const seen=new Set([trip.node]),q=[{node:trip.node,clicks:0}];
+ for(const item of q){if(item.clicks>=3)continue;for(const c of network.choices(item.node,trip.blocked)){const step=network.travel(item.node,c,trip.target.node,trip.blocked);if(!step)continue;if(step.node===trip.target.node)return true;if(!seen.has(step.node)){seen.add(step.node);q.push({node:step.node,clicks:item.clicks+1});}}}
+ return false;
+}
+export function turnChoice(network,trip,direction,current){
+ const reverse=uTurnChoice(network,trip);
+ const candidates=practiceChoices(network,trip).filter(c=>Math.abs(angle(trip.heading,c.heading))<=150&&!(c.edge===reverse?.edge&&c.to===reverse?.to)).sort((a,b)=>angle(trip.heading,a.heading)-angle(trip.heading,b.heading));
+ if(!candidates.length)return null;
+ const index=candidates.findIndex(c=>c.edge===current?.edge&&c.to===current?.to),step=direction==='left'?-1:1;
+ return candidates[index<0?(step<0?0:candidates.length-1):(index+step+candidates.length)%candidates.length];
+}
