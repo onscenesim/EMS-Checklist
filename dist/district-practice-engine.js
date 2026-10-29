@@ -46,6 +46,7 @@ export function drive(network,trip,choice){
  const result=network.travel(trip.node,choice,trip.target.node,trip.blocked);if(!result)return false;
  for(const [i,s] of result.segments.entries()){const delta=angle(trip.heading,s.heading),previous=trip.history.at(-1);trip.history.push({edge:s.edge,reverse:s.reverse,from:s.from,to:s.to,road:s.name,turn:trip.history.length?(i>0&&previous?.road===s.name?'Continue':turnName(delta)):'Depart',meters:s.meters,leg:trip.leg,at:Date.now()});trip.meters+=s.meters;trip.heading=s.endHeading;}
  trip.node=result.node;
+ if(trip.target.kind==='hospital'&&distance(network.nodes[trip.node],network.nodes[trip.target.node])<=3219)trip.hospitalPinRevealed=true;
  if(trip.node===trip.target.node){trip.status='arrived';trip.arrived=Date.now();}
  return true;
 }
@@ -62,6 +63,8 @@ export function uTurnChoice(network,trip){
 const streetKey=s=>String(s||'').toLowerCase().replace(/\b(road|rd)\b/g,'rd').replace(/\b(drive|dr)\b/g,'dr').replace(/\b(court|ct)\b/g,'ct').replace(/\b(avenue|ave)\b/g,'ave').replace(/\b(street|st)\b/g,'st').replace(/[^a-z0-9]/g,'');
 export function destinationIsNear(network,trip){
  if(!trip)return false;if(trip.node===trip.target.node)return true;
+ // Reveal hospital campuses on the approach, independently of street names and click count.
+ if(trip.target.kind==='hospital')return !!trip.hospitalPinRevealed||distance(network.nodes[trip.node],network.nodes[trip.target.node])<=3219;
  const current=trip.history.at(-1)?.road;if(!current||streetKey(current)!==streetKey(trip.target.street)||distance(network.nodes[trip.node],network.nodes[trip.target.node])>400)return false;
  const seen=new Set([trip.node]),q=[{node:trip.node,clicks:0}];
  for(const item of q){if(item.clicks>=3)continue;for(const c of network.choices(item.node,trip.blocked)){const step=network.travel(item.node,c,trip.target.node,trip.blocked);if(!step)continue;if(step.node===trip.target.node)return true;if(!seen.has(step.node)){seen.add(step.node);q.push({node:step.node,clicks:item.clicks+1});}}}

@@ -55,3 +55,12 @@ test('left and right cycle through Continue and all forward directions, never U-
  c=turnChoice(n,t,'left',forward);assert.equal(c.to,1);c=turnChoice(n,t,'right',c);assert.equal(c.to,2);
  const reverse=uTurnChoice(n,t);assert.equal(reverse.to,4);assert.notEqual(turnChoice(n,t,'right',reverse).to,4);assert.equal(JSON.stringify(t),before);
 });
+
+
+test('hospital pins appear on approaches two miles away regardless of street or click count',()=>{
+ for(const target of data.targets.filter(t=>t.kind==='hospital')){
+  const nearby=data.nodes.findIndex(p=>{const m=Math.hypot((p[0]-data.nodes[target.node][0])*111000,(p[1]-data.nodes[target.node][1])*86000);return m>1500&&m<3000;});
+  assert.ok(nearby>=0,target.label);const t={target,node:nearby,history:[{road:'Different approach road'}]};assert.equal(destinationIsNear(net,t),true,target.label);
+  const far=data.nodes.findIndex(p=>Math.hypot((p[0]-data.nodes[target.node][0])*111000,(p[1]-data.nodes[target.node][1])*86000)>4000);t.node=far;assert.equal(destinationIsNear(net,t),false);t.hospitalPinRevealed=true;assert.equal(destinationIsNear(net,t),true);
+ }
+});
