@@ -166,12 +166,12 @@ const destinationRecords=[
     "id": "kroger-warehouse",
     "name": "Kroger Warehouse",
     "area": "woodlawn",
-    "address": "98 Glendale Milford Road",
+    "address": "10421 Glendale Road",
     "source": "https://www.thekrogerco.com/vendor-suppliers/logistics/",
     "description": null,
     "ll": [
-      39.258697,
-      -84.468421
+      39.258061,
+      -84.466435
     ]
   },
   {

@@ -87,3 +87,8 @@ test('nearby address pins do not wait for the final three tiny road segments',()
  assert.equal(destinationIsNear(n,t),true);t.history=[{road:'Chester Road'}];assert.equal(destinationIsNear(n,t),false);
  const far={...n,nodes:[[39.0,-84],[39.01,-84]]};assert.equal(destinationIsNear(far,{...t,target:{...t.target,node:1},history:[{road:'Matthews Drive'}]}),false);
 });
+
+test('Kroger Warehouse uses the locally corrected Glendale Road entrance',()=>{
+ const t=data.targets.find(t=>t.id==='kroger-warehouse--main');assert.equal(t.address,'10421 Glendale Road');assert.ok(Math.hypot((data.nodes[t.node][0]-39.258061)*111000,(data.nodes[t.node][1]+84.466435)*86000)<2);
+ assert.ok(net.choices(t.node).some(c=>net.choices(c.to).some(x=>x.name==='Glendale Road')));
+});
