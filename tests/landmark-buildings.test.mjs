@@ -13,3 +13,9 @@ test('building names require proximity and respect hidden street names',()=>{
  assert.equal(buildingNameVisible(b,b.center,15),false);
  assert.equal(buildingNameVisible(b,b.center,18,false),false);
 });
+
+test('reported missing landmarks and apartment buildings are retained below the old size cutoff',()=>{
+ for(const [id,name] of [['201044262','Century Inn'],['52432959','Friendship Plaza Apartments'],['200416038','The Commons Apartments'],['36951679','Goodwill'],['64168206','Woodlawn Recreation Center']])assert.equal(landmarkBuildings.find(b=>b.id===id)?.name,name);
+ for(const id of ['200416082','200416044','200416074','200416026','52431265','52431266'])assert.ok(landmarkBuildings.some(b=>b.id===id),id);
+ assert.ok(!landmarkBuildings.some(b=>b.id==='687039045'&&b.name==='Woodlawn Recreation Center'));
+});

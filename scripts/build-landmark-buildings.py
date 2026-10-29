@@ -25,13 +25,14 @@ for id,e in ways.items():
  if not (39.227<center[0]<39.27 and -84.485<center[1]<-84.44):continue
  area=abs(sum(a[0]*b[1]-b[0]*a[1] for a,b in zip(ring,ring[1:])))*111000*86000/2
  buildings.append(dict(id=id,ll=ring,center=center,area=round(area),name='',station=False))
-ids={'woodlawn-fd','lincoln-fd','kroger-store','kroger-warehouse','national-guard','transport','recreation','woodlawn-school','woodlawn-pd','lincoln-school','glendale-care','goodwill','idea','major-tire'}
+ids={'woodlawn-fd','lincoln-fd','kroger-store','kroger-warehouse','national-guard','transport','recreation','woodlawn-school','woodlawn-pd','lincoln-school','glendale-care','goodwill','idea','major-tire','century-inn','friendship','commons'}
 for place in places:
  if place['id'] not in ids:continue
  choices=sorted(buildings,key=lambda b:dist(place['ll'],b['ll']))
- b=next((b for b in choices if b['id']=='36951688'),None) if place['id']=='kroger-warehouse' else choices[0]
- if b and (place['id']=='kroger-warehouse' or dist(place['ll'],b['ll'])<65):
+ overrides={'kroger-warehouse':'36951688','recreation':'64168206'}
+ b=next((b for b in choices if b['id']==overrides[place['id']]),None) if place['id'] in overrides else choices[0]
+ if b and (place['id'] in overrides or dist(place['ll'],b['ll'])<65):
   b['name']=place['name'];b['station']=place['id'] in ('woodlawn-fd','lincoln-fd');print(place['id'],b['id'],round(dist(place['ll'],b['ll'])))
-selected=[b for b in buildings if b['area']>=1200 or b['name']]
+selected=[b for b in buildings if b['area']>=300 or b['name']]
 (root/'dist/landmark-buildings.js').write_text('// Real OpenStreetMap building outlines from cached district extracts.\nexport const landmarkBuildings='+json.dumps(selected,separators=(',',':'))+';\nexport const buildingNameVisible=(building,position,zoom,names=true)=>names&&zoom>=16&&Math.hypot((position[0]-building.center[0])*111000,(position[1]-building.center[1])*86000)<=250;\n')
 print('Building footprints:',len(selected))
