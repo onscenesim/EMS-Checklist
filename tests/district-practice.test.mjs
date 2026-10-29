@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
-import {createNetwork,newTrip,drive,returnTrip,rollRailClosure,practiceChoices,turnChoice,uTurnChoice,angle,destinationIsNear} from '../dist/district-practice-engine.js';
+import {createNetwork,newTrip,drive,returnTrip,rollRailClosure,practiceChoices,turnChoice,uTurnChoice,angle,destinationIsNear,isArrivalNode,completeArrival} from '../dist/district-practice-engine.js';
 const data=JSON.parse(readFileSync(new URL('../dist/practice-network.json',import.meta.url))),net=createNetwork(data);
 function route(start,end,blocked=false){const q=[start],seen=new Map([[start,null]]);for(const n of q){if(n===end)break;for(const c of net.choices(n,blocked))if(!seen.has(c.to)){seen.set(c.to,{from:n,...c});q.push(c.to);}}assert.ok(seen.has(end),'target must be reachable');const path=[];let n=end;while(n!==start){const c=seen.get(n);path.unshift(c);n=c.from;}return path;}
 function finish(t){for(let i=0;t.status==='driving'&&i<600;i++){const choices=route(t.node,t.target.node,t.blocked);assert.ok(drive(net,t,choices[0]));}assert.equal(t.status,'arrived');}
@@ -63,4 +63,27 @@ test('hospital pins appear on approaches two miles away regardless of street or 
   assert.ok(nearby>=0,target.label);const t={target,node:nearby,history:[{road:'Different approach road'}]};assert.equal(destinationIsNear(net,t),true,target.label);
   const far=data.nodes.findIndex(p=>Math.hypot((p[0]-data.nodes[target.node][0])*111000,(p[1]-data.nodes[target.node][1])*86000)>4000);t.node=far;assert.equal(destinationIsNear(net,t),false);t.hospitalPinRevealed=true;assert.equal(destinationIsNear(net,t),true);
  }
+});
+
+
+test('Fairfield campus arrival completes without driving the five-meter destination spur',()=>{
+ const target=data.targets.find(t=>t.id==='fairfield'),spur=net.choices(target.node)[0],near=spur.to;
+ const t=newTrip(net,{mode:'hospital',hospital:'fairfield',rng:()=>.5});
+ t.node=near;assert.notEqual(t.node,target.node);assert.equal(completeArrival(net,t),true);assert.equal(t.status,'arrived');assert.equal(returnTrip(t),true);assert.equal(t.status,'driving');
+ const approach=data.edges.find(e=>e.kind==='service'&&e.b===near&&e.a!==target.node&&net.choices(e.a).some(c=>c.to===near));assert.ok(approach);
+ const driving=newTrip(net,{mode:'hospital',hospital:'fairfield',rng:()=>.5});driving.node=approach.a;drive(net,driving,net.choices(approach.a).find(c=>c.to===near));assert.equal(driving.status,'arrived');assert.ok(isArrivalNode(net,driving));
+ const far=data.nodes.findIndex(p=>{const m=Math.hypot((p[0]-target.ll[0])*111000,(p[1]-target.ll[1])*86000);return m>80&&m<120;});assert.equal(isArrivalNode(net,{target,node:far}),false);
+ const address={...target,kind:'address'};assert.equal(isArrivalNode(net,{target:address,node:near}),false);
+});
+
+
+test('nearby address pins do not wait for the final three tiny road segments',()=>{
+ const main=Array.from({length:12},(_,i)=>[39+i*.0001,-84]),nodes=[...main,...main.slice(0,11).map(p=>[p[0],p[1]+.0001])];
+ const edges=main.slice(1).map((_,i)=>({a:i,b:i+1,name:'Matthews Drive',ll:[nodes[i],nodes[i+1]],one:0,meters:11,kind:'residential'}));
+ for(let i=0;i<11;i++)edges.push({a:i,b:12+i,name:'Driveway',ll:[nodes[i],nodes[12+i]],one:0,meters:9,kind:'service'});
+ const n=createNetwork({nodes,edges});
+ const t={node:0,target:{node:11,street:'Matthews Drive',kind:'address'},history:[{road:'Matthews Drive'}]};
+ // Several drive decisions can remain because there are many short address segments.
+ assert.equal(destinationIsNear(n,t),true);t.history=[{road:'Chester Road'}];assert.equal(destinationIsNear(n,t),false);
+ const far={...n,nodes:[[39.0,-84],[39.01,-84]]};assert.equal(destinationIsNear(far,{...t,target:{...t.target,node:1},history:[{road:'Matthews Drive'}]}),false);
 });
