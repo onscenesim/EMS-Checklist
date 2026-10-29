@@ -1,4 +1,4 @@
-import {warehouseFootprint,warehouseCenter} from './warehouse-landmark.js';
+import {landmarkBuildings,buildingNameVisible} from './landmark-buildings.js';
 import {createNetwork,newTrip,drive,returnTrip,angle,turnName,bearing,practiceChoices,uTurnChoice,destinationIsNear,turnChoice,completeArrival} from './district-practice-engine.js';
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const storageKey='woodlawn-district-practice-v2';
@@ -24,7 +24,7 @@ export async function mountDistrictPractice(){
  L.control.scale({imperial:true,metric:false}).addTo(instance);instance.attributionControl.addAttribution('© <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> · practice road network');
  L.geoJSON(network.boundaries,{style:{color:'#67869a',weight:2,dashArray:'8 7',fillColor:'#98b6c8',fillOpacity:.06},interactive:false}).addTo(instance);
  for(const rail of network.rails||[])L.polyline(rail,{color:'#5d6466',weight:2,dashArray:'3 5',interactive:false}).addTo(instance);
- L.polygon(warehouseFootprint,{color:'#6c7785',weight:2,fillColor:'#9da9b5',fillOpacity:.55,interactive:false}).addTo(instance);
+ for(const b of landmarkBuildings)L.polygon(b.ll,{color:b.station?'#9b493b':'#6c7785',weight:b.station?2.5:1.5,fillColor:b.station?'#c78f7d':'#9da9b5',fillOpacity:.55,interactive:false}).addTo(instance);
  const roadLayer=L.layerGroup().addTo(instance),labelLayer=L.layerGroup().addTo(instance),tripLayer=L.layerGroup().addTo(instance),choiceLayer=L.layerGroup().addTo(instance);
  // Draw only roads in view. No image tiles: disabling names removes every street label.
  function drawRoads(){roadLayer.clearLayers();labelLayer.clearLayers();const bounds=instance.getBounds().pad(.2),zoom=instance.getZoom(),seen=new Set(),boxes=[];
@@ -34,7 +34,7 @@ export async function mountDistrictPractice(){
  const midpoint=e.ll[Math.floor(e.ll.length/2)],p=instance.latLngToContainerPoint(midpoint),width=Math.min(160,e.name.length*6),size=instance.getSize();if(p.x<35||p.y<20||p.x>size.x-35||p.y>size.y-20||boxes.some(b=>Math.abs(b.x-p.x)<(b.w+width)/2+12&&Math.abs(b.y-p.y)<24))continue;
  boxes.push({x:p.x,y:p.y,w:width});seen.add(e.name);L.marker(midpoint,{interactive:false,icon:L.divIcon({className:'practice-street-label',html:esc(e.name),iconSize:[width,18],iconAnchor:[width/2,9]})}).addTo(labelLayer);
  }
- if((names||review)&&bounds.contains(warehouseCenter))L.marker(warehouseCenter,{interactive:false,icon:L.divIcon({className:'practice-warehouse-label',html:'KROGER WAREHOUSE',iconSize:[150,24],iconAnchor:[75,12]})}).addTo(labelLayer);
+ for(const b of landmarkBuildings){const center=instance.getCenter(),position=trip?network.nodes[trip.node]:[center.lat,center.lng];if(b.name&&bounds.contains(b.center)&&buildingNameVisible(b,position,zoom,names||review))L.marker(b.center,{interactive:false,icon:L.divIcon({className:'practice-warehouse-label',html:esc(b.name),iconSize:[180,24],iconAnchor:[90,12]})}).addTo(labelLayer);}
  if(names||review)for(const landmark of network.landmarks||[]){if(!bounds.contains(landmark.ll))continue;L.circleMarker(landmark.ll,{radius:3,color:'#53677e',fillColor:'white',fillOpacity:1,weight:1,interactive:false}).addTo(labelLayer);L.marker(landmark.ll,{interactive:false,icon:L.divIcon({className:'practice-checkpoint-label',html:esc(landmark.label),iconSize:[110,22],iconAnchor:[55,28]})}).addTo(labelLayer);}
 
  }

@@ -1,4 +1,4 @@
-import {warehouseFootprint,warehouseCenter} from './warehouse-landmark.js';
+import {landmarkBuildings,buildingNameVisible} from './landmark-buildings.js';
 import {destinations,stationId} from './local-destinations.js';
 import {municipalBorders} from './local-boundaries.js';
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -22,7 +22,7 @@ export async function mountLocalMap(){
  const container=document.getElementById('district-map');if(!container)return;
  if(!window.L){container.textContent='Map library unavailable. Reload to try again.';return;}
  const L=window.L;const instance=L.map(container,{scrollWheelZoom:false,zoomControl:false,zoomSnap:.25,minZoom:13,maxZoom:19,zoomAnimation:false,fadeAnimation:false,markerZoomAnimation:false});map=instance;
- instance.setView([39.2505,-84.465],14.5);L.polygon(warehouseFootprint,{color:'#6c7785',weight:2,fillColor:'#9da9b5',fillOpacity:.6,interactive:false}).addTo(instance);L.marker(warehouseCenter,{interactive:false,icon:L.divIcon({className:'practice-warehouse-label',html:'KROGER WAREHOUSE',iconSize:[150,24],iconAnchor:[75,12]})}).addTo(instance);L.control.zoom({position:'bottomright'}).addTo(instance);L.control.scale({imperial:true,metric:false}).addTo(instance);
+ instance.setView([39.2505,-84.465],14.5);for(const b of landmarkBuildings)L.polygon(b.ll,{color:b.station?'#9b493b':'#6c7785',weight:b.station?2.5:1.5,fillColor:b.station?'#c78f7d':'#9da9b5',fillOpacity:.6,interactive:false}).addTo(instance);const buildingLabels=L.layerGroup().addTo(instance);function updateBuildingLabels(){buildingLabels.clearLayers();const c=instance.getCenter();for(const b of landmarkBuildings)if(b.name&&buildingNameVisible(b,[c.lat,c.lng],instance.getZoom()))L.marker(b.center,{interactive:false,icon:L.divIcon({className:'practice-warehouse-label',html:esc(b.name),iconSize:[180,24],iconAnchor:[90,12]})}).addTo(buildingLabels);}instance.on('moveend zoomend',updateBuildingLabels);updateBuildingLabels();L.control.zoom({position:'bottomright'}).addTo(instance);L.control.scale({imperial:true,metric:false}).addTo(instance);
  for(const [name,zIndex] of Object.entries({districtFills:280,districtBorders:320,districtRails:410,districtRoutes:430,districtLabels:450,districtPinLeaders:460})){
   const pane=instance.createPane(name);pane.style.zIndex=zIndex;pane.style.pointerEvents='none';
  }
