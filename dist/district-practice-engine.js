@@ -51,7 +51,7 @@ export function completeArrival(network,trip){
 export function drive(network,trip,choice){
  if(trip.status!=='driving')return false;
  const result=network.travel(trip.node,choice,trip.target.node,trip.blocked,node=>isArrivalNode(network,trip,node));if(!result)return false;
- for(const [i,s] of result.segments.entries()){const delta=angle(trip.heading,s.heading),previous=trip.history.at(-1);trip.history.push({edge:s.edge,reverse:s.reverse,from:s.from,to:s.to,road:s.name,turn:trip.history.length?(i>0&&previous?.road===s.name?'Continue':turnName(delta)):'Depart',meters:s.meters,leg:trip.leg,at:Date.now()});trip.meters+=s.meters;trip.heading=s.endHeading;}
+ for(const [i,s] of result.segments.entries()){const delta=angle(trip.heading,s.heading),previous=trip.history.at(-1);trip.history.push({edge:s.edge,reverse:s.reverse,from:s.from,to:s.to,road:s.name,turn:trip.history.length?(i>0&&previous?.road===s.name?'Continue':Math.abs(delta)>150&&previous&&s.to!==previous.from?(delta<0?'Sharp left':'Sharp right'):turnName(delta)):'Depart',meters:s.meters,leg:trip.leg,at:Date.now()});trip.meters+=s.meters;trip.heading=s.endHeading;}
  trip.node=result.node;
  if(trip.target.kind==='hospital'&&distance(network.nodes[trip.node],network.nodes[trip.target.node])<=3219)trip.hospitalPinRevealed=true;
  completeArrival(network,trip);
@@ -65,7 +65,8 @@ export function practiceChoices(network,trip){
 }
 export function uTurnChoice(network,trip){
  const options=practiceChoices(network,trip),last=trip.history.at(-1);
- return (last?options.find(c=>c.to===last.from):null)||options.filter(c=>Math.abs(angle(trip.heading,c.heading))>150).sort((a,b)=>Math.abs(angle(trip.heading,b.heading))-Math.abs(angle(trip.heading,a.heading)))[0]||null;
+ if(last)return options.find(c=>c.to===last.from)||null;
+ return options.filter(c=>Math.abs(angle(trip.heading,c.heading))>150).sort((a,b)=>Math.abs(angle(trip.heading,b.heading))-Math.abs(angle(trip.heading,a.heading)))[0]||null;
 }
 const streetKey=s=>String(s||'').toLowerCase().replace(/\b(road|rd)\b/g,'rd').replace(/\b(drive|dr)\b/g,'dr').replace(/\b(court|ct)\b/g,'ct').replace(/\b(avenue|ave)\b/g,'ave').replace(/\b(street|st)\b/g,'st').replace(/[^a-z0-9]/g,'');
 export function destinationIsNear(network,trip){
@@ -77,7 +78,7 @@ export function destinationIsNear(network,trip){
 }
 export function turnChoice(network,trip,direction,current){
  const reverse=uTurnChoice(network,trip);
- const candidates=practiceChoices(network,trip).filter(c=>Math.abs(angle(trip.heading,c.heading))<=150&&!(c.edge===reverse?.edge&&c.to===reverse?.to)).sort((a,b)=>angle(trip.heading,a.heading)-angle(trip.heading,b.heading));
+ const candidates=practiceChoices(network,trip).filter(c=>!(c.edge===reverse?.edge&&c.to===reverse?.to)).sort((a,b)=>angle(trip.heading,a.heading)-angle(trip.heading,b.heading));
  if(!candidates.length)return null;
  const index=candidates.findIndex(c=>c.edge===current?.edge&&c.to===current?.to),step=direction==='left'?-1:1;
  return candidates[index<0?(step<0?0:candidates.length-1):(index+step+candidates.length)%candidates.length];

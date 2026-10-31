@@ -92,3 +92,20 @@ test('Kroger Warehouse uses the locally corrected Glendale Road entrance',()=>{
  const t=data.targets.find(t=>t.id==='kroger-warehouse--main');assert.equal(t.address,'10421 Glendale Road');assert.ok(Math.hypot((data.nodes[t.node][0]-39.258061)*111000,(data.nodes[t.node][1]+84.466435)*86000)<2);
  assert.ok(net.choices(t.node).some(c=>net.choices(c.to).some(x=>x.name==='Glendale Road')));
 });
+
+test('Schumard connects to North Wayne and can be entered from either direction',()=>{
+ const node=data.nodes.findIndex((p,i)=>{const names=net.choices(i).map(c=>c.name);return names.includes('North Wayne Avenue')&&names.includes('Schumard Avenue');});assert.ok(node>=0);
+ for(const incoming of net.choices(node).filter(c=>c.name==='North Wayne Avenue')){
+  const t={node,heading:(incoming.heading+180)%360,origin:{},history:[{from:incoming.to}],status:'driving',target:{node:-1},leg:'outbound',meters:0};
+  const options=practiceChoices(net,t);let c,seen=[];for(let i=0;i<options.length;i++){c=turnChoice(net,t,'right',c);seen.push(c.name);}assert.ok(seen.includes('Schumard Avenue'));
+  assert.ok(drive(net,t,options.find(c=>c.name==='Schumard Avenue')));assert.equal(t.history.at(-1).road,'Schumard Avenue');
+ }
+});
+test('every outgoing junction choice except the actual reverse remains reachable by cycling',()=>{
+ let checked=0;
+ for(const e of data.edges){for(const [from,node] of [...(e.one!==-1?[[e.a,e.b]]:[]),...(e.one!==1?[[e.b,e.a]]:[])]){
+  const options=net.choices(node);if(options.length<2)continue;
+  const t={node,heading:0,origin:{},history:[{from}],leg:'outbound'},reverse=uTurnChoice(net,t),expected=options.filter(c=>!(c.edge===reverse?.edge&&c.to===reverse?.to));
+  const seen=new Set();let c;for(let i=0;i<expected.length;i++){c=turnChoice(net,t,'right',c);assert.ok(c);seen.add(c.edge+':'+c.to);}assert.equal(seen.size,expected.length);checked++;
+ }}assert.ok(checked>1000);
+});

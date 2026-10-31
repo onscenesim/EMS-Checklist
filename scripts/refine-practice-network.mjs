@@ -13,6 +13,9 @@ export function refinePracticeNetwork(data,geography){
  function snap(target,wanted){let best={meters:Infinity};for(let id=0;id<edges.length;id++){const e=edges[id];if(wanted&&!wanted(e))continue;if(/motorway|trunk/.test(e.kind))continue;for(let i=1;i<e.ll.length;i++){const q=projection(target.ll,e.ll[i-1],e.ll[i]);if(q.meters<best.meters)best={...q,id,segment:i};}}
  if(best.id===undefined)return null;const e=edges[best.id];let node;if(distance(best.ll,e.ll[0])<.2)node=e.a;else if(distance(best.ll,e.ll.at(-1))<.2)node=e.b;else{node=nodes.length;nodes.push(best.ll);const ll1=[...e.ll.slice(0,best.segment),best.ll],ll2=[best.ll,...e.ll.slice(best.segment)];edges.splice(best.id,1,{...e,b:node,ll:ll1,meters:Math.round(lineLength(ll1))},{...e,a:node,ll:ll2,meters:Math.round(lineLength(ll2))});}
  return {node,ll:best.ll,street:e.name,meters:best.meters};}
+ // Local correction: Schumard's imported west endpoint stops short of North Wayne.
+ const schumard=edges.filter(e=>e.name==='Schumard Avenue').flatMap(e=>[e.a,e.b]).sort((a,b)=>nodes[a][1]-nodes[b][1])[0];
+ if(schumard!==undefined){const junction=snap({ll:nodes[schumard]},e=>e.name==='North Wayne Avenue');if(!junction||junction.meters>75)throw Error('Schumard / North Wayne correction no longer matches source');if(junction.meters>1)edges.push({a:junction.node,b:schumard,name:'Schumard Avenue',ref:'',sign:'',kind:'residential',one:0,ll:[nodes[junction.node],nodes[schumard]],meters:Math.round(junction.meters),rail:false,correction:'local Schumard / North Wayne connection'});}
  const omitted=[];
  for(const t of targets){let road=t.kind==='address'?t.address.replace(/^\S+\s+/,''):courtNames.has(t.label)?t.label:t.kind==='station'?'Springfield Pike':null;
  const point=road?snap(t.kind==='station'?{...t,ll:[39.2511441,-84.4703906]}:t,e=>streetKey(e.name)===streetKey(road)):null;
