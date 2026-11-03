@@ -36,6 +36,12 @@ try{
  await alert.click();
  await page.locator('[data-check="trauma-3-body-sweep"]').check();
  assert.equal(await page.locator('.checklist-progress b').innerText(),'1 of 11 complete');
+ await page.locator('#shock-hr').pressSequentially('120');await page.locator('#shock-sbp').pressSequentially('100');
+ assert.equal(await page.locator('#shock-hr').inputValue(),'120');
+ assert.equal(await page.locator('#shock-sbp').inputValue(),'100');
+ assert.match(await page.locator('.shock-panel .clinical-help').innerText(),/120 ÷ 100 = 1.20/);
+ await page.locator('#shock-hr').fill('80');await page.locator('#shock-sbp').fill('120');
+ assert.equal(await page.locator('.shock-result strong').innerText(),'0.67');
  await page.locator('#shock-hr').fill('120');await page.locator('#shock-sbp').fill('100');
  assert.equal(await page.locator('.shock-result strong').innerText(),'1.20');
  await page.locator('.nav-item[data-page="sick"]').click();assert.equal(await page.locator('.shock-result strong').innerText(),'1.20');

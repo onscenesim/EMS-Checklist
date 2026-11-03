@@ -8,7 +8,7 @@ export const modules=[
         {id:'main-o2',text:'Turn main O2 AND cabin power on'},
         {id:'bp-cycling',text:'Set BP to cycle every 3 minutes (Q3)'},
         {id:'roles',text:'Assign roles before things get worse',note:'Leader · airway · access / medications · scene control'},
-        {id:'pads-early',text:'Put pads on early',note:'Pacing / cardioversion ready.',tool:['cardio','Defib / cardioversion']},
+        {id:'pads-early',text:'Put pads on early',note:'Switch monitor lead to PADS. Pacing / cardioversion ready.',tool:['cardio','Defib / cardioversion']},
         {id:'lucas-staged',text:'Place the LUCAS backboard under the patient while they still have a pulse'},
         {id:'saline-ready',text:'Spike a bag of saline; prepare the pressure infuser if using it'},
         {id:'push-dose-ready',text:'Prepare and clearly label push-dose epinephrine',protocol:['PUSH-DOSE EPI · SB205',53],tool:['medications','Push-dose epi guide','push-epi']}
@@ -36,7 +36,7 @@ export const modules=[
         {id:'code-roles',text:'Assign airway, compressions, IV / IO + medications, and scene control'}
       ]],
       ['Run the code',[
-        {id:'cpr-pads',text:'Start CPR; pads on and connected'},
+        {id:'cpr-pads',text:'Start CPR; pads on and connected; switch monitor lead to PADS'},
         {id:'firm-surface',text:'Get the patient out of bed / onto a firm CPR surface'},
         {id:'compressors',text:'Plan compressor rotations'},
         {id:'rhythm',text:'Identify the rhythm; follow the arrest protocol'},
@@ -53,7 +53,7 @@ export const modules=[
       ]],
       ['When the pulse comes back',[
         {id:'rosc-care',text:'Follow post-ROSC care',protocol:['POST-ROSC CARE · C307',83]},
-        {id:'rosc-monitoring',text:'Recheck airway, ETCO₂, BP, and perfusion; keep pads on'},
+        {id:'rosc-monitoring',text:'Recheck airway, ETCO₂, BP, and perfusion; keep pads on; switch monitor lead to PADS'},
         {id:'rosc-ecg',text:'Get the post-ROSC 12-lead'},
         {id:'rosc-hospital',text:'Notify the hospital; confirm the movement plan'}
       ]]

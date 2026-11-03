@@ -247,3 +247,5 @@ Lincoln Heights calls have a 20% simulated Marion crossing closure, maintained f
 Refresh source extracts with `node scripts/fetch-practice-data.mjs` and `node scripts/fetch-practice-refinements.mjs` (network access), then `python3 scripts/assemble-practice-data.py` and `node scripts/build-practice-network.mjs '../tmp/practice-assembled.json'`. The ignored task-level `../tmp/practice-data/` stores source extracts. The refiner applies saved court geometry, address placement and bounded road segments.
 
 Validation: `npm test` checks the existing application plus destination reachability, all nine hospital round trips, rail detours, one-way roads, address/court placement, firehouse choices, cycling through Continue, U-turn selection, bounded movement and automatic destination pins.
+
+Pad prompts remind crews to switch the monitor lead to PADS in Sick patient, Cardiac arrest / ROSC, Trauma arrest, and Pediatric cardiac arrest. Shock index keeps the input controls mounted while typing and displays the entered HR ÷ systolic BP calculation alongside the result.
