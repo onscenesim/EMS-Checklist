@@ -95,6 +95,21 @@
 .age-help{margin-top:12px}.not-carried-heading{margin:28px 0 14px;color:#a32b36}.not-carried-heading p{font-size:12px;margin-top:5px}.drug-card.not-carried>summary,.drug-card.not-carried .drug-name small{color:#a32b36}.stock-status{font-weight:700}
 
 /* Post-call closeout and the persistent, browser-local restock list. */
+.daily-note{margin-bottom:22px;border-top:3px solid #427e71}
+.daily-note h2{font-size:18px}
+.daily-note-help,.daily-note-meta,.daily-note-status{font-size:13px;color:#536676;line-height:1.5}
+.daily-note-help{margin:6px 0 14px}
+.daily-note-text{white-space:pre-wrap;overflow-wrap:anywhere;font-size:15px;line-height:1.55}
+.daily-note-meta{margin:8px 0 12px;overflow-wrap:anywhere}
+.daily-note-form{display:grid;gap:8px;max-width:42rem}
+.daily-note-form label{font-size:13px;font-weight:700;color:#3b4b61}
+.daily-note-form textarea,.daily-note-form input{width:100%;border:1px solid #cbd7dd;border-radius:6px;padding:10px;background:#fff;color:inherit;font:inherit;font-size:16px}
+.daily-note-form textarea{resize:vertical;min-height:84px}
+.daily-note-form input{max-width:22rem;min-height:44px}
+.daily-note-actions{display:flex;flex-wrap:wrap;gap:8px}
+.daily-note-form .daily-note-actions{margin-top:4px}
+.daily-note .button{min-height:44px}
+.daily-note-status:not(:empty){margin-top:9px}
 .post-closeout{margin-bottom:30px;border-top:3px solid #427e71}
 .post-step{display:inline-flex;align-items:center;justify-content:center;width:29px;height:29px;border-radius:7px;background:#e5f0ec;color:#326658;font-size:12px;font-weight:700;flex-shrink:0}
 .section-top h2>.post-step{font-size:12px;color:#326658;font-weight:700}.post-count{font-size:12px;color:#647287;white-space:nowrap}

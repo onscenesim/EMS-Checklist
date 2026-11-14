@@ -1,4 +1,5 @@
 import {supplies,supplyCategories,findSupplies,frequentlyUsed,codeSupplies,retiredSupplyIds} from './supply-data.js';
+import {dailyNote,bindDailyNote} from './daily-note.js';
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const colors=['blue','teal','purple','orange','red'];
 const storageKey='wfd-restock-v1';
@@ -14,6 +15,7 @@ export function postCall(fields,icon){
  const matches=findSupplies(ui.search,ui.category),list=selected();
  const checklist=[['post-csn-done','CSN','In narrative'],['post-nurse','Nurse signature','Obtained'],['post-patient','Patient signature','Obtained'],['post-retrieve','Retrieve Equipment','Retrieved'],['post-hospital','Doors closed, lights off','At hospital'],['post-quarters','In quarters','Confirmed']];
  return `<div class="page-heading"><div><h1>Post-call checklist</h1></div><div class="large-icon teal">${icon('finish')}</div></div>
+ ${dailyNote()}
  <section class="panel post-closeout priority-panel" data-priority="blue" aria-labelledby="closeout-title"><div class="section-top"><h2 id="closeout-title"><span class="post-step">01</span> Call closeout</h2><span class="post-count">${checklist.filter(([id])=>fields[id]).length} of 6 checked</span></div>
  <div class="post-call-fields">${checklist.map(([id,label,caption],i)=>`<label class="post-check ${fields[id]?'is-done':''}" data-priority="${colors[i%colors.length]}"><input id="${id==='post-csn-done'?'post-csn':id}" type="checkbox" data-field-check="${id}" ${fields[id]?'checked':''}><span><b>${label}</b><small>${id==='post-csn-done'?(fields[id]?'In narrative':'Enter in narrative'):(id==='post-hospital'?'At hospital':fields[id]?caption:'To confirm')}</small></span></label>`).join('')}</div>
  <p class="post-help">Check CSN after entering it in the narrative. Signature checks record that signatures were obtained. Call closeout stays in this tab and clears with New encounter.</p></section>
@@ -29,6 +31,7 @@ export function postCall(fields,icon){
 // Drop retired equipment pickup entries, preserving the actual restock queue.
 save();
 export function bindPostCall(render){
+ bindDailyNote();
  const repaint=(focusId,control)=>{const y=window.scrollY,active=document.getElementById(focusId),position=active?.selectionStart;render();window.scrollTo(0,y);if(focusId){const next=document.getElementById(focusId);next?.focus({preventScroll:true});if(position!=null)next?.setSelectionRange(position,position);}else if(control)document.querySelector(`${control.group?`[data-supply-category="${control.group}"] `:''}[data-supply-action="${control.action}"][data-supply-id="${control.id}"]`)?.focus({preventScroll:true});};
  document.addEventListener('toggle',e=>{const id=e.target.dataset?.supplyCategory;if(id&&!ui.search&&!ui.category){if(e.target.open)ui.open.add(id);else ui.open.delete(id);}},true);
  document.addEventListener('input',e=>{if(e.target.id==='supply-search'){ui.search=e.target.value;repaint('supply-search');}});
