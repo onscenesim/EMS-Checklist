@@ -5,16 +5,16 @@ export const shockDevices=[{id:'zenix',name:'ZOLL Zenix',short:'Zenix',max:200,m
 export const selectedShockDevice=fields=>shockDevices.find(d=>d.id===fields['shock-device'])||shockDevices[0];
 export const shockDevicePicker=fields=>`<div class="shock-device-choices" role="group" aria-label="Select defibrillator">${shockDevices.map(d=>`<button data-shock-device="${d.id}" aria-pressed="${selectedShockDevice(fields).id===d.id}"><b>${d.name}</b><span>${d.max} J max · biphasic</span></button>`).join('')}</div>`;
 export const shockProtocols=[
- {id:'C300',label:'VF / pulseless VT',context:'Adult · no pulse',page:75,mode:'UNSYNCHRONIZED',initial:'200',steps:['200','200'],stepLabels:['Next shock','Further shocks'],note:'C300 calls for maximum energy: 200 J on your Zenix for each indicated shock. Resume CPR immediately after each shock; reassess at the next 2-minute rhythm check.'},
- {id:'C303',label:'Wide complex · unstable',context:'Adult · with pulse',page:79,mode:'SYNCHRONIZED',initial:'100',steps:['200'],ceiling:true,note:'C303 starting dose: 100 J, then 200 J if unsuccessful. If the rhythm recurs, use the previously successful energy.',syncNote:'Synchronize unless it is impossible (for example, an irregular rhythm), per C303.',sedation:'versed-cardioversion'},
- {id:'C306',label:'Narrow complex · unstable',context:'Adult · with pulse',page:82,mode:'SYNCHRONIZED',sedation:'versed-cardioversion-narrow'}
+ {id:'C300',label:'VF / pulseless VT',context:'Adult · no pulse',page:74,mode:'UNSYNCHRONIZED',initial:'200',steps:['200','200'],stepLabels:['Next shock','Further shocks'],note:'C300 calls for maximum energy: 200 J on your Zenix for each indicated shock. Resume CPR immediately after each shock; reassess at the next 2-minute rhythm check.'},
+ {id:'C304',label:'Wide complex · unstable',context:'Adult · with pulse',page:79,mode:'SYNCHRONIZED',initial:'100',steps:['200'],ceiling:true,note:'C304 starting dose: 100 J, then 200 J if unsuccessful. If the rhythm recurs, use the previously successful energy.',syncNote:'Synchronize unless it is impossible (for example, an irregular rhythm), per C304.',sedation:'versed-cardioversion'},
+ {id:'C306',label:'Narrow complex · unstable',context:'Adult · with pulse',page:81,mode:'SYNCHRONIZED',sedation:'versed-cardioversion-narrow'}
 ];
-export function selectedShockProtocol(fields){return shockProtocols.find(p=>p.id===fields['shock-protocol'])||null;}
+export function selectedShockProtocol(fields){const stored=fields['shock-protocol'];return shockProtocols.find(p=>p.id===(stored==='C303'?'C304':stored))||null;}
 export function shockPlan(fields){
  const protocol=selectedShockProtocol(fields);if(!protocol)return null;
  const device=selectedShockDevice(fields),max=String(device.max);
  if(protocol.id==='C300')return {...protocol,initial:max,steps:[max,max],device,note:`C300 calls for maximum energy: ${max} J on your ${device.short} for each indicated shock. Resume CPR immediately after each shock; reassess at the next 2-minute rhythm check.`};
- if(protocol.id==='C303')return {...protocol,device,steps:device.id==='lifepak15'?['200','300','360']:['200'],note:`C303: increase energy after unsuccessful shocks, up to ${max} J on your ${device.short}. If the rhythm recurs, use the previously successful energy.`};
+ if(protocol.id==='C304')return {...protocol,device,steps:device.id==='lifepak15'?['200','300','360']:['200'],note:`C304: increase energy after unsuccessful shocks, up to ${max} J on your ${device.short}. If the rhythm recurs, use the previously successful energy.`};
  const storedRhythm=fields['shock-narrow-rhythm'];
  const rhythm=storedRhythm==='irregular-monophasic'?'irregular-biphasic':['regular','irregular-biphasic'].includes(storedRhythm)?storedRhythm:'regular';
  const higher=device.id==='lifepak15'?['200','300','360']:['200'];

@@ -1,28 +1,56 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {kgFrom,poundsFrom,volumeFor,calculateDose,orderedDose,dripRate,infusionRate,dilute} from '../dist/calculations.js';
-import {drugReference} from '../dist/medication-data.js';
+import {kgFrom,poundsFrom,volumeFor,calculateDose,orderedDose,dripRate,infusionRate,dilute,septicShockBolus} from '../dist/calculations.js';
+import {drugReference,postIntubationFentanyl} from '../dist/medication-data.js';
+import {syringeSize,pediatricSyringe} from '../dist/syringe.js';
 const close=(actual,expected)=>assert.ok(Math.abs(actual-expected)<1e-8,`${actual} != ${expected}`);
 const recipe=(path,idx=0)=>drugReference.flatMap(m=>m.pathways).find(p=>p.id===path).recipes[idx];
 const calc=(path,inputs={},idx=0)=>calculateDose(recipe(path,idx),{age:40,weightKg:80,idealKg:70,concentration:50,concentrationUnit:'mg',prior:0,...inputs});
 test('kg/lb conversion preserves precision and rejects missing / invalid values',()=>{close(kgFrom(220.46226218487757,'lb'),100);close(poundsFrom(100),220.46226218487757);for(const n of ['',0,-2,Infinity,'not a number'])assert.equal(kgFrom(n),null);assert.equal(kgFrom(10,'stone'),null);});
 test('mass units and mEq stay dimensionally separate',()=>{assert.equal(volumeFor(2,'g',500,'mg'),4);assert.equal(volumeFor(20,'mcg',10,'mcg'),2);assert.equal(volumeFor(100,'mcg',.1,'mg'),1);assert.equal(volumeFor(1,'mg',1000,'mcg'),1);assert.equal(volumeFor(20,'mEq',1,'mEq'),20);assert.equal(volumeFor(20,'mEq',1,'mg'),null);assert.equal(volumeFor(10,'mg',0),null);});
 test('department magnesium 5g/10mL yields stock volume for each indication',()=>{for(const id of ['mag-torsades-unstable','mag-torsades-stable','mag-asthma'])assert.equal(calc(id,{concentration:500}).volumeLow,4);const iv=calc('mag-eclampsia-iv',{concentration:500});assert.equal(iv.volumeLow,8);assert.equal(iv.volumeHigh,12);assert.equal(calc('mag-eclampsia-im',{concentration:500}).volumeLow,10);});
-test('ketamine uses ideal weight for adult pain / restraint and actual weight for T715',()=>{const pain=calc('ket-pain-iv');assert.equal(pain.low,14);close(pain.volumeLow,.28);assert.equal(calc('ket-restraint').low,280);assert.equal(calc('ket-restraint').volumeLow,5.6);assert.equal(calc('ket-post-intubation').low,160);assert.equal(calc('ket-post-intubation',{},1).low,80);assert.match(calc('ket-pain-iv',{idealKg:null}).error,/ideal body weight/);assert.ok(calc('ket-induction').error);});
+test('ketamine uses ideal weight for adult pain / restraint and actual weight for T706',()=>{const pain=calc('ket-pain-iv');assert.equal(pain.low,14);close(pain.volumeLow,.28);assert.equal(calc('ket-restraint').low,280);assert.equal(calc('ket-restraint').volumeLow,5.6);assert.equal(calc('ket-post-intubation').low,160);assert.equal(calc('ket-post-intubation',{},1).low,80);assert.match(calc('ket-pain-iv',{idealKg:null}).error,/ideal body weight/);assert.ok(calc('ket-induction').error);});
 test('post-intubation Versed caps apply before volume conversion',()=>{assert.equal(calc('versed-post-intubation',{concentration:5}).low,4);assert.equal(calc('versed-post-intubation',{weightKg:150,concentration:5}).volumeLow,1);});
-test('push-dose epi and IM epi do not share concentrations / units',()=>{const p=calc('push-epi-shock',{concentration:10,concentrationUnit:'mcg'});assert.equal(p.volumeLow,.5);assert.equal(p.volumeHigh,2);assert.equal(calc('push-epi-shock-ped',{age:5,weightKg:30,concentration:10,concentrationUnit:'mcg'}).low,20);assert.equal(calc('push-epi-rosc',{concentration:10,concentrationUnit:'mcg'}).volumeLow,1);assert.equal(calc('epi-anaphylaxis-adult',{concentration:1}).volumeLow,.3);});
-test('lidocaine code prefill and IO formulation requirements are explicit',()=>{const code=calc('lido-arrest',{concentration:20});assert.equal(code.low,120);assert.equal(code.volumeLow,6);const repeat=calc('lido-arrest',{concentration:20},1);assert.equal(repeat.low,40);assert.equal(repeat.high,60);assert.equal(calc('lido-io-ped',{age:5,weightKg:20,concentration:20}).error,'N/A');assert.equal(calc('lido-io-ped',{age:12,weightKg:40,concentration:20}).volumeLow,1);assert.ok(calc('lido-io-ped',{age:12,weightKg:40,concentration:10}).error);});
-test('cumulative caps require prior dose and do not authorize below-minimum doses',()=>{assert.match(calc('versed-cardioversion',{prior:''}).error,/already given/);assert.equal(calc('versed-cardioversion',{prior:7,concentration:5}).high,3);assert.match(calc('versed-cardioversion',{prior:9}).error,/Remaining allowance/);assert.match(calc('versed-cardioversion',{prior:10}).error,/maximum reached/);assert.equal(calc('lido-stable-vt',{prior:180,concentration:20}).high,60);});
-test('age and weight boundaries prevent wrong-pathway output',()=>{assert.ok(calc('ket-pain-ped-iv',{age:4,weightKg:15}).error);assert.ok(calc('ket-pain-ped-iv',{age:16}).error);assert.ok(calc('mag-asthma',{age:''}).error);assert.ok(calc('adenosine-adult',{weightKg:90}).error);assert.ok(calc('adenosine-adult',{weightKg:90},1).error);});
+test('push-dose epi and IM epi do not share concentrations / units',()=>{const p=calc('push-epi-shock',{concentration:10,concentrationUnit:'mcg'});assert.equal(p.volumeLow,.5);assert.equal(p.volumeHigh,2);assert.equal(calc('push-epi-shock-ped',{age:5,weightKg:30,concentration:10,concentrationUnit:'mcg'}).low,20);assert.equal(calc('push-epi-rosc',{concentration:10,concentrationUnit:'mcg'}).volumeLow,1);assert.equal(calc('epi-anaphylaxis-adult',{concentration:1}).volumeLow,.5);});
+test('lidocaine code prefill and IO formulation requirements are explicit',()=>{const code=calc('lido-arrest',{concentration:20});assert.equal(code.low,120);assert.equal(code.volumeLow,6);const repeat=calc('lido-arrest',{concentration:20},1);assert.equal(repeat.low,40);assert.equal(repeat.high,60);assert.equal(calc('lido-io-ped',{age:5,weightKg:20,concentration:20}).volumeLow,.5);assert.equal(calc('lido-io-ped',{age:12,weightKg:40,concentration:20}).volumeLow,1);assert.ok(calc('lido-io-ped',{age:12,weightKg:40,concentration:10}).error);});
+test('cumulative caps require prior dose and do not authorize below-minimum doses',()=>{assert.match(calc('versed-cardioversion',{prior:''}).error,/already given/);assert.equal(calc('versed-cardioversion',{prior:7,concentration:5}).high,3);assert.match(calc('versed-cardioversion',{prior:9}).error,/Remaining allowance/);assert.match(calc('versed-cardioversion',{prior:10}).error,/maximum reached/);assert.ok(!drugReference.some(m=>m.pathways.some(p=>p.id==='lido-stable-vt')));});
+test('age and weight boundaries prevent wrong-pathway output',()=>{assert.ok(calc('ket-pain-ped-iv',{age:5,weightKg:20}).error);assert.ok(calc('ket-pain-ped-iv',{age:16}).error);assert.ok(calc('mag-asthma',{age:''}).error);assert.ok(calc('adenosine-adult',{weightKg:90}).error);assert.ok(calc('adenosine-adult',{weightKg:90},1).error);});
 test('dose, drip, infusion, dilution calculations handle units and invalid input',()=>{const ordered=orderedDose({dose:2,doseUnit:'mcg',perKg:true,weightKg:100,max:150,stockAmount:1,stockUnit:'mg',stockVolume:10});assert.equal(ordered.amount,150);close(ordered.volume,1.5);assert.equal(ordered.limited,true);assert.equal(orderedDose({dose:1,doseUnit:'mEq',stockAmount:1,stockUnit:'mg',stockVolume:1}),null);assert.deepEqual(dripRate(100,20,60),{hourly:300,drops:300,roundedDrops:300});assert.equal(dripRate(100,0,60),null);assert.equal(dripRate(100,20,''),null);const inf=infusionRate({dose:.1,rateUnit:'mcg/kg/min',weightKg:70,stockAmount:4,stockUnit:'mg',bagVolume:250,factor:60});close(inf.hourly,26.25);close(inf.drops,26.25);assert.equal(infusionRate({dose:.1,rateUnit:'mcg/kg/min',weightKg:null,stockAmount:4,stockUnit:'mg',bagVolume:250}),null);assert.deepEqual(dilute({stockAmount:1,stockUnit:'mg',stockVolume:10,targetConcentration:10,targetUnit:'mcg',finalVolume:10}),{draw:1,diluent:9,finalVolume:10});assert.equal(dilute({stockAmount:1,stockUnit:'mg',stockVolume:10,targetConcentration:1,targetUnit:'mg',finalVolume:10}),null);});
 test('reference IDs are unique; every pathway has a source and recipes',()=>{assert.equal(new Set(drugReference.map(m=>m.id)).size,drugReference.length);const paths=drugReference.flatMap(m=>m.pathways);assert.equal(new Set(paths.map(p=>p.id)).size,paths.length);for(const p of paths){assert.ok(p.page>=1&&p.page<=243,p.id);assert.ok(p.code,p.id);assert.ok(p.recipes.length,p.id);}});
-test('pediatric table overrides conflicting formulas and preserves N/A without interpolation',()=>{
- for(const [weight,dose] of [[5,.05],[15,.15],[20,.2],[40,.3],[50,.3]])assert.equal(calc('epi-anaphylaxis-ped',{age:12,weightKg:weight,concentration:1}).low,dose);
- assert.equal(calc('epi-anaphylaxis-ped',{age:1,weightKg:3,concentration:1}).error,'N/A');
- assert.equal(calc('versed-seizure-ped',{age:14,weightKg:50,concentration:5},1).low,5);
- assert.equal(calc('versed-seizure-ped',{age:5,weightKg:13,concentration:5}).error,'N/A');
- assert.equal(calc('versed-seizure-ped',{age:5,weightKg:13,tableIndex:3,concentration:5}).low,5);
+test('P609 uses age and weight bands and withholds ambiguous doses',()=>{
+ for(const [age,weight,dose] of [[.5,5,.1],[5,14,.15],[8,25,.3],[12,40,.5]])assert.equal(calc('epi-anaphylaxis-ped',{age,weightKg:weight,concentration:1}).low,dose);
+ for(const [age,weight] of [[2,10],[6,15],[11,32],[12,30]])assert.match(calc('epi-anaphylaxis-ped',{age,weightKg:weight,concentration:1}).error,/overlap/);
+ assert.match(calc('epi-anaphylaxis-ped',{age:.25,weightKg:3,concentration:1}).error,/entered age/);
+});
+test('P610 seizure calculations follow actual-weight bands and P611 lookup retains N/A',()=>{
+ assert.equal(calc('versed-seizure-ped',{age:14,weightKg:50,concentration:5},1).low,2);
+ assert.equal(calc('versed-seizure-ped',{age:14,weightKg:50,concentration:5},1).high,5);
+ assert.equal(calc('versed-seizure-ped',{age:5,weightKg:12.8,concentration:5}).low,2.4);
+ assert.equal(calc('versed-seizure-ped',{age:5,weightKg:13,concentration:5}).low,5);
  assert.equal(calc('ket-pain-ped-iv',{age:6,weightKg:15}).error,'N/A');
+});
+test('2027 rescue doses and age-specific TXA and sepsis limits are applied before volume conversion',()=>{
+ assert.equal(calc('epi-asthma-adult',{concentration:1}).volumeLow,.5);
+ assert.equal(calc('push-epi-escalation',{concentration:10,concentrationUnit:'mcg'}).volumeLow,5);
+ assert.equal(calc('push-epi-shock-ped',{age:5,weightKg:17,concentration:10,concentrationUnit:'mcg'}).low,17);
+ const pacing=calc('versed-pacing',{concentration:5});
+ assert.deepEqual([pacing.low,pacing.high,pacing.volumeLow,pacing.volumeHigh],[1,2,.2,.4]);
+ assert.equal(calc('txa-ped',{age:11,weightKg:40,concentration:100}).low,600);
+ assert.ok(calc('txa-ped',{age:12,weightKg:40}).error);
+ assert.equal(calc('txa-adolescent',{age:12,concentration:100}).volumeLow,10);
+ assert.equal(calculateDose(postIntubationFentanyl.pathways[0].recipes[0],{weightKg:225,concentration:50,concentrationUnit:'mcg'}).volumeLow,4);
+ assert.equal(septicShockBolus(null,20),null);
+ assert.equal(septicShockBolus(15,null),null);
+ assert.deepEqual(septicShockBolus(16,null),{initial:500});
+ assert.deepEqual(septicShockBolus(3,15),{initial:300,twoBoluses:600});
+ assert.deepEqual(septicShockBolus(12,40),{initial:500,twoBoluses:1000});
+});
+test('syringe selection covers exact limits and distinguishes TXA preparation from bolus equipment',()=>{
+ assert.deepEqual([.3,1,1.01,3,3.01,5,5.01,10,10.01,20,20.01,null,0].map(syringeSize),[1,1,3,3,5,5,10,10,20,20,null,null,null]);
+ assert.match(pediatricSyringe(12,{mode:'bolus'}),/10 mL syringe \+ bag \+ stopcock/);
+ assert.match(pediatricSyringe(12,{mode:'txa'}),/for prep/);
+ assert.match(pediatricSyringe(.8,{route:'PO'}),/1 mL oral syringe/);
+ assert.match(pediatricSyringe(1.1,{route:'IN'}),/3 mL syringe \+ atomizer/);
 });
 test('unusual drug list has exactly the requested entries and non-carried items at the bottom',()=>{
  assert.deepEqual(drugReference.map(m=>m.id),['hypertonic','magnesium','ketamine','midazolam','push-epi','lidocaine','im-epi','adenosine','morphine','txa','bicarbonate','calcium-chloride','blood','succinylcholine','rocuronium','cyanokit']);

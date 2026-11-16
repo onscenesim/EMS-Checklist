@@ -18,10 +18,12 @@ try{
  await page.evaluate(()=>sessionStorage.setItem('wfd-stock-v1',JSON.stringify({midazolam:{custom:true,value:'1'}})));await page.reload();assert.equal(await page.locator('#stock-midazolam').count(),0);assert.match(await dose('versed-restraint-1').innerText(),/10 mg[\s\S]*2 mL/);
  assert.match(await page.locator('.ketamine-height-heading').innerText(),/IM once/);
  assert.match(await page.locator('[data-sedation-path="versed-restraint"] .sedation-instructions').innerText(),/Repeat only with online medical control/);
- await page.locator('[data-sedation-group="intubated"]').click();assert.equal(await page.locator('.sedation-path').count(),2);
+ await page.locator('[data-sedation-group="intubated"]').click();assert.equal(await page.locator('.sedation-path').count(),4);
  assert.match(await dose('ket-post-intubation-0').innerText(),/140 mg[\s\S]*2.8 mL/);assert.match(await dose('ket-post-intubation-1').innerText(),/70 mg[\s\S]*1.4 mL/);
  assert.match(await dose('versed-post-intubation-0').innerText(),/3.5 mg[\s\S]*0.7 mL/);
  assert.match(await page.locator('[data-sedation-path="versed-post-intubation"] .sedation-instructions').innerText(),/fentanyl OR morphine/);
+ await page.locator('#stock-fentanyl').selectOption('50');
+ assert.match(await dose('fent-post-intubation-0').locator('.sedation-dose-output').innerText(),/mL/);
  await page.screenshot({path:'/Users/Shared/EMS Checklist/tmp/sedation-quick-desktop.png',fullPage:true});
  for(const width of [768,390,320]){await page.setViewportSize({width,height:1100});assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);if(width===390)await page.screenshot({path:'/Users/Shared/EMS Checklist/tmp/sedation-quick-mobile.png',fullPage:true});}
  await page.locator('[data-sedation-group="cardioversion"]').click();assert.equal(await page.locator('.sedation-path').count(),3);assert.equal(await dose('versed-cardioversion-0').locator('.sedation-give').count(),0);
@@ -30,13 +32,13 @@ try{
  await page.locator('#ref-age').fill('12');await page.locator('#ref-weight').fill('40');assert.match(await dose('versed-cardioversion-ped-0').innerText(),/4 mg[\s\S]*0.8 mL/);assert.match(await page.locator('[data-sedation-path="versed-cardioversion-ped"] .sedation-instructions').innerText(),/Medical-control order required/);
  await page.reload();assert.equal(await page.locator('[data-sedation-group="cardioversion"]').getAttribute('aria-pressed'),'true');
  await page.goto('http://127.0.0.1:4173/#cardio');await page.locator('[data-shock-device="lifepak15"]').click();await page.locator('[data-shock-protocol="C300"]').click();assert.deepEqual(await page.locator('.shock-energy-step strong').allTextContents(),['360J','360J','360J']);
- await page.locator('[data-shock-protocol="C303"]').click();assert.deepEqual(await page.locator('.shock-energy-step strong').allTextContents(),['100J','200J','300J','360J']);
+ await page.locator('[data-shock-protocol="C304"]').click();assert.deepEqual(await page.locator('.shock-energy-step strong').allTextContents(),['100J','200J','300J','360J']);
  await page.locator('[data-shock-protocol="C306"]').click();await page.locator('[data-shock-rhythm="irregular-biphasic"]').click();assert.deepEqual(await page.locator('.shock-energy-step strong').allTextContents(),['125–200J','200J','300J','360J']);
  await page.reload();assert.equal(await page.locator('[data-shock-device="lifepak15"]').getAttribute('aria-pressed'),'true');
  await page.goto('http://127.0.0.1:4173/#pediatric');await page.locator('[data-age="8"]').click();assert.deepEqual(await page.locator('.energy-grid b').allTextContents(),['100 J','200 J','200–360 J']);
  await page.locator('[data-shock-device="zenix"]').click();assert.deepEqual(await page.locator('.energy-grid b').allTextContents(),['100 J','200 J','200 J']);
  await page.goto('http://127.0.0.1:4173/#cardio');assert.equal(await page.locator('[data-shock-device="zenix"]').getAttribute('aria-pressed'),'true');assert.deepEqual(await page.locator('.shock-energy-step strong').allTextContents(),['120–200J','200J']);
- await page.locator('[data-shock-protocol="C303"]').click();await page.locator('[data-cardio-sedation]').click();assert.equal(await page.locator('[data-sedation-group="cardioversion"]').getAttribute('aria-pressed'),'true');assert.equal(await page.locator('[data-sedation-path="versed-cardioversion"]').isVisible(),true);
+ await page.locator('[data-shock-protocol="C304"]').click();await page.locator('[data-cardio-sedation]').click();assert.equal(await page.locator('[data-sedation-group="cardioversion"]').getAttribute('aria-pressed'),'true');assert.equal(await page.locator('[data-sedation-path="versed-cardioversion"]').isVisible(),true);
  await page.locator('[data-action="new"]').click();await page.locator('[data-action="confirm-new"]').click();await page.goto('http://127.0.0.1:4173/#cardio');assert.equal(await page.locator('[data-shock-device="zenix"]').getAttribute('aria-pressed'),'true');
  assert.deepEqual(errors,[]);console.log('Passed: readable sedation doses / volumes / routes, age and cumulative safeguards, indication filters, clinical instructions, device-specific energy paths, shared pediatric ceiling, persistence/reset and phone layouts.');
 }finally{await browser.close();}

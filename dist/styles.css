@@ -829,3 +829,11 @@ main.stopwatch-screen{position:fixed;inset:0;z-index:30;width:100%;height:100vh;
 .practice-highway-options{font-size:12px!important;line-height:1.7;color:#354f68;background:#ffffffa6;padding:10px 12px;border-radius:6px;margin-top:12px!important}
 
 .practice-warehouse-label{font-size:10px;font-weight:800;letter-spacing:.06em;text-align:center;color:#263442;text-shadow:0 1px 2px white,0 -1px 2px white;white-space:nowrap;pointer-events:none}
+
+.syringe-size{display:inline-flex;align-items:center;gap:4px;width:fit-content;max-width:100%;margin-top:5px;padding:3px 6px;border:1px solid #c7d8e7;border-radius:5px;background:#edf4fa;color:#25496c;font-size:11px;font-weight:700;line-height:1.25;text-align:left;white-space:normal}
+.syringe-size svg{width:15px;height:15px;flex:none}
+.critical-value .syringe-size{display:flex;max-width:9.5rem;margin-left:auto}
+.syringe-note,.push-pull-guide{margin-top:8px;font-size:12px;line-height:1.5}
+.push-pull-guide summary{font-weight:800;color:#174d89;cursor:pointer}
+.push-pull-guide ol{padding-left:20px;margin:8px 0}
+.push-pull-guide li+li{margin-top:4px}

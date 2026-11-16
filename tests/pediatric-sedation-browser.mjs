@@ -26,7 +26,7 @@ try{
  await page.screenshot({path:'/Users/Shared/EMS Checklist/tmp/pediatric-critical-desktop.png',fullPage:true});
  await page.setViewportSize({width:390,height:844});assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);await page.screenshot({path:'/Users/Shared/EMS Checklist/tmp/pediatric-critical-mobile.png',fullPage:true});
  await page.setViewportSize({width:320,height:720});assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);
- await page.goto('http://127.0.0.1:4173/#sedation');assert.equal(await page.locator('.protocol-links a[href$="#page=173"]').count(),1);
+ await page.goto('http://127.0.0.1:4173/#sedation');assert.equal(await page.locator('.protocol-links a[href$="#page=194"]').count(),1);
  await page.locator('#ref-age').fill('30');await page.locator('#ref-weight').fill('70');
  await page.locator('[data-ref-open="sedation-ketamine"]>summary').click();assert.equal(await page.locator('.ketamine-height-table tbody tr').count(),5);assert.match(await page.locator('[data-recipe="ket-post-intubation-0"]').innerText(),/140 mg[\s\S]*2.8 mL/);
  await page.locator('[data-ref-open="sedation-midazolam"]>summary').click();assert.equal(await page.locator('#stock-midazolam').count(),0);assert.match(await page.locator('[data-recipe="versed-post-intubation-0"]').innerText(),/3.5 mg[\s\S]*0.7 mL/);

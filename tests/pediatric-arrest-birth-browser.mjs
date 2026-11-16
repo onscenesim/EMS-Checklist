@@ -3,20 +3,20 @@ import assert from 'node:assert/strict';
 async function assertNewbornEpi(page){
  const card=page.locator('.neonatal-code .neonatal-epi');
  assert.equal(await card.count(),1);
- assert.match(await card.locator('.neonatal-epi-trigger').innerText(),/HR <60 after 30 sec CPR \+ effective BVM/);
+ assert.match(await card.locator('.neonatal-epi-trigger').innerText(),/HR <60 after 60 sec of compressions \+ adequate ventilation/);
  assert.match(await card.locator('.neonatal-epi-route').innerText(),/Epinephrine · IV \/ IO[\s\S]*0.1 mg\/mL · 1 mg \/ 10 mL syringe/);
  assert.match(await card.locator('.neonatal-epi-draw').innerText(),/Draw from code epi into a 1 mL syringe with 0.01 mL markings/);
- for(const [group,volume,mass] of [['term',.4,.04],['preterm',.2,.02]]){
+ for(const [group,volume,mass] of [['term',.3,.03],['preterm',.2,.02]]){
   const dose=card.locator(`[data-neonatal-dose="${group}"]`);
   assert.equal((await dose.locator('strong').innerText()).replace(/\s+/g,' ').trim(),`${volume} mL`);
   assert.equal(await dose.locator(':scope>span').innerText(),`${mass} mg`);
   assert.ok(Math.abs(volume*.1-mass)<1e-12,'IV/IO mass matches stock concentration and volume');
  }
  assert.match(await card.locator('.neonatal-epi-repeat').innerText(),/Repeat every 3–5 min while HR <60/);
- assert.match(await card.locator('.neonatal-epi-repeat').innerText(),/No IV \/ IO → request medical-control ETT order/);
+ assert.match(await card.locator('.neonatal-epi-repeat').innerText(),/distal femoral IO/);
  assert.equal(await card.locator('input,button').count(),0);
- assert.equal(await card.locator('a[href$="#page=151"]').count(),1);
- assert.equal(await card.locator('a[href$="#page=236"]').count(),1);
+ assert.equal(await card.locator('a[href$="#page=170"]').count(),1);
+ assert.equal(await card.locator('a[href$="#page=262"]').count(),1);
 }
 const browser=await chromium.launch({headless:true,executablePath:'/Applications/Google Chrome.app/Contents/MacOS/Google Chrome'});
 try {
@@ -31,8 +31,8 @@ try {
  assert.equal(await page.locator('#peds-weight').getAttribute('open'),'');
  await page.locator('[data-age="3"]').click();
  assert.match(await page.locator('[data-arrest-drug="Epinephrine · cardiac arrest"] .critical-value').innerText(),/0.15 mg\s*1.5 mL/);
- assert.match(await page.locator('[data-arrest-drug="Amiodarone · cardiac arrest"] .critical-value').innerText(),/75 mg\s*1.55 mL/);
- assert.match(await page.locator('.dose-discrepancy').innerText(),/1.5 mL/);
+ assert.match(await page.locator('[data-arrest-drug="Amiodarone · cardiac arrest"] .critical-value').innerText(),/75 mg\s*1.5 mL/);
+ assert.match(await page.locator('.dose-discrepancy').innerText(),/1.55 mL/);
  assert.deepEqual(await page.locator('.leader-energy strong').allTextContents(),['30J','60J','60–150J']);
  await page.locator('#peds-arrest-weight').fill('17');
  assert.match(await page.locator('[data-arrest-drug="Epinephrine · cardiac arrest"] .critical-value').innerText(),/0.17 mg\s*1.7 mL/);
@@ -53,7 +53,7 @@ try {
  assert.doesNotMatch(await page.locator('.neonatal-content').innerText(),/service-approved standard|requires clarification/);
  assert.match(await page.locator('.neonatal-content').innerText(),/3 compressions : 1 breath/);
  await page.locator('[data-action="pulse-cycle"]').click();await page.locator('[data-action="epi-dose"]').click();
- assert.equal(await page.locator('.epi-heading a').getAttribute('href'),'https://www.academyofmedicine.org/aws/AOMC/asset_manager/get_file/937559?ver=5#page=152');
+ assert.equal(await page.locator('.epi-heading a').getAttribute('href'),'https://academyofmedicine.org/aws/AOMC/asset_manager/get_file/965819?ver=1#page=172');
  await page.reload();assert.equal(await page.locator('.neonatal-code').getAttribute('open'),'');
  assert.match(await page.locator('.pulse-status').innerText(),/CPR cycle/);
  await page.locator('.neonatal-code>summary').click();
@@ -84,15 +84,15 @@ try {
  await page.locator('[data-check="birth-prepare-gestation"]').check();
  await page.locator('.neonatal-code>summary').click();assert.match(page.url(),/#birth$/);assert.equal(await page.locator('.neonatal-code').getAttribute('open'),'');
  assert.equal(await page.locator('.birth-source-alert').count(),0);await assertNewbornEpi(page);
- assert.match(await page.locator('#birth-newborn').innerText(),/begin with ROOM AIR \(P600\)/);
+ assert.match(await page.locator('#birth-newborn').innerText(),/begin with room air \(P600\)/);
  assert.doesNotMatch(await page.locator('#birth-newborn').innerText(),/Confirm service guidance|Preterm initial O₂/);
  assert.match(await page.locator('#birth-newborn').innerText(),/START CHEST COMPRESSIONS/);
- assert.match(await page.locator('#birth-newborn').innerText(),/Consider ETT \/ laryngeal mask BEFORE compressions/);
+ assert.match(await page.locator('#birth-newborn').innerText(),/Consider an advanced airway/);
  assert.match(await page.locator('#birth-newborn').innerText(),/100% O₂; after ROSC/);
  await page.reload();assert.equal(await page.locator('.neonatal-code').getAttribute('open'),'');
  assert.equal(await page.locator('[data-check="birth-prepare-gestation"]').isChecked(),true);assert.equal(await page.locator('[data-check="birth-post-oxygen"]').isChecked(),true);
  await page.locator('#birth-eclampsia>summary').click();
- assert.equal(await page.locator('#birth-eclampsia a[href$="#page=218"]').count(),1);
+ assert.equal(await page.locator('#birth-eclampsia a[href$="#page=241"]').count(),1);
  assert.match(await page.locator('#birth-eclampsia').innerText(),/4–6 g IV in 100 mL NS over 20–25 min/);
  assert.match(await page.locator('#birth-eclampsia').innerText(),/draw 8–12 mL/i);
  await page.locator('#birth-eclampsia>summary').click();
