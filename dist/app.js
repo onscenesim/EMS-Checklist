@@ -87,12 +87,21 @@ function arrestCodeTools(){return `<div class="arrest-tools">${pulsePanel(state,
 function arrestDirections(){return `<aside class="arrest-priority-note" aria-label="Ongoing pads and airway reminder"><strong>Keep reassessing: pads on? Airway in?</strong><p>If either is missing, ensure it happens ASAP. Switch monitor lead to PADS.</p><b>Pads first → switch monitor lead to PADS → then airway.</b><strong class="precharge-emphasis">PRE-CHARGE DEFIB before the rhythm / pulse check.</strong><p>Continue CPR while charging; shock only for a shockable rhythm after everyone is clear. Disarm if no shock is indicated.</p></aside>`;}
 function sickArrestPanel(m){return `<details class="cardiac-arrest-box sick-arrest-panel" ${state.fields['sick-arrest-open']?'open':''}><summary><span class="sick-arrest-icon">${icon('skull')}</span><span><b>Cardiac arrest</b></span><span class="sick-arrest-expand" aria-hidden="true">+</span></summary><div class="sick-arrest-content">${arrestDirections()}<div class="arrest-rosc-direction"><b>After ROSC, follow C307</b>${source('POST-ROSC CARE · C307',83)}</div>${dispatchTimerPanel(state.fields,icon)}${arrestCodeTools()}<nav class="protocol-links arrest-links" aria-label="Cardiac arrest protocols">${m.arrestRefs.map(ref=>source(...ref)).join('')}<button class="button small" data-page="arrest">Full cardiac arrest checklist ${icon('arrow')}</button></nav></div></details>`;}
 function oxygenPriority(m){const item=m.sections[0][1].find(item=>item.id==='main-o2');return item?`<section class="oxygen-priority" aria-label="Oxygen and cabin power first priority">${checklistRow(m,item,0,0)}</section>`:'';}
+function pacingNote(){
+  return `<aside class="callout amber pacing-note" aria-label="Pacing reminder">
+    <b>Transcutaneous pacing for bradycardia</b>
+    <p><strong>Start at 60 mA.</strong> Increase current until electrical and mechanical capture or maximum output.</p>
+    <p>Asynchronous (non-demand) pacing is “generally desired.” Keep the <strong>4-lead ECG connected</strong> throughout pacing. Limb leads are required for demand mode.</p>
+    <p>Confirm ECG capture and mechanical capture with a matching pulse-ox waveform and palpable pulse. Check for a T wave after each paced beat. <strong>No T wave means capture is unconfirmed.</strong></p>
+    <a class="source" href="${protocol2027.full}#page=76" target="_blank" rel="noopener">${icon('book')} PACING · C302 · 2027 FINAL DRAFT ↗</a>
+  </aside>`;
+}
 function checklistSection(m,section,si){
-  if(m.id==='cardio'&&si===0)return defibGuide(state.fields,source,icon);
+  if(m.id==='cardio'&&si===0)return defibGuide(state.fields,source,icon)+pacingNote();
   const code=m.id==='arrest'&&si===1;
   return `<section class="check-section priority-section${m.id==='trauma'?' march-section':''}" data-priority="${checklistColors[m.id]?.[si]||sectionColors[si%sectionColors.length]}" ${m.id==='trauma'?`data-march="${['m','a','r','c','h'][si]}"`:''}>
     <h2><span>${String(si+1).padStart(2,'0')}</span>${icon(checklistSectionIcons[m.id]?.[si]||m.icon)}${section[0]}</h2>
-    ${m.id==='sick'&&si===0?`<aside class="callout amber pacing-note" aria-label="Pacing reminder"><b>Pacing: increase current (mA) until capture.</b>Confirm ECG capture and mechanical capture with a matching pulse-ox waveform and pulse. Also confirm a T wave after each pacer beat. <strong>No T wave = no capture.</strong><div>${source('PACING · C302',77)}</div></aside>`:''}
+    ${m.id==='sick'&&si===0?pacingNote():''}
     ${code?arrestDirections():''}
     ${code||(m.id==='sick'&&section[0]==='Airway supplies ready')||(m.id==='intubation'&&section[0]==='Reassess')?ventilationReminder(code):''}
     ${section[1].map((item,ii)=>item.id==='main-o2'?'':checklistRow(m,item,si,ii)).join('')}
