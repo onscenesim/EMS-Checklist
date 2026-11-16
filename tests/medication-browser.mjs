@@ -73,6 +73,7 @@ try{
  await page.locator('#ref-age').fill('10');await page.locator('#ref-weight').fill('40');
  const sepsis=page.locator('.calculator').filter({has:page.getByRole('heading',{name:'Septic shock fluids'})});
  assert.match(await sepsis.locator('.utility-result').innerText(),/500 mL[\s\S]*1000 mL/);
+ assert.equal(await sepsis.locator('.sepsis-cap b').innerText(),'500 mL maximum per bolus.');
  assert.match(await sepsis.locator('.syringe-size').innerText(),/10 mL syringe \+ bag \+ stopcock/);
  await sepsis.locator('summary').click();
  await sepsis.getByText(/Draw from the bag/).waitFor();

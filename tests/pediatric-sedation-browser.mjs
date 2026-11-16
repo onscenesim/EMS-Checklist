@@ -34,7 +34,7 @@ try{
  await page.reload();assert.equal(await page.locator('[data-ref-open="sedation-midazolam"]').getAttribute('open'),'');assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);
  await page.screenshot({path:'/Users/Shared/EMS Checklist/tmp/sedation-dosing-mobile.png',fullPage:true});
  await page.goto('http://127.0.0.1:4173/#cardio');assert.equal(await page.getByText('Recheck Sync before next shock',{exact:true}).count(),1);
- await page.goto('http://127.0.0.1:4173/#calculators');assert.equal(await page.locator('.calculator>.calculator-note>b').count(),5);assert.equal(await page.getByText('Optional: for adult ketamine dosing',{exact:true}).count(),1);
+ await page.goto('http://127.0.0.1:4173/#calculators');assert.equal(await page.locator('.calculator>.calculator-note>b').count(),6);assert.equal(await page.getByText('Optional: for adult ketamine dosing',{exact:true}).count(),1);
  await page.goto('http://127.0.0.1:4173/assets/woodlawn-fd-crest.svg');await page.setViewportSize({width:640,height:640});await page.screenshot({path:'/Users/Shared/EMS Checklist/tmp/woodlawn-logo-digitized.png'});
  assert.deepEqual(errors,[]);console.log('Pediatric / sedation checks passed: all age columns, critical doses, airway overlaps, table expansion / filtering, default / reset 200 J, sedation routes / stock / caps, SYNC note, and phone layouts.');
 }finally{await browser.close();}

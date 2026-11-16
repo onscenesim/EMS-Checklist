@@ -88,7 +88,7 @@ export function calculators(fields,source){
     <section class="panel calculator"><h2>Septic shock fluids</h2>
       <p class="calculator-note">Use after confirming septic shock criteria for the patient’s age.</p>
       ${resultBox(sepsis?[['INITIAL CRYSTALLOID',fmt(sepsis.initial),'mL'],...(sepsis.twoBoluses?[['TOTAL AFTER TWO BOLUSES',fmt(sepsis.twoBoluses),'mL']]:[])]:null,'Enter age above and patient weight for ages under 16.')}
-      <p class="calculator-note">Age 16+: 500 mL initially, then reassess. Under 16: 20 mL/kg up to 500 mL per bolus. Reassess before repeating and follow P618 stop criteria and medical-control instructions.</p>
+      <p class="calculator-note sepsis-cap"><b>500 mL maximum per bolus.</b> Age 16+ starts at 500 mL. Under 16, dose by weight at 20 mL/kg up to the cap. Reassess before a second pediatric bolus and follow P618 stop criteria.</p>
       <div class="clinical-links">${source('M404 · ADULT',97)}${source('P618 · PEDIATRIC',199)}</div>
       ${sepsis?.twoBoluses?pediatricSyringe(sepsis.initial,{mode:'bolus'}):''}
       <details class="push-pull-guide" data-clinical-open="push-pull-guide" ${fields['push-pull-guide-open']?'open':''}><summary>Push-pull fluid guide · P618</summary>
