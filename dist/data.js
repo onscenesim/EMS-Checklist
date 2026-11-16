@@ -1,4 +1,8 @@
 export const protocol='https://www.academyofmedicine.org/aws/AOMC/asset_manager/get_file/937559?ver=5';
+export const protocol2027={
+  full:'https://academyofmedicine.org/aws/AOMC/asset_manager/get_file/965819?ver=1',
+  changes:'https://academyofmedicine.org/aws/AOMC/asset_manager/get_file/965815?ver=1'
+};
 export const modules=[
   {id:'sick',title:'Sick patient',short:'Sick patient',icon:'caution',color:'red',source:'SB212 · SB205 · SB204 · C300 · C301 · C307',page:71,
     refs:[['Crashing patient · SB212',71],['Shock / push-dose epi · SB205',53]],
