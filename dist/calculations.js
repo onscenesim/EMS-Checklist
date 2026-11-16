@@ -50,17 +50,7 @@ export function calculateDose(recipe,inputs={}){
   if(recipe.kind==='band'){
     if(recipe.rule==='seizure-im')low=high=weight<13?Math.min(weight*.2,2.4):weight<=40?5:10;
     else if(recipe.rule==='seizure-iv'){low=weight<=40?Math.min(weight*.1,5):2;high=weight<=40?low:5;}
-    else if(recipe.rule==='anaphylaxis-im'){
-      // P609 allows age OR estimated weight. At overlap or disagreement, show the source instead of choosing a dose.
-      const bands=[
-        [age>=.5&&age<=2||weight<=10,.1],
-        [age>=2&&age<6||weight>=10&&weight<=15,.15],
-        [age>=6&&age<12||weight>=15&&weight<=30,.3],
-        [age>=12||weight>30,.5]
-      ].filter(([matches])=>matches);
-      if(bands.length!==1)return {error:'P609 bands overlap or give different doses for this age and weight. Confirm the dose with medical control.'};
-      low=high=bands[0][1];
-    }
+    else if(recipe.rule==='anaphylaxis-im')low=high=weight<15?.15:weight<=30?.3:.5;
     else if(recipe.rule==='glucagon-age'){if(age===null)return {error:'Enter patient age in years above to calculate the age-based dose.'};low=high=age<6?.5:1;}
     else return {error:'Review source dosing.'};
   }
@@ -83,14 +73,6 @@ export function calculateDose(recipe,inputs={}){
   const volumeLow=recipe.unit==='mL'?low:volumeFor(low,recipe.unit,inputs.concentration,inputs.concentrationUnit);
   const volumeHigh=recipe.unit==='mL'?high:volumeFor(high,recipe.unit,inputs.concentration,inputs.concentrationUnit);
   return {low,high,unit:recipe.unit,volumeLow,volumeHigh,remaining,limited:low!==raw[0]||high!==raw[1],weight:recipe.kind==='weight'||recipe.kind==='band'?weight:null,ideal:!!recipe.ideal};
-}
-export function septicShockBolus(ageYears,weightKg){
-  const age=number(ageYears),kg=number(weightKg);
-  if(age===null||age<0)return null;
-  if(age>=16)return {initial:500};
-  if(!positive(kg))return null;
-  const initial=Math.min(20*kg,500);
-  return {initial,twoBoluses:2*initial};
 }
 export function orderedDose({dose,doseUnit,perKg,weightKg,max,stockAmount,stockUnit,stockVolume}){
   if(!positive(dose)||!positive(stockAmount)||!positive(stockVolume)||perKg&&!positive(weightKg))return null;

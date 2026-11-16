@@ -26,7 +26,7 @@ try{
  await page.screenshot({path:'/Users/Shared/EMS Checklist/tmp/pediatric-critical-desktop.png',fullPage:true});
  await page.setViewportSize({width:390,height:844});assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);await page.screenshot({path:'/Users/Shared/EMS Checklist/tmp/pediatric-critical-mobile.png',fullPage:true});
  await page.setViewportSize({width:320,height:720});assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);
- await page.goto('http://127.0.0.1:4173/#sedation');assert.equal(await page.locator('.protocol-links a[href$="#page=194"]').count(),1);
+ await page.goto('http://127.0.0.1:4173/#sedation');assert.equal(await page.locator('.protocol-links a[href$="#page=173"]').count(),1);
  await page.locator('#ref-age').fill('30');await page.locator('#ref-weight').fill('70');
  await page.locator('[data-ref-open="sedation-ketamine"]>summary').click();assert.equal(await page.locator('.ketamine-height-table tbody tr').count(),5);assert.match(await page.locator('[data-recipe="ket-post-intubation-0"]').innerText(),/140 mg[\s\S]*2.8 mL/);
  await page.locator('[data-ref-open="sedation-midazolam"]>summary').click();assert.equal(await page.locator('#stock-midazolam').count(),0);assert.match(await page.locator('[data-recipe="versed-post-intubation-0"]').innerText(),/3.5 mg[\s\S]*0.7 mL/);
@@ -34,7 +34,7 @@ try{
  await page.reload();assert.equal(await page.locator('[data-ref-open="sedation-midazolam"]').getAttribute('open'),'');assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);
  await page.screenshot({path:'/Users/Shared/EMS Checklist/tmp/sedation-dosing-mobile.png',fullPage:true});
  await page.goto('http://127.0.0.1:4173/#cardio');assert.equal(await page.getByText('Recheck Sync before next shock',{exact:true}).count(),1);
- await page.goto('http://127.0.0.1:4173/#calculators');assert.equal(await page.locator('.calculator>.calculator-note>b').count(),6);assert.equal(await page.getByText('Optional: for adult ketamine dosing',{exact:true}).count(),1);
+ await page.goto('http://127.0.0.1:4173/#calculators');assert.equal(await page.locator('.calculator>.calculator-note>b').count(),5);assert.equal(await page.getByText('Optional: for adult ketamine dosing',{exact:true}).count(),1);
  await page.goto('http://127.0.0.1:4173/assets/woodlawn-fd-crest.svg');await page.setViewportSize({width:640,height:640});await page.screenshot({path:'/Users/Shared/EMS Checklist/tmp/woodlawn-logo-digitized.png'});
  assert.deepEqual(errors,[]);console.log('Pediatric / sedation checks passed: all age columns, critical doses, airway overlaps, table expansion / filtering, default / reset 200 J, sedation routes / stock / caps, SYNC note, and phone layouts.');
 }finally{await browser.close();}

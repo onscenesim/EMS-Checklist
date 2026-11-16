@@ -39,8 +39,8 @@ try{
   assert.equal(await page.locator('.page-heading p').count(),0);
   const sedation=page.locator('.check-row').filter({hasText:'Provide post-intubation analgesia / sedation'});
   assert.match(await sedation.innerText(),/Sedate patients given paralytics/);
-  assert.match(await sedation.locator('a').getAttribute('href'),/#page=220$/);
-  assert.match(await sedation.locator('a').innerText(),/POST-INTUBATION SEDATION · T706/);
+  assert.match(await sedation.locator('a').getAttribute('href'),/#page=209$/);
+  assert.match(await sedation.locator('a').innerText(),/POST-INTUBATION SEDATION · T715/);
   assert.equal(await sedation.locator('input').isChecked(),false);
   const popupPromise=page.waitForEvent('popup');
   await sedation.locator('a').click();
@@ -54,7 +54,7 @@ try{
   assert.equal(await page.getByText('Have push-dose epinephrine ready',{exact:true}).count(),1);
   await page.screenshot({path:'/Users/Shared/EMS Checklist/tmp/intubation-updated-desktop.png',fullPage:true});
   await sedation.getByRole('button',{name:'Sedation checklist'}).click();
-  assert.equal(await page.locator('.check-row').filter({hasText:'Provide post-intubation analgesia / sedation'}).locator('a[href$="#page=220"]').count(),1);
+  assert.equal(await page.locator('.check-row').filter({hasText:'Provide post-intubation analgesia / sedation'}).locator('a[href$="#page=209"]').count(),1);
   await page.locator('.nav-item[data-page="trauma"]').click();
   assert.equal(await page.getByText('Full body sweep including armpits and back',{exact:true}).count(),1);
   await page.locator('[data-action="new"]').click();

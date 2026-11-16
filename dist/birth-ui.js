@@ -27,28 +27,28 @@ const delivery=[
 ];
 const newborn=[
  direction('First','Dry, warm, position airway; HR + right-hand SpO₂'),
- direction('Apnea / gasping or HR <100','BVM 30–60/min; begin with room air (P600)'),
+ direction('Apnea / gasping or HR <100','BVM 60/min; begin with ROOM AIR (P600)'),
  direction('No chest rise / no HR rise','Correct seal, position, obstruction'),
- direction('BVM still ineffective','Correct ventilation. Consider an advanced airway if HR remains below 100 after 30 sec of adequate BVM.'),
+ direction('BVM still ineffective','Consider ETT / laryngeal mask BEFORE compressions'),
  direction('HR <60 after 30 sec BVM moving chest','START CHEST COMPRESSIONS: 3 compressions : 1 breath; two-thumb technique',undefined,true),
  direction('During chest compressions','100% O₂; after ROSC, titrate to SpO₂ targets'),
  {epinephrine:true},
  direction('HR ≥60','Stop compressions; continue BVM if needed'),
  direction('ETT','Term 3.0–3.5 mm; preterm 2.5–3.0 mm; confirm CO₂ / depth'),
- direction('Delivery blood loss / shock','NS 10 mL/kg IV / IO. P600 lists 30 mL full term and 20 mL preterm.')
+ direction('Delivery blood loss / shock','NS 20 mL/kg IV; use actual newborn weight')
 ];
 const complications=[
- direction('Heavy bleeding AFTER birth','MASSAGE UTERINE FUNDUS—firm, vigorous pressure. NOT GENTLE.',['O801 · HEMORRHAGE',239],true),
- direction('Hemorrhage / shock','2 IVs + crystalloid + TXA',['TXA · S511',159]),
+ direction('Heavy bleeding AFTER birth','MASSAGE UTERINE FUNDUS—firm, vigorous pressure. NOT GENTLE.',['O801 · HEMORRHAGE',216],true),
+ direction('Hemorrhage / shock','2 IVs + crystalloid + TXA',['TXA · S506',144]),
  direction('Bleeding persists','Control other bleeding sources; do not rely on massage alone'),
  direction('Shoulders stuck','McRoberts + suprapubic pressure; NO fundal pressure / head traction'),
  direction('Prolapsed cord','Lift presenting part, elevate hips, keep cord moist, maternal O₂; urgent transport'),
- direction('Breech / malpresentation','ALS + medical control; O801 maneuvers',['O801',238])
+ direction('Breech / malpresentation','ALS + medical control; O801 maneuvers',['O801',215])
 ];
 const eclampsia=[
  direction('Pregnant / ≤6 weeks postpartum + seizure','Consider eclampsia'),
  direction('Immediate care','Left lateral tilt; glucose, BP, ETCO₂'),
- direction('Seizing, age 16+','Versed 10 mg IM once; alternate routes → M410',['ALTERNATE ROUTES · M410',110]),
+ direction('Seizing, age 16+','Versed 10 mg IM once; alternate routes → M410',['ALTERNATE ROUTES · M410',106]),
  direction('Magnesium','4–6 g IV in 100 mL NS over 20–25 min—even after seizure stops'),
  direction('5 g / 10 mL stock','Draw 8–12 mL; dilute before infusion'),
  direction('Magnesium + Versed','Respiratory depression; no magnesium with myasthenia gravis'),
@@ -57,7 +57,7 @@ const eclampsia=[
 ];
 
 // Regional bands are a briefing reference, never an automatic withholding / TOR rule.
-function viability(source){return `<aside class="birth-viability" aria-label="Gestational age and viability"><div class="viability-title">Regional gestational-age bands · O800</div><div class="viability-grid"><div data-priority="orange"><strong>&lt;22 <span>weeks</span></strong><b>Extreme prematurity</b><span>Medical control decision</span></div><div data-priority="purple"><strong>22–24 6/7 <span>weeks</span></strong><b>Periviable</b><span>Indicated care + medical control</span></div><div data-priority="teal"><strong>≥25 <span>weeks</span></strong><b>Viable</b><span>Resuscitate if indicated</span></div></div><div class="viability-decision"><b>Uncertain age / no HR at birth → indicated resuscitation + medical control.</b><span>O800 labels &lt;22 weeks non-viable; UCMC reports care from 21 weeks. Withholding / stopping: medical control decision.</span>${source('O800',236)}<a class="source" href="${ucNicu}" target="_blank" rel="noopener">UCMC · 21 WEEKS ↗</a></div></aside>`;}
+function viability(source){return `<aside class="birth-viability" aria-label="Gestational age and viability"><div class="viability-title">Regional gestational-age bands · O800</div><div class="viability-grid"><div data-priority="orange"><strong>&lt;22 <span>weeks</span></strong><b>Extreme prematurity</b><span>Medical control decision</span></div><div data-priority="purple"><strong>22–24 6/7 <span>weeks</span></strong><b>Periviable</b><span>Indicated care + medical control</span></div><div data-priority="teal"><strong>≥25 <span>weeks</span></strong><b>Viable</b><span>Resuscitate if indicated</span></div></div><div class="viability-decision"><b>Uncertain age / no HR at birth → indicated resuscitation + medical control.</b><span>O800 labels &lt;22 weeks non-viable; UCMC reports care from 21 weeks. Withholding / stopping: medical control decision.</span>${source('O800',213)}<a class="source" href="${ucNicu}" target="_blank" rel="noopener">UCMC · 21 WEEKS ↗</a></div></aside>`;}
 
 export function oxygenGuide(){return `<aside class="newborn-oxygen" aria-label="Newborn oxygen saturation targets"><div class="oxygen-guide-title"><b>SpO₂ targets · right hand / wrist</b><span>Minutes since BIRTH</span></div><div class="oxygen-target-grid">${oxygenTargets.map(([minute,target])=>`<div><span>${minute===10?'≥10':minute} min</span><strong>${target}%</strong></div>`).join('')}</div><div class="oxygen-guide-rule"><b>Excess O₂ can harm. Do not chase 100%.</b><span>Chest compressions: 100% O₂. After ROSC: titrate down.</span><a class="source" href="${oxygenAlgorithm}" target="_blank" rel="noopener">2025 AHA TARGETS ↗</a></div></aside>`;}
 function localNicus(state,icon){return `<details id="birth-nicus" class="birth-fold" data-priority="blue" data-code-open="birth-nicus" ${state.fields['birth-nicus-open']?'open':''}><summary>${icon('hospital')}<b>Local high-level NICUs</b><span class="expand-symbol" aria-hidden="true">+</span></summary><div class="nicu-list"><a class="nicu-row" href="${ucNicu}" target="_blank" rel="noopener"><b>UCMC</b><strong>LEVEL III</strong><span>Maternity + NICU · peri-viable care</span></a><a class="nicu-row" href="https://www.trihealth.com/locations/good-samaritan-hospital" target="_blank" rel="noopener"><b>Good Samaritan</b><strong>LEVEL III</strong><span>Maternity + NICU</span></a><a class="nicu-row" href="https://www.cincinnatichildrens.org/service/n/nicu" target="_blank" rel="noopener"><b>Cincinnati Children’s · Burnet</b><strong>LEVEL IV</strong><span>Highest neonatal / surgical level · coordinate maternal care separately</span></a></div></details>`;}
@@ -70,13 +70,13 @@ export function imminentBirth(state,source,icon,renderRow){
  const fold=(id,title,color,list,prefix='',extra='',refs='')=>`<details id="${id}" class="birth-fold ${id==='birth-newborn'?'neonatal-code':''}" data-priority="${color}" data-code-open="${id==='birth-newborn'?'birth-neonatal':id}" ${state.fields[(id==='birth-newborn'?'birth-neonatal':id)+'-open']?'open':''}><summary>${icon({'birth-complications':'caution','birth-newborn':'skull','birth-eclampsia':'bolt'}[id])}<b>${title}</b><span class="expand-symbol" aria-hidden="true">+</span></summary><div class="birth-fold-body ${id==='birth-newborn'?'neonatal-content':''}">${prefix}${directions(list)}${extra}${refs?`<div class="birth-source-links">${refs}</div>`:''}</div></details>`;
  return `<div class="birth-page"><button class="back" data-page="home">← All checklists</button><div class="page-heading"><h1>Imminent birth</h1><div class="large-icon teal">${icon('birth')}</div></div>
  <section class="oxygen-priority birth-power" aria-label="Main oxygen, cabin power, and heat first priority">${renderRow({id:'birth'},power,'prepare',0)}</section>
- <div class="birth-source-links birth-protocols">${source('O800',236)}${source('O801',238)}${source('O802',241)}</div>
+ <div class="birth-source-links birth-protocols">${source('O800',213)}${source('O801',215)}${source('O802',218)}</div>
  ${checklist('01','Pre-delivery','blue','prepare',prepare,viability(source))}
  ${flow('Delivery','teal',delivery)}
- ${fold('birth-complications','Delivery complications','red',complications,'','',source('O801',238))}
+ ${fold('birth-complications','Delivery complications','red',complications,'','',source('O801',215))}
  ${checklist('02','Post-delivery','teal','post',post,oxygenGuide())}
- ${fold('birth-newborn','Neonatal code','purple',newborn,viability(source),oxygenGuide(),source('P600',170))}
- ${fold('birth-eclampsia','Eclampsia / severe BP','purple',eclampsia,'','',source('O802',241)+source('P610 · UNDER 16',184)+`<button class="button small" data-page="medications" data-reference-open="magnesium">Magnesium guide</button>`)}
+ ${fold('birth-newborn','Neonatal code','purple',newborn,viability(source),oxygenGuide(),source('P600',151))}
+ ${fold('birth-eclampsia','Eclampsia / severe BP','purple',eclampsia,'','',source('O802',218)+source('P610 · UNDER 16',164)+`<button class="button small" data-page="medications" data-reference-open="magnesium">Magnesium guide</button>`)}
  ${localNicus(state,icon)}
  </div>`;
 }
