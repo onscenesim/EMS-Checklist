@@ -3,6 +3,8 @@
 import {readFile,writeFile} from 'node:fs/promises';
 import {destinations,stationId} from '../dist/local-destinations.js';
 import {refinePracticeNetwork} from './refine-practice-network.mjs';
+import {addPracticeAddresses} from './practice-address-coverage.mjs';
+const addressSupplement=JSON.parse(await readFile(new URL('./data/practice-addresses.json',import.meta.url)));
 import {hospitalPlaces} from '../dist/hospital-map-data.js';
 const input=JSON.parse(await readFile(process.argv[2]));
 const geography=JSON.parse(await readFile(new URL('../dist/local-geography.json',import.meta.url)));
@@ -36,5 +38,5 @@ function reachable(reverse=false){const a=nodes.map(()=>[]);edges.forEach(e=>{if
 const forward=reachable(),back=reachable(true);
 const usable=targets.filter(t=>forward.has(index.get(t.osm))&&back.has(index.get(t.osm))&&t.snapMeters<250).map(({osm,...t})=>({...t,node:index.get(osm)}));
 for(const t of targets.filter(t=>t.kind!=='address'))if(!usable.some(u=>u.id===t.id))throw Error('Unreachable destination: '+t.label+' ('+t.snapMeters+' m)');
-await writeFile(new URL('../dist/practice-network.json',import.meta.url),JSON.stringify(refinePracticeNetwork({landmarks:input.elements.filter(e=>e.type==='node'&&e.tags?.highway==='motorway_junction').map(e=>({ll:[e.lat,e.lon],label:['Exit '+(e.tags.ref||''),e.tags.name||''].filter(Boolean).join(' · ')})),source:'OpenStreetMap / OSRM',checked:'2026-10-28',nodes,edges:edges.filter(e=>forward.has(e.a)&&back.has(e.a)&&forward.has(e.b)&&back.has(e.b)),targets:usable,rails:geography.rails,boundaries:{type:'FeatureCollection',features:geography.municipalities.features.filter(f=>/^(Woodlawn|Lincoln Heights)/.test(f.properties.NAME))}},geography)));
+await writeFile(new URL('../dist/practice-network.json',import.meta.url),JSON.stringify(addPracticeAddresses(refinePracticeNetwork({landmarks:input.elements.filter(e=>e.type==='node'&&e.tags?.highway==='motorway_junction').map(e=>({ll:[e.lat,e.lon],label:['Exit '+(e.tags.ref||''),e.tags.name||''].filter(Boolean).join(' · ')})),source:'OpenStreetMap / OSRM',checked:'2026-10-28',nodes,edges:edges.filter(e=>forward.has(e.a)&&back.has(e.a)&&forward.has(e.b)&&back.has(e.b)),targets:usable,rails:geography.rails,boundaries:{type:'FeatureCollection',features:geography.municipalities.features.filter(f=>/^(Woodlawn|Lincoln Heights)/.test(f.properties.NAME))}},geography),addressSupplement)));
 console.log({nodes:nodes.length,edges:edges.length,targets:usable.length,addresses:usable.filter(t=>t.kind==='address').length,railEdges:edges.filter(e=>e.rail).length});

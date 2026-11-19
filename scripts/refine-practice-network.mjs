@@ -1,7 +1,7 @@
 // Apply the department's saved map corrections and choose street-specific driving targets.
 import {createHash} from 'node:crypto';
 import {distance,bearing} from '../dist/district-practice-engine.js';
-export const streetKey=s=>String(s||'').toLowerCase().replace(/[’']/g,'').replace(/\b(north|south|east|west)\b/g,m=>m[0]).replace(/\b(road|rd)\b/g,'rd').replace(/\b(drive|dr)\b/g,'dr').replace(/\b(court|ct)\b/g,'ct').replace(/\b(avenue|ave)\b/g,'ave').replace(/\b(street|st)\b/g,'st').replace(/\b(boulevard|blvd)\b/g,'blvd').replace(/[^a-z0-9]/g,'');
+export const streetKey=s=>String(s||'').toLowerCase().replace(/[’']/g,'').replace(/\b(north|south|east|west)\b/g,m=>m[0]).replace(/\b(road|rd)\b/g,'rd').replace(/\b(drive|dr)\b/g,'dr').replace(/\b(court|ct)\b/g,'ct').replace(/\b(avenue|ave|av)\b/g,'ave').replace(/\b(street|st)\b/g,'st').replace(/\b(boulevard|blvd)\b/g,'blvd').replace(/\b(lane|ln)\b/g,'ln').replace(/\b(terrace|ter)\b/g,'ter').replace(/\b(circle|cir)\b/g,'cir').replace(/\b(way|wy)\b/g,'way').replace(/\b(alley|aly)\b/g,'aly').replace(/\b(place|pl)\b/g,'pl').replace(/[^a-z0-9]/g,'');
 export function projection(p,a,b){const x=(b[1]-a[1])*86000,y=(b[0]-a[0])*111000,px=(p[1]-a[1])*86000,py=(p[0]-a[0])*111000,t=Math.max(0,Math.min(1,(px*x+py*y)/(x*x+y*y||1))),ll=[a[0]+t*(b[0]-a[0]),a[1]+t*(b[1]-a[1])];return {ll,t,meters:distance(p,ll)};}
 const lineLength=ll=>ll.slice(1).reduce((sum,p,i)=>sum+distance(ll[i],p),0);
 export function refinePracticeNetwork(data,geography){

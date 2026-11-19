@@ -27,18 +27,32 @@ export function createNetwork(data){
  return {...data,choices,path,reachable,travel};
 }
 export function rollRailClosure(area,rng=Math.random){return area==='lincoln'&&rng()<.2;}
-export function newTrip(network,{mode='landmark',area='all',destination='random',hospital='random',rng=Math.random}={}){
+export function newTrip(network,{mode='landmark',area='all',destination='random',hospital='random',rng=Math.random,selection=network.practiceSelection??={}}={}){
  const pick=a=>a[Math.min(a.length-1,Math.floor(rng()*a.length))];
  const station=network.targets.find(t=>t.kind==='station');
- const pool=network.targets.filter(t=>(area==='all'||t.area===area)&&t.kind===(mode==='landmark'?'landmark':'address')&&t.node!==station.node);
+ const pool=network.targets.filter(t=>(area==='all'||t.area===area)&&(mode==='landmark'?t.kind==='landmark':['address','street'].includes(t.kind))&&t.node!==station.node);
  if(!pool.length)throw Error('No practice locations are available in this district.');
- const call=destination==='random'||mode!=='landmark'?pick(pool):pool.find(t=>t.id===destination);
+ let call,key,counts;
+ if(mode==='landmark')call=destination==='random'?pick(pool):pool.find(t=>t.id===destination);
+ else{
+  // Drawing from the least-practiced streets is a shuffled cycle. Shared counts
+  // preserve coverage when switching districts or Hospital & back modes.
+  counts=selection.revision===network.revision&&selection.counts&&typeof selection.counts==='object'?selection.counts:{};
+  const groups=new Map();for(const t of pool){const k=streetKey(t.street);if(!groups.has(k))groups.set(k,[]);groups.get(k).push(t);}
+  const visits=k=>Number.isSafeInteger(counts[k])&&counts[k]>=0?counts[k]:0;
+  const least=Math.min(...[...groups.keys()].map(visits));
+  let available=[...groups.keys()].filter(k=>visits(k)===least);
+  if(available.length>1&&selection.revision===network.revision)available=available.filter(k=>k!==selection.lastStreet);
+  key=pick(available);const locations=groups.get(key),addresses=locations.filter(t=>t.kind==='address');
+  call=pick(addresses.length?addresses:locations);
+ }
  if(!call)throw Error('Choose a destination in the selected district.');
  const blocked=rollRailClosure(call.area,rng);
  const hospitals=network.targets.filter(t=>t.kind==='hospital');
  const target=mode==='hospital'?(hospital==='random'?pick(hospitals):hospitals.find(t=>t.id===hospital)):call;
  const origin=mode==='hospital'?call:station;
  if(!target||!network.reachable(origin.node,blocked).has(target.node)||!network.reachable(target.node,blocked).has(origin.node))throw Error('This trip is unavailable. Choose another location.');
+ if(key){selection.revision=network.revision;selection.counts={...counts,[key]:(Number.isSafeInteger(counts[key])&&counts[key]>=0?counts[key]:0)+1};selection.lastStreet=key;}
  return {mode,origin,target,call,blocked,node:origin.node,heading:origin.heading??0,networkRevision:network.revision,leg:'outbound',status:'driving',history:[],meters:0,started:Date.now(),legStarted:Date.now()};
 }
 export function isArrivalNode(network,trip,node=trip.node){
